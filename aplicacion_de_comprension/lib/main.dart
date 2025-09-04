@@ -6,6 +6,7 @@ import './features/usuario/presentacion/controladores/cargar.dart';
 import './features/usuario/presentacion/paginas/registro.dart';
 import './features/usuario/presentacion/paginas/login.dart';
 import './features/usuario/presentacion/paginas/personajes.dart';
+import './features/secciones/presentacion/paginas/introduccion.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,10 +23,11 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final boot = ref.watch(bootProvider);
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Kids Reader',
+      debugShowCheckedModeBanner: true,
+      title: 'Aplico',
       home: boot.when(
         data: (r) => switch (r) {
+          BootRoute.introduccion => const Introduccion(),
           BootRoute.onboarding => const Registro(),
           BootRoute.login => const Login(),
           BootRoute.profiles => const CharacterSelectPage(),

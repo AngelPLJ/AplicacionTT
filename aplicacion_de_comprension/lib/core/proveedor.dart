@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import './database/database.dart';
 import './hasher.dart';
 import './seguridad.dart';
@@ -11,6 +12,10 @@ import '../features/usuario/repositorios/repoperfil.dart';
 import '../features/usuario/repositorios/repoconfig.dart';
 
 final dbProvider = Provider<AppDatabase>((ref) => throw UnimplementedError('Init in main'));
+
+final prefsProvider = FutureProvider<SharedPreferences>((ref) async {
+  return SharedPreferences.getInstance();
+});
 
 final secureStorageProvider = Provider<SecureStorage>((_) => SecureStorageImpl());
 final hasherProvider = Provider<PasswordHasher>((_) => Pbkdf2Hasher());

@@ -9,6 +9,7 @@ android {
     namespace = "com.example.aplicacion_de_comprension"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973" // <-- Agrega esta línea
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

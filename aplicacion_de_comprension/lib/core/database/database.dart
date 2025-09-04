@@ -23,6 +23,12 @@ class Perfiles extends Table {
   @override Set<Column> get primaryKey => {id};
 }
 
+class Modulos extends Table {
+  TextColumn get id => text()();
+  TextColumn get nombreModulo => text()();
+  
+}
+
 class Configuraciones extends Table {
   TextColumn get tutorId => text().references(Tutor, #id)();
   BoolColumn get ttsHabilitado => boolean().withDefault(const Constant(true))();
