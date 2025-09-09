@@ -7,7 +7,7 @@ try:
     # Configura la API key desde los secretos de GitHub
     api_key = os.environ['GEMINI_API_KEY']
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('gemini-2.5-pro')
 except KeyError:
     print("Error: La variable de entorno GEMINI_API_KEY no está configurada.")
     exit(1)
