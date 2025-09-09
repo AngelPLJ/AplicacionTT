@@ -1,0 +1,40 @@
+name: Documentar Código con Gemini
+
+# Permite ejecutar este workflow manualmente desde la pestaña Actions
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-document:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write # Permiso para que la action pueda hacer commits
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Instalar dependencias de Python
+        run: pip install google-generativeai
+
+      - name: Ejecutar el script de documentación
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python .github/scripts/documenter.py
+
+      - name: Hacer commit de la documentación generada
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(gemini): Actualizar documentación automática del proyecto"
+          # Incluye el índice principal y todo lo que esté en la nueva carpeta 'docs'
+          file_pattern: "aplicacion_de_comprension/DOCUMENTACION.md aplicacion_de_comprension/docs/**/*"
+          repository: .
+          # Opciones para configurar el autor del commit
+          commit_user_name: Gemini Bot
+          commit_user_email: gemini-bot@users.noreply.github.com
