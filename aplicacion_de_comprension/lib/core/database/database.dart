@@ -26,7 +26,6 @@ class Perfiles extends Table {
 class Modulos extends Table {
   TextColumn get id => text()();
   TextColumn get nombreModulo => text()();
-  
 }
 
 class Configuraciones extends Table {

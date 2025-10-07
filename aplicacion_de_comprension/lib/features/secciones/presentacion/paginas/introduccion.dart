@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../features/usuario/presentacion/controladores/cargar.dart';
+import '../../../../core/cargar_pantallas.dart';
 
 class Introduccion extends ConsumerStatefulWidget {
   const Introduccion({super.key});
@@ -33,20 +33,20 @@ class _IntroduccionState extends ConsumerState<Introduccion> {
   Widget build(BuildContext context) {
     final pages = const [
       _IntroPage(
-        title: '✨ Bienvenidos a Aplico ✨',
+        title: 'Bienvenidos a mi app',
         text:
             'Aplico es una aplicación educativa creada para fortalecer la comprensión lectora en estudiantes de primaria.',
       ),
       _IntroPage(
         title: 'La lectura',
-        text: 'La lectura no solo implica reconocer palabras, sino también comprender y dar sentido a los textos. Para lograrlo, se apoyan cuatro habilidades clave:',
+        text: 'La lectura no solo implica reconocer palabras, sino también dar sentido a los textos. Para lograrlo, se utilizan cuatro habilidades clave:',
       ),
       _IntroPage(
         title: 'Atención',
         text: 'Mantener el foco en el texto, ignorar distracciones, seleccionar información relevante.',
       ),
       _IntroPage(
-        title: 'Memoria de trabajo',
+        title: 'Memoria',
         text: 'Retener e integrar información leída para construir significado en tiempo real.',
       ),
       _IntroPage(
@@ -59,49 +59,58 @@ class _IntroduccionState extends ConsumerState<Introduccion> {
       ),
       _IntroPage(
         title: 'Diviertete',
-        text: 'Cada actividad dentro de la aplicación está diseñada para estimular estas habilidades de manera lúdica e interactiva, promoviendo un aprendizaje significativo y divertido.',
+        text: 'Cada actividad dentro de la aplicación está diseñada para estimular estas habilidades esperamos que la disfrutes.',
       ),
     ];
 
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 2, 22, 28),
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView.builder(
-                controller: _controller,
-                itemCount: pages.length,
-                onPageChanged: (i) => setState(() => _page = i),
-                itemBuilder: (_, i) => pages[i],
+        child: Center(
+          child: Stack(
+            children: [
+              
+              Positioned(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: PageView.builder(
+                        controller: _controller,
+                        itemCount: pages.length,
+                        onPageChanged: (i) => setState(() => _page = i),
+                        itemBuilder: (_, i) => pages[i],
+                      ),
+                    ),
+                    _Dots(count: pages.length, index: _page),
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Row(
+                        children: [
+                          const Spacer(),
+                          FilledButton(
+                            onPressed: () {
+                              if (_page == pages.length - 1) {
+                                _finish();
+                              } else {
+                                _controller.nextPage(
+                                  duration: const Duration(milliseconds: 250),
+                                  curve: Curves.easeOut,
+                                );
+                              }
+                            },
+                            child: Text(_page == pages.length - 1 ? 'Comenzar' : 'Siguiente'),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
               ),
-            ),
-            _Dots(count: pages.length, index: _page),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                children: [
-                  TextButton(onPressed: _finish, child: const Text('Saltar')),
-                  const Spacer(),
-                  FilledButton(
-                    onPressed: () {
-                      if (_page == pages.length - 1) {
-                        _finish();
-                      } else {
-                        _controller.nextPage(
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeOut,
-                        );
-                      }
-                    },
-                    child: Text(_page == pages.length - 1 ? 'Comenzar' : 'Siguiente'),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
-        ),
+            ],
+          ),
+        )
       ),
     );
   }
@@ -124,12 +133,20 @@ class _IntroPage extends StatelessWidget {
         children: [
           const SizedBox(height: 24),
           Text(title,
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: TextStyle(
+                  fontFamily: 'DancingScript',
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
               textAlign: TextAlign.center),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           Text(text,
-              style: Theme.of(context).textTheme.displayLarge,
-              textAlign: TextAlign.center),
+              style: TextStyle(
+                  fontSize: 24,
+                  fontFamily: 'RobotoSlab',
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+              textAlign: TextAlign.center,),
         ],
       ),
     );
@@ -155,11 +172,61 @@ class _Dots extends StatelessWidget {
           decoration: BoxDecoration(
             color: i == index
                 ? Theme.of(context).colorScheme.primary
-                : Colors.grey.shade400,
+                : const Color.fromARGB(255, 255, 255, 255),
             borderRadius: BorderRadius.circular(8),
           ),
         ),
       ),
     );
+  }
+}
+
+class Triangulo extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // El 'size' viene del widget CustomPaint.
+    final double centerX = size.width / 2;
+    final double centerY = size.height / 2;
+    final Offset center = Offset(centerX, centerY);
+    final double radius = size.width / 2;
+
+    // --- El Pincel para la cara (relleno amarillo) ---
+    final paintCara = Paint()
+      ..color = Colors.yellow
+      ..style = PaintingStyle.fill;
+
+    // Dibujamos el círculo de la cara
+    canvas.drawCircle(center, radius, paintCara);
+    
+    // --- El Pincel para los ojos y la boca (contorno negro) ---
+    final paintDetalles = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    // Dibujamos el ojo izquierdo
+    canvas.drawCircle(Offset(centerX - radius / 2, centerY - radius / 2.5), radius/4, paintDetalles);
+
+    // Dibujamos el ojo derecho
+    canvas.drawCircle(Offset(centerX + radius / 2, centerY - radius / 2.5), radius/4, paintDetalles);
+
+    // Dibujamos la boca (un arco)
+    final pathBoca = Path();
+    // Movemos el "lápiz" al inicio de la sonrisa
+    pathBoca.moveTo(centerX - radius / 2, centerY + radius / 4);
+    // Dibujamos una curva de Bézier cuadrática para la sonrisa
+    pathBoca.quadraticBezierTo(
+        centerX, // Punto de control X
+        centerY + radius / 1.5, // Punto de control Y
+        centerX + radius / 2, // Punto final X
+        centerY + radius / 4); // Punto final Y
+        
+    canvas.drawPath(pathBoca, paintDetalles);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    // En este caso, el dibujo no cambia, así que devolvemos false.
+    return false;
   }
 }

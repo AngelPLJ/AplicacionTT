@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/proveedor.dart';
 import 'core/database/database.dart';
-import './features/usuario/presentacion/controladores/cargar.dart';
+import 'core/cargar_pantallas.dart';
 import './features/usuario/presentacion/paginas/registro.dart';
 import './features/usuario/presentacion/paginas/login.dart';
 import './features/usuario/presentacion/paginas/personajes.dart';
@@ -23,8 +23,22 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final boot = ref.watch(bootProvider);
     return MaterialApp(
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: false,
       title: 'Aplico',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
+        useMaterial3: true,
+        primaryColor: Colors.green,
+        hintColor: Colors.lightGreen,
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(fontSize: 24.0, fontFamily: 'Roboto Slab'),
+          bodyMedium: TextStyle(fontSize: 20.0, fontFamily: 'Roboto Slab'),
+          bodySmall: TextStyle(fontSize: 16.0, fontFamily: 'Roboto Slab'),
+          titleLarge: TextStyle(fontSize: 30.0, fontFamily: 'Roboto Slab', fontWeight: FontWeight.bold),
+          titleMedium: TextStyle(fontSize: 26.0, fontFamily: 'Roboto Slab', fontWeight: FontWeight.bold),
+          titleSmall: TextStyle(fontSize: 22.0, fontFamily: 'Roboto Slab', fontWeight: FontWeight.bold),
+        ),
+      ), 
       home: boot.when(
         data: (r) => switch (r) {
           BootRoute.introduccion => const Introduccion(),

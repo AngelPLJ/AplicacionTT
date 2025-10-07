@@ -12,7 +12,6 @@ class Registro extends ConsumerWidget {
     final authState = ref.watch(authControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Crear cuenta')),
       body: switch (authState) {
         AuthLoading() => const Center(child: CircularProgressIndicator()),
         AuthError(message: final m) => _Form(errorText: m),
@@ -36,24 +35,87 @@ class _FormState extends ConsumerState<_Form> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(children: [
-        if (widget.errorText != null)
-          Text(widget.errorText!, style: const TextStyle(color: Colors.red)),
-        TextField(controller: nombreCtrl, decoration: const InputDecoration(labelText: 'Nombre (opcional)')),
-        TextField(controller: passCtrl, decoration: const InputDecoration(labelText: 'Contraseña o PIN'), obscureText: true),
-        const SizedBox(height: 12),
-        FilledButton(
-          onPressed: () {
-            ref.read(authControllerProvider.notifier).crearTutor(
-              nombre: nombreCtrl.text.isEmpty ? null : nombreCtrl.text, // <-- nombrado
-              secret: passCtrl.text,                                    // <-- nombrado
-            );
-          },
-          child: const Text('Registrar'),
+    return 
+    Stack(
+      children: [
+        Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/imagenes/valentina-remenar-make-a-wish-by-valentina-remenar.jpg'),
+              fit: BoxFit.cover,
+              alignment: Alignment(0.3, 0),
+            ),
+          ),
         ),
-      ]),
+        Center(
+          child: Padding(
+          padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, 
+              mainAxisAlignment: MainAxisAlignment.center, 
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+              if (widget.errorText != null)
+                Text(widget.errorText!, style: const TextStyle(color: Colors.red)),
+              Padding(padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
+                child: TextField(
+                  controller: nombreCtrl, 
+                  style: const TextStyle(
+                    fontSize: 25,
+                    fontFamily: 'Roboto', // Fuente monoespaciada para mejor apariencia
+                    fontWeight: FontWeight.bold                
+                  ),
+                  decoration: const InputDecoration(
+                    labelText: 'Nombre',
+                    labelStyle: TextStyle(
+                      fontFamily: 'Roboto',
+                      letterSpacing: 0, // Restablecer el espaciado para la etiqueta
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black54,
+                    ),
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 182, 220, 225),
+                  ),
+                ),
+              ),
+
+              Padding(padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
+                child: TextField(
+                  controller: passCtrl, 
+                  style: const TextStyle(
+                    fontSize: 25,
+                    letterSpacing: 8, // Espaciado entre caracteres para simular un PIN
+                    fontFamily: 'Roboto', // Fuente monoespaciada para mejor apariencia
+                    fontWeight: FontWeight.bold
+                  ),
+                  decoration: const InputDecoration(
+                    labelText: 'Contraseña o PIN',
+                    labelStyle: TextStyle(
+                      fontFamily: 'Roboto',
+                      letterSpacing: 0, // Restablecer el espaciado para la etiqueta
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black54,
+                    ),
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 182, 220, 225),
+                  ), 
+                  obscureText: true,
+                ),
+              ),
+              const SizedBox(height: 12),
+              FilledButton(
+                onPressed: () {
+                  ref.read(authControllerProvider.notifier).crearTutor(
+                    nombre: nombreCtrl.text.isEmpty ? null : nombreCtrl.text, // <-- nombrado
+                    secret: passCtrl.text,                                    // <-- nombrado
+                  );
+                },
+                child: const Text('Registrar'),
+              ),
+            ]),
+          ),
+        ),
+      ],
     );
   }
 }

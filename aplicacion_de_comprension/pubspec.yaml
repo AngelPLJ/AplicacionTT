@@ -45,6 +45,7 @@ dependencies:
   flutter_tts: ^4.2.3
   local_auth: ^2.3.0
   shared_preferences: ^2.5.3
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:
@@ -100,3 +101,42 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  # Coloca este bloque dentro de la sección 'flutter:' de tu pubspec.yaml
+# flutter:
+#   uses-material-design: true
+#   ...
+  assets:
+    - assets/imagenes/
+
+  fonts:
+    - family: WorkSans
+      fonts:
+        - asset: assets/fonts/Work_Sans/WorkSans-VariableFont_wght.ttf
+        - asset: assets/fonts/Work_Sans/WorkSans-Italic-VariableFont_wght.ttf
+          style: italic
+
+    - family: RobotoSlab
+      fonts:
+        - asset: assets/fonts/Roboto_Slab/RobotoSlab-VariableFont_wght.ttf
+
+    - family: PressStart2P
+      fonts:
+        - asset: assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf
+
+    - family: Pacifico
+      fonts:
+        - asset: assets/fonts/Pacifico/Pacifico-Regular.ttf
+
+    - family: Monoton
+      fonts:
+        - asset: assets/fonts/Monoton/Monoton-Regular.ttf
+
+    - family: DancingScript
+      fonts:
+        - asset: assets/fonts/Dancing_Script/DancingScript-VariableFont_wght.ttf
+
+    - family: AmaticSC
+      fonts:
+        - asset: assets/fonts/Amatic_SC/AmaticSC-Regular.ttf
+        - asset: assets/fonts/Amatic_SC/AmaticSC-Bold.ttf
+          weight: 700

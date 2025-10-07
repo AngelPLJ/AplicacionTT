@@ -23,7 +23,6 @@ class _S extends ConsumerState<Login> {
 
     // muestra loading si el estado lo indica
     final isLoading = loading || auth is AuthLoading;
-
     return Scaffold(
       appBar: AppBar(title: const Text('Ingresar')),
       body: Padding(
