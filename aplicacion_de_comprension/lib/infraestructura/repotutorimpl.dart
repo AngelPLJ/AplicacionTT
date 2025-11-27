@@ -1,7 +1,6 @@
 // lib/infraestructura/repotutorimpl.dart
 import 'dart:convert';
 import 'package:uuid/uuid.dart';
-import 'package:drift/drift.dart' show Value;
 import 'package:aplicacion_de_comprension/core/database/database.dart';
 import '../core/seguridad.dart';
 import '../core/hasher.dart';
@@ -31,9 +30,8 @@ class RepoTutorImpl implements RepoTutor {
 
     await db.into(db.tutor).insert(TutorCompanion.insert(
       id: id,
-      usuario: usuario == null ? const Value.absent() : Value(usuario),
-      contrasenia: Value(stored),
-      fechaCreacion: DateTime.now(),
+      usuario: usuario ?? '',
+      pinSeguridad: stored,
     ));
 
     await setSesionRapida(true);
@@ -41,9 +39,8 @@ class RepoTutorImpl implements RepoTutor {
 
   @override
   Future<bool> autenticar(String secreto) async {
-    final row = await db.select(db.tutor).getSingleOrNull();
-    if (row?.contrasenia == null) return false;
-    return hasher.verify(secreto, row!.contrasenia!);
+    final row = await db.select(db.tutor).getSingle();
+    return hasher.verify(secreto, row.pinSeguridad);
   }
 
   @override

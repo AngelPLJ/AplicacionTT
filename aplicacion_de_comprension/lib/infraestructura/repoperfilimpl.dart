@@ -16,11 +16,11 @@ class ProfileRepositoryImpl implements RepoPerfil {
     final tutorRow = await db.select(db.tutor).getSingle(); // hay un único tutor
     final id = const Uuid().v4();
 
-    await db.into(db.perfiles).insert(PerfilesCompanion.insert(
+    await db.into(db.usuarios).insert(UsuariosCompanion.insert(
       id: id,
       tutorId: tutorRow.id,
       nombre: name,
-      codigoAvatar: avatarCode,
+      icono: avatarCode,
       activo: const Value(false),
     ));
 
@@ -35,12 +35,12 @@ class ProfileRepositoryImpl implements RepoPerfil {
 
   @override
   Stream<List<Perfil>> mirarPerfiles() {
-    return (db.select(db.perfiles)).watch().map((rows) => rows.map((r) =>
+    return (db.select(db.usuarios)).watch().map((rows) => rows.map((r) =>
       Perfil(
         id: r.id,
         tutorId: r.tutorId,
         nombre: r.nombre,
-        codigoAvatar: r.codigoAvatar,
+        codigoAvatar: r.icono,
         activo: r.activo,
       )
     ).toList());
@@ -49,10 +49,10 @@ class ProfileRepositoryImpl implements RepoPerfil {
   @override
   Future<void> elegirActivo(String profileId) async {
     // Pone activo=true solo al elegido, y false al resto
-    final todos = await db.select(db.perfiles).get();
+    final todos = await db.select(db.usuarios).get();
     for (final r in todos) {
-      await (db.update(db.perfiles)..where((t) => t.id.equals(r.id)))
-          .write(PerfilesCompanion(activo: Value(r.id == profileId)));
+      await (db.update(db.usuarios)..where((t) => t.id.equals(r.id)))
+          .write(UsuariosCompanion(activo: Value(r.id == profileId)));
     }
     await db.upsertKv(_kActiveProfile, profileId);
   }
@@ -61,13 +61,13 @@ class ProfileRepositoryImpl implements RepoPerfil {
   Future<Perfil?> getActivo() async {
     final activeId = await db.getKv(_kActiveProfile);
     if (activeId == null) return null;
-    final r = await (db.select(db.perfiles)..where((t) => t.id.equals(activeId))).getSingleOrNull();
+    final r = await (db.select(db.usuarios)..where((t) => t.id.equals(activeId))).getSingleOrNull();
     if (r == null) return null;
     return Perfil(
       id: r.id,
       tutorId: r.tutorId,
       nombre: r.nombre,
-      codigoAvatar: r.codigoAvatar,
+      codigoAvatar: r.icono,
       activo: r.activo,
     );
   }

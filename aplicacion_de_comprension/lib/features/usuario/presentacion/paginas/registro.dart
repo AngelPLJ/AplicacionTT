@@ -106,8 +106,8 @@ class _FormState extends ConsumerState<_Form> {
               FilledButton(
                 onPressed: () {
                   ref.read(authControllerProvider.notifier).crearTutor(
-                    nombre: nombreCtrl.text.isEmpty ? null : nombreCtrl.text, // <-- nombrado
-                    secret: passCtrl.text,                                    // <-- nombrado
+                    nombre: nombreCtrl.text,
+                    secret: passCtrl.text, 
                   );
                 },
                 child: const Text('Registrar'),

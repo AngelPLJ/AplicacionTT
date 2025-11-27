@@ -2,8 +2,7 @@
 class Configuracion {
   final String tutorId;
   final bool ttsHabilitado;
-  final double ttsFrecuencia;
-  final double ttsTono;
-  final bool parentalLock;
-  const Configuracion({required this.tutorId, required this.ttsHabilitado, required this.ttsFrecuencia, required this.ttsTono, required this.parentalLock});
+  final double ttsVelocidad;
+  final bool musicaFondo;
+  const Configuracion({required this.tutorId, required this.ttsHabilitado, required this.ttsVelocidad, required this.musicaFondo});
 }

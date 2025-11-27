@@ -17,18 +17,16 @@ class RepoConfImpl implements RepoConfig {
       return Configuracion(
         tutorId: t.id,
         ttsHabilitado: true,
-        ttsFrecuencia: 0.5,
-        ttsTono: 1.0,
-        parentalLock: false,
+        ttsVelocidad: 0.5,
+        musicaFondo: true
       );
     }
 
     return Configuracion(
       tutorId: s.tutorId,
       ttsHabilitado: s.ttsHabilitado,
-      ttsFrecuencia: s.ttsFrecuencia,
-      ttsTono: s.ttsTono,
-      parentalLock: s.parentalLock,
+      ttsVelocidad: s.ttsVelocidad,
+      musicaFondo: s.musicaFondo
     );
   }
 
@@ -37,9 +35,8 @@ class RepoConfImpl implements RepoConfig {
     await db.into(db.configuraciones).insertOnConflictUpdate(ConfiguracionesCompanion(
       tutorId: Value(a.tutorId),
       ttsHabilitado: Value(a.ttsHabilitado),
-      ttsFrecuencia: Value(a.ttsFrecuencia),
-      ttsTono: Value(a.ttsTono),
-      parentalLock: Value(a.parentalLock),
+      ttsVelocidad: Value(a.ttsVelocidad),
+      musicaFondo: Value(a.musicaFondo)
     ));
   }
 }
