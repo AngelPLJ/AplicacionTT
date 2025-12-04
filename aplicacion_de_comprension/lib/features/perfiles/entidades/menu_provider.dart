@@ -1,18 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:drift/drift.dart'; // Necesario para 'select'
 import '../../../core/proveedor.dart';
 import '../../usuario/entidades/perfil.dart';
-import '../../../core/utils.dart';
-
- 
+import '../repositorios/repo_contenido_json.dart'; // Asegúrate de importar esto
+import '../../../core/utils.dart'; // Importa ProgresoActividad
 class MenuData {
   final Perfil usuario;
   final double progresoTotal;
   final List<ModuloConProgreso> modulos;
   final bool esNuevoUsuario;
-
+  
+  // Recomendación
   final int actividadRecomendadaId;
   final String tituloRecomendacion;
   final String motivoRecomendacion;
+
+  // NUEVO: Flag para controlar la navegación
+  final bool necesitaDiagnostico;
 
   MenuData({
     required this.usuario,
@@ -22,46 +26,53 @@ class MenuData {
     required this.actividadRecomendadaId,
     required this.tituloRecomendacion,
     required this.motivoRecomendacion,
+    required this.necesitaDiagnostico, 
   });
 }
 
 final menuDataProvider = FutureProvider.autoDispose<MenuData>((ref) async {
+  // 1. Obtener dependencias
   final repoPerfil = ref.read(repoPerfilProvider);
+  final repoProgreso = ref.read(repoProgresoProvider);
+  final db = ref.read(dbProvider); // <--- CORRECCIÓN 1: Obtenemos la DB
+  
   final usuario = await repoPerfil.getActivo();
   if (usuario == null) throw Exception("No hay usuario activo");
 
-  final repoProgreso = ref.read(repoProgresoProvider);
   final progresoTotal = await repoProgreso.getProgresoGeneral(usuario.id);
   final modulos = await repoProgreso.getModulosDelUsuario(usuario.id);
   final esNuevo = progresoTotal <= 0.01;
 
+  // --- LÓGICA DE DIAGNÓSTICO ---
+  // Consultamos si el Módulo 0 (Diagnóstico) está al 100% (1.0)
+  final progresoDiagnostico = await (db.select(db.modulosHasUsuarios)
+    ..where((t) => t.usuarioId.equals(usuario.id) & t.moduloId.equals(0)))
+    .getSingleOrNull();
+
+  // Si es nulo o menor a 1.0, falta el diagnóstico
+  bool diagnosticoCompletado = (progresoDiagnostico?.progreso ?? 0.0) >= 1.0;
+
   // --- LÓGICA DE RECOMENDACIÓN INTELIGENTE ---
-  int recId = 1; // Default: Actividad 1
+  int recId = 1; 
   String recTitulo = "Empezar Aventura";
   String recMotivo = "Comienza por el principio";
 
-  if (!esNuevo) {
-    // 1. Obtenemos historial y definiciones
+  // Solo calculamos recomendación si ya hizo el diagnóstico
+  if (!esNuevo && diagnosticoCompletado) {
     final historial = await repoProgreso.getHistorialCompleto(usuario.id);
     final repoJson = ref.read(repoContenidoJsonProvider);
     final todasLasActividades = await repoJson.cargarActividades();
 
-    // 2. Calculamos efectividad por habilidad
-    // Mapa: "Atención" -> [0.5, 1.0, 0.0] (Lista de porcentajes de acierto)
     Map<String, List<double>> puntajesPorHabilidad = {};
 
     for (var intento in historial) {
-      // Buscamos qué actividad fue
       try {
         final actModelo = todasLasActividades.firstWhere((a) => a.id == intento.actividadId);
-        
-        // Calculamos score de este intento (aciertos / total)
-        // Evitamos división por cero
-        double score = (intento.total ?? 1) > 0 
-            ? intento.aciertos / (intento.total!) 
+        // Validación para evitar división por cero
+        double score = (intento.total ?? 0) > 0 
+            ? (intento.aciertos / intento.total!) 
             : 0.0;
 
-        // Una actividad puede tener varias habilidades: "Vocabulario, lógica"
         final habilidades = actModelo.habilidad.split(',').map((e) => e.trim());
         
         for (var h in habilidades) {
@@ -71,49 +82,42 @@ final menuDataProvider = FutureProvider.autoDispose<MenuData>((ref) async {
           puntajesPorHabilidad[h]!.add(score);
         }
       } catch (e) {
-        // Si no encontramos la actividad en el JSON, la ignoramos
+        // Ignoramos actividades que no estén en el JSON actual
       }
     }
 
-    // 3. Encontramos la habilidad más débil (Menor promedio)
     String? habilidadMasDebil;
     double menorPromedio = 100.0;
 
     puntajesPorHabilidad.forEach((habilidad, scores) {
-      final promedio = scores.reduce((a, b) => a + b) / scores.length;
-      if (promedio < menorPromedio) {
-        menorPromedio = promedio;
-        habilidadMasDebil = habilidad;
+      if (scores.isNotEmpty) {
+        final promedio = scores.reduce((a, b) => a + b) / scores.length;
+        if (promedio < menorPromedio) {
+          menorPromedio = promedio;
+          habilidadMasDebil = habilidad;
+        }
       }
     });
 
-    // 4. Seleccionamos una actividad de esa habilidad
     if (habilidadMasDebil != null) {
       recMotivo = "Refuerza tu $habilidadMasDebil";
-      
-      // Buscamos una actividad que tenga esa habilidad
-      // Idealmente una que NO haya hecho, o una aleatoria de ese tipo
       final candidatas = todasLasActividades.where(
         (a) => a.habilidad.contains(habilidadMasDebil!)
       ).toList();
       
       if (candidatas.isNotEmpty) {
-        candidatas.shuffle(); // Aleatorio para variar
+        candidatas.shuffle();
         final seleccionada = candidatas.first;
         recId = seleccionada.id;
         recTitulo = seleccionada.nombre;
       }
     }
-  }
-
-  final progresoDiagnostico = await db.select(db.modulosHasUsuarios)
-    .where((t) => t.usuarioId.equals(usuarioId) & t.moduloId.equals(0)) // Módulo 0
-    .getSingleOrNull();
-
-  bool diagnosticoCompletado = (progresoDiagnostico?.progreso ?? 0.0) >= 1.0;
-
-  if (!diagnosticoCompletado) {
-    // Redirigir a Evaluación Diagnóstica
+  } 
+  // Si no ha hecho el diagnóstico, forzamos la recomendación hacia allá (opcional)
+  else if (!diagnosticoCompletado) {
+     recTitulo = "Evaluación Diagnóstica";
+     recMotivo = "Descubre tu nivel inicial";
+     recId = 0; // ID reservado para navegar al diagnóstico si quieres usar el mismo botón
   }
 
   return MenuData(
@@ -124,5 +128,6 @@ final menuDataProvider = FutureProvider.autoDispose<MenuData>((ref) async {
     actividadRecomendadaId: recId,
     tituloRecomendacion: recTitulo,
     motivoRecomendacion: recMotivo,
+    necesitaDiagnostico: !diagnosticoCompletado, // <--- CORRECCIÓN 2: Pasamos el dato
   );
 });

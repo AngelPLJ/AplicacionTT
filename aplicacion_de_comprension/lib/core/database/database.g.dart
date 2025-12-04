@@ -3929,7 +3929,7 @@ class ActividadesHasModulosCompanion
 }
 
 class $UsuariosHasActividadesTable extends UsuariosHasActividades
-    with TableInfo<$UsuariosHasActividadesTable, UsuariosHasActividade> {
+    with TableInfo<$UsuariosHasActividadesTable, ProgresoActividad> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -3996,7 +3996,7 @@ class $UsuariosHasActividadesTable extends UsuariosHasActividades
   static const String $name = 'usuarios_has_actividades';
   @override
   VerificationContext validateIntegrity(
-    Insertable<UsuariosHasActividade> instance, {
+    Insertable<ProgresoActividad> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -4040,9 +4040,9 @@ class $UsuariosHasActividadesTable extends UsuariosHasActividades
   @override
   Set<GeneratedColumn> get $primaryKey => {usuarioId, actividadId};
   @override
-  UsuariosHasActividade map(Map<String, dynamic> data, {String? tablePrefix}) {
+  ProgresoActividad map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return UsuariosHasActividade(
+    return ProgresoActividad(
       usuarioId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}usuario_id'],
@@ -4068,13 +4068,13 @@ class $UsuariosHasActividadesTable extends UsuariosHasActividades
   }
 }
 
-class UsuariosHasActividade extends DataClass
-    implements Insertable<UsuariosHasActividade> {
+class ProgresoActividad extends DataClass
+    implements Insertable<ProgresoActividad> {
   final String usuarioId;
   final int actividadId;
   final int aciertos;
   final int? total;
-  const UsuariosHasActividade({
+  const ProgresoActividad({
     required this.usuarioId,
     required this.actividadId,
     required this.aciertos,
@@ -4103,12 +4103,12 @@ class UsuariosHasActividade extends DataClass
     );
   }
 
-  factory UsuariosHasActividade.fromJson(
+  factory ProgresoActividad.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return UsuariosHasActividade(
+    return ProgresoActividad(
       usuarioId: serializer.fromJson<String>(json['usuarioId']),
       actividadId: serializer.fromJson<int>(json['actividadId']),
       aciertos: serializer.fromJson<int>(json['aciertos']),
@@ -4126,21 +4126,19 @@ class UsuariosHasActividade extends DataClass
     };
   }
 
-  UsuariosHasActividade copyWith({
+  ProgresoActividad copyWith({
     String? usuarioId,
     int? actividadId,
     int? aciertos,
     Value<int?> total = const Value.absent(),
-  }) => UsuariosHasActividade(
+  }) => ProgresoActividad(
     usuarioId: usuarioId ?? this.usuarioId,
     actividadId: actividadId ?? this.actividadId,
     aciertos: aciertos ?? this.aciertos,
     total: total.present ? total.value : this.total,
   );
-  UsuariosHasActividade copyWithCompanion(
-    UsuariosHasActividadesCompanion data,
-  ) {
-    return UsuariosHasActividade(
+  ProgresoActividad copyWithCompanion(UsuariosHasActividadesCompanion data) {
+    return ProgresoActividad(
       usuarioId: data.usuarioId.present ? data.usuarioId.value : this.usuarioId,
       actividadId: data.actividadId.present
           ? data.actividadId.value
@@ -4152,7 +4150,7 @@ class UsuariosHasActividade extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('UsuariosHasActividade(')
+    return (StringBuffer('ProgresoActividad(')
           ..write('usuarioId: $usuarioId, ')
           ..write('actividadId: $actividadId, ')
           ..write('aciertos: $aciertos, ')
@@ -4166,7 +4164,7 @@ class UsuariosHasActividade extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is UsuariosHasActividade &&
+      (other is ProgresoActividad &&
           other.usuarioId == this.usuarioId &&
           other.actividadId == this.actividadId &&
           other.aciertos == this.aciertos &&
@@ -4174,7 +4172,7 @@ class UsuariosHasActividade extends DataClass
 }
 
 class UsuariosHasActividadesCompanion
-    extends UpdateCompanion<UsuariosHasActividade> {
+    extends UpdateCompanion<ProgresoActividad> {
   final Value<String> usuarioId;
   final Value<int> actividadId;
   final Value<int> aciertos;
@@ -4196,7 +4194,7 @@ class UsuariosHasActividadesCompanion
   }) : usuarioId = Value(usuarioId),
        actividadId = Value(actividadId),
        aciertos = Value(aciertos);
-  static Insertable<UsuariosHasActividade> custom({
+  static Insertable<ProgresoActividad> custom({
     Expression<String>? usuarioId,
     Expression<int>? actividadId,
     Expression<int>? aciertos,
@@ -5451,7 +5449,7 @@ final class $$UsuariosTableReferences
 
   static MultiTypedResultKey<
     $UsuariosHasActividadesTable,
-    List<UsuariosHasActividade>
+    List<ProgresoActividad>
   >
   _usuariosHasActividadesRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
@@ -6182,7 +6180,7 @@ class $$UsuariosTableTableManager
                         await $_getPrefetchedData<
                           Usuario,
                           $UsuariosTable,
-                          UsuariosHasActividade
+                          ProgresoActividad
                         >(
                           currentTable: table,
                           referencedTable: $$UsuariosTableReferences
@@ -8058,7 +8056,7 @@ final class $$ActividadesTableReferences
 
   static MultiTypedResultKey<
     $UsuariosHasActividadesTable,
-    List<UsuariosHasActividade>
+    List<ProgresoActividad>
   >
   _usuariosHasActividadesRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
@@ -8331,7 +8329,7 @@ class $$ActividadesTableTableManager
                         await $_getPrefetchedData<
                           Actividade,
                           $ActividadesTable,
-                          UsuariosHasActividade
+                          ProgresoActividad
                         >(
                           currentTable: table,
                           referencedTable: $$ActividadesTableReferences
@@ -10280,7 +10278,7 @@ final class $$UsuariosHasActividadesTableReferences
         BaseReferences<
           _$AppDatabase,
           $UsuariosHasActividadesTable,
-          UsuariosHasActividade
+          ProgresoActividad
         > {
   $$UsuariosHasActividadesTableReferences(
     super.$_db,
@@ -10532,14 +10530,14 @@ class $$UsuariosHasActividadesTableTableManager
         RootTableManager<
           _$AppDatabase,
           $UsuariosHasActividadesTable,
-          UsuariosHasActividade,
+          ProgresoActividad,
           $$UsuariosHasActividadesTableFilterComposer,
           $$UsuariosHasActividadesTableOrderingComposer,
           $$UsuariosHasActividadesTableAnnotationComposer,
           $$UsuariosHasActividadesTableCreateCompanionBuilder,
           $$UsuariosHasActividadesTableUpdateCompanionBuilder,
-          (UsuariosHasActividade, $$UsuariosHasActividadesTableReferences),
-          UsuariosHasActividade,
+          (ProgresoActividad, $$UsuariosHasActividadesTableReferences),
+          ProgresoActividad,
           PrefetchHooks Function({bool usuarioId, bool actividadId})
         > {
   $$UsuariosHasActividadesTableTableManager(
@@ -10666,14 +10664,14 @@ typedef $$UsuariosHasActividadesTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $UsuariosHasActividadesTable,
-      UsuariosHasActividade,
+      ProgresoActividad,
       $$UsuariosHasActividadesTableFilterComposer,
       $$UsuariosHasActividadesTableOrderingComposer,
       $$UsuariosHasActividadesTableAnnotationComposer,
       $$UsuariosHasActividadesTableCreateCompanionBuilder,
       $$UsuariosHasActividadesTableUpdateCompanionBuilder,
-      (UsuariosHasActividade, $$UsuariosHasActividadesTableReferences),
-      UsuariosHasActividade,
+      (ProgresoActividad, $$UsuariosHasActividadesTableReferences),
+      ProgresoActividad,
       PrefetchHooks Function({bool usuarioId, bool actividadId})
     >;
 typedef $$ModulosHasUsuariosTableCreateCompanionBuilder =

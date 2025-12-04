@@ -159,7 +159,8 @@ class RepoProgresoImpl implements RepoProgreso {
     });
   }
   @override
-  Future<List<UsuariosHasActividadesData>> getHistorialCompleto(String usuarioId) async {
+  Future<List<ProgresoActividad>> getHistorialCompleto(String usuarioId) async {
+    // Select simple: "Dame todo de la tabla usuarios_has_actividades donde el usuario sea X"
     return await (db.select(db.usuariosHasActividades)
           ..where((t) => t.usuarioId.equals(usuarioId)))
         .get();

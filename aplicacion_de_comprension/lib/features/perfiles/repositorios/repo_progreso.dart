@@ -25,5 +25,5 @@ abstract class RepoProgreso {
     required int actividadId, 
     required bool esAcierto
   });
-  Future<List<UsuariosHasActividadesData>> getHistorialCompleto(String usuarioId);
+  Future<List<ProgresoActividad>> getHistorialCompleto(String usuarioId);
 }

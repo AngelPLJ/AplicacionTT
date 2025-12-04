@@ -38,9 +38,9 @@ class RepoContenidoImpl implements RepoContenido {
       }
       batch.insert(
           db.modulos,
-          const ModulosCompanion.insert(
+          ModulosCompanion.insert(
             id: Value(0), // ID 0 reservado para Diagnóstico
-            nombre: Value("Evaluación Diagnóstica"),
+            nombre: "Evaluación Diagnóstica",
           ),
           mode: InsertMode.insertOrIgnore
         );

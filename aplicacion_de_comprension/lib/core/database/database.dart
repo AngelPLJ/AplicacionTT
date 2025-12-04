@@ -149,6 +149,7 @@ class ActividadesHasModulos extends Table {
 }
 
 // Tabla: usuarios_has_actividades
+@DataClassName('ProgresoActividad')
 class UsuariosHasActividades extends Table {
   TextColumn get usuarioId => text().references(Usuarios, #id)();
   IntColumn get actividadId => integer().references(Actividades, #id)();
