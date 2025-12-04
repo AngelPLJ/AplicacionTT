@@ -1,80 +1,87 @@
-Claro, aquí tienes la documentación completa del archivo `RepoTutor.dart` en un único bloque de Markdown, siguiendo las instrucciones proporcionadas.
-
-***
-
-### Documentación del archivo: `RepoTutor.dart`
-
-#### Resumen General
-
-Este archivo define la clase abstracta `RepoTutor`, que sirve como un contrato o interfaz para gestionar la lógica de negocio y la persistencia de datos de la entidad 'Tutor' en la aplicación.
-
-Siguiendo el **Patrón de Repositorio (Repository Pattern)**, esta clase desacopla la capa de lógica de negocio (por ejemplo, BLoCs, Cubits, Providers) de la capa de acceso a datos. Esto significa que las partes de la aplicación que necesitan interactuar con el tutor no necesitan saber *cómo* se guardan o recuperan los datos (por ejemplo, en una base de datos local como Hive/Isar, en SharedPreferences, o a través de una API REST), solo necesitan saber *qué* operaciones están disponibles.
-
-#### Dependencias Principales
-
-*   **`dart:async`**: Implícito por el uso de la clase `Future` para todas las operaciones, lo que indica que son asíncronas.
-
-#### Rol en la Aplicación
-
-El rol de `RepoTutor` es centralizar todas las operaciones relacionadas con el perfil del tutor, como:
-
-*   Creación y verificación de la existencia de un perfil de tutor.
-*   Autenticación del tutor (inicio de sesión).
-*   Gestión de un modo de "inicio de sesión rápido" (posiblemente para biometría o sesiones recordadas).
-
-Una o más clases concretas (por ejemplo, `RepoTutorImplLocal` o `RepoTutorImplApi`) implementarán esta interfaz para proporcionar la lógica real de almacenamiento y recuperación de datos.
+¡Excelente! Como Senior Technical Writer especializado en Flutter, procederé a generar la documentación Markdown para la interfaz `RepoTutor`, enfocándome en su rol dentro de una arquitectura robusta y su relevancia para la gestión de identidad y sesiones.
 
 ---
 
-### Código Documentado
+# `RepoTutor` - Interfaz para la Gestión de Identidad y Sesiones
 
-```dart
-/// Define el contrato (interfaz) para la gestión de datos y autenticación del Tutor.
-///
-/// Actúa como una abstracción sobre la fuente de datos (local o remota),
-/// permitiendo que la lógica de la aplicación interactúe con los datos del tutor
-/// sin conocer los detalles de implementación del almacenamiento.
-///
-/// Cualquier clase que implemente `RepoTutor` debe proporcionar una implementación
-/// concreta para todos sus métodos.
-abstract class RepoTutor {
-  /// Verifica si ya existe un perfil de tutor en el sistema.
-  ///
-  /// Devuelve un [Future<bool>] que se resuelve a `true` si el tutor existe,
-  /// de lo contrario `false`.
-  Future<bool> existeTutor();
+El `abstract class RepoTutor` define el contrato para la gestión de la identidad y el estado de sesión de un "Tutor" dentro de la aplicación. Actúa como una capa de abstracción crucial que desacopla la lógica de negocio de la implementación específica de persistencia o autenticación.
 
-  /// Crea un nuevo perfil de tutor con la información proporcionada.
-  ///
-  /// Lanza una excepción si la operación de creación falla.
-  ///
-  /// Parámetros:
-  /// - [usuario]: Un nombre de usuario opcional para el tutor.
-  /// - [secret]: La contraseña o PIN requerido para la autenticación.
-  Future<void> crearTutor({String? usuario, required String secret});
+## Resumen
 
-  /// Autentica al tutor utilizando su `secret` (contraseña o PIN).
-  ///
-  /// Parámetros:
-  /// - [secret]: El secreto a verificar para la autenticación.
-  ///
-  /// Devuelve un [Future<bool>] que se resuelve a `true` si la autenticación
-  /// es exitosa, de lo contrario `false`.
-  Future<bool> autenticar(String secret);
+`RepoTutor` es una **interfaz abstracta** que encapsula las operaciones fundamentales relacionadas con el registro, autenticación y control de sesión rápida de un usuario (referido como "Tutor" en este contexto). Su objetivo principal es proporcionar un conjunto de métodos estandarizados que cualquier implementación concreta de un repositorio de tutores deberá cumplir. Esto asegura que la lógica de negocio, que depende de estas funcionalidades, pueda interactuar con cualquier mecanismo de almacenamiento o autenticación subyacente (base de datos local, API remota, servicios de Firebase Auth, etc.) sin necesidad de conocer los detalles de dicha implementación.
 
-  /// Habilita o deshabilita la función de sesión rápida.
-  ///
-  /// Esta función permite mecanismos de inicio de sesión alternativos, como la
-  /// autenticación biométrica, para evitar introducir el `secret` repetidamente.
-  ///
-  /// Parámetros:
-  /// - [enabled]: `true` para activar la sesión rápida, `false` para desactivarla.
-  Future<void> setSesionRapida(bool enabled);
+**Funcionalidades Clave que abstrae `RepoTutor`:**
+*   Verificación de existencia de un tutor registrado.
+*   Creación y registro de un nuevo tutor con una clave secreta.
+*   Autenticación de un tutor mediante su clave secreta.
+*   Activación/desactivación y verificación del estado de una "sesión rápida" (e.g., biometría, PIN).
 
-  /// Comprueba si la función de sesión rápida está actualmente activa.
-  ///
-  /// Devuelve un [Future<bool>] que se resuelve a `true` si está activa,
-  /// de lo contrario `false`.
-  Future<bool> sesionRapidaActiva();
-}
-```
+## Arquitectura (Widget/Provider/Repo)
+
+En una arquitectura Flutter moderna, típicamente basada en patrones como Provider, BLoC o Riverpod, `RepoTutor` juega un papel fundamental como la **capa de repositorio**.
+
+1.  ### **Capa de Widgets (UI):**
+    Los `Widgets` (p. ej., `LoginPage`, `RegisterPage`, `SettingsPage`) son responsables de la presentación de la interfaz de usuario y de capturar las interacciones del usuario. **Nunca interactúan directamente con `RepoTutor`**. En su lugar, delegan las operaciones a la capa de gestión de estado, que a su vez utilizará el repositorio.
+
+2.  ### **Capa de Gestión de Estado (Provider/BLoC/Riverpod):**
+    Esta capa (ej. `AuthProvider` con `ChangeNotifier` de `provider`, un `AuthBLoC`, o un `AuthService` con `StateNotifier` de `riverpod`) es donde reside la lógica de negocio específica. Este componente **dependerá de una implementación concreta de `RepoTutor`**.
+
+    *   Cuando un Widget necesita, por ejemplo, autenticar un tutor, invoca un método en el `AuthProvider` (o BLoC, etc.).
+    *   El `AuthProvider` a su vez llama al método `autenticar()` de su instancia de `RepoTutor` (que se le ha inyectado).
+    *   El `RepoTutor` (su implementación concreta) maneja la lógica de autenticación (ej. llamar a una API, verificar en un almacén seguro local) y devuelve el resultado al `AuthProvider`.
+    *   El `AuthProvider` actualiza su estado interno y notifica a los Widgets que lo escuchan, reflejando el nuevo estado de autenticación.
+
+    Este enfoque garantiza que la lógica de negocio esté desacoplada de los detalles de cómo se obtienen o persisten los datos.
+
+3.  ### **Capa de Repositorio (`RepoTutor`):**
+    Esta capa, definida por la interfaz `RepoTutor`, abstrae por completo los detalles de la fuente de datos o los servicios externos de autenticación.
+
+    *   **Contrato:** `RepoTutor` define *qué* operaciones se pueden realizar (la "interfaz").
+    *   **Implementación:** Una o varias clases concretas (ej. `LocalRepoTutorImpl` que usa `shared_preferences` o `flutter_secure_storage`, `ApiRepoTutorImpl` que interactúa con una REST API) implementarán `RepoTutor`, proporcionando la lógica *de cómo* se realizan esas operaciones.
+    *   **Inyección de Dependencias:** La implementación concreta de `RepoTutor` se inyecta en la capa de gestión de estado. Esto permite cambiar la implementación subyacente (ej. pasar de autenticación local a un servicio en la nube) sin modificar la lógica de negocio o la UI.
+
+    **Ventajas de este enfoque arquitectónico:**
+    *   **Desacoplamiento Robusto:** La lógica de negocio no se preocupa por cómo se almacenan o autentican los datos, solo por la interfaz `RepoTutor`.
+    *   **Testabilidad Superior:** Se pueden crear fácilmente mocks o fakes de `RepoTutor` para probar la lógica de negocio de forma aislada, sin necesidad de dependencias externas (bases de datos, APIs).
+    *   **Flexibilidad y Escalabilidad:** La fuente de datos o el método de autenticación se pueden cambiar o extender (ej. añadir autenticación biométrica) fácilmente sin afectar las capas superiores de la aplicación.
+    *   **Mantenibilidad:** El código es más fácil de entender y mantener al tener responsabilidades claramente definidas.
+
+## Componentes Clave (Métodos)
+
+Cada método de `RepoTutor` devuelve un `Future`, indicando que son operaciones asíncronas, típicas en interacciones con I/O, criptografía o servicios externos.
+
+### `Future<bool> existeTutor()`
+*   **Descripción:** Consulta el repositorio para determinar si ya hay un tutor registrado en el sistema. Es fundamental para decidir el flujo inicial de la aplicación (ej. mostrar pantalla de registro o de login).
+*   **Retorno:**
+    *   `true`: Si se encuentra un tutor registrado.
+    *   `false`: Si no hay ningún tutor registrado.
+
+### `Future<void> crearTutor({String? usuario, required String secret})`
+*   **Descripción:** Permite el registro de un nuevo tutor en el sistema. Requiere una `secret` que actuará como credencial principal para futuras autenticaciones. El `usuario` es opcional, pudiendo la implementación generar uno si no se provee, o simplemente no usarlo si la `secret` es suficiente.
+*   **Parámetros:**
+    *   `usuario` (`String?`): Un identificador opcional para el tutor (ej. nombre de usuario, email). Puede ser nulo si el sistema solo requiere la `secret`.
+    *   `secret` (`String`): La clave secreta (contraseña o PIN) que se utilizará para la autenticación futura.
+        *   **Nota de Seguridad:** Es responsabilidad crítica de la implementación concreta de `RepoTutor` **no almacenar esta `secret` en texto plano**. Debe ser procesada con funciones hash robustas (ej. Argon2, scrypt, bcrypt) y salting adecuado antes de su almacenamiento.
+*   **Retorno:** `Future<void>`: La operación se completa sin devolver un valor específico al éxito. Debería lanzar una excepción en caso de fallo (ej. `TutorAlreadyExistsException`).
+
+### `Future<bool> autenticar(String secret)`
+*   **Descripción:** Intenta autenticar a un tutor existente utilizando la `secret` proporcionada. Esta operación verificará la `secret` contra la almacenada previamente (posiblemente un hash) para conceder acceso.
+*   **Parámetros:**
+    *   `secret` (`String`): La clave secreta proporcionada por el usuario para la verificación.
+*   **Retorno:**
+    *   `true`: Si la autenticación es exitosa (la `secret` coincide).
+    *   `false`: Si la `secret` no coincide, no hay un tutor registrado o la operación falla por otra razón (ej. bloqueo por intentos fallidos).
+
+### `Future<void> setSesionRapida(bool enabled)`
+*   **Descripción:** Habilita o deshabilita la funcionalidad de "sesión rápida" para el tutor. La sesión rápida permite un acceso más ágil a la aplicación después de la autenticación inicial, a menudo mediante métodos biométricos (huella dactilar, reconocimiento facial) o un PIN corto, mejorando la experiencia de usuario a costa de posibles compromisos de seguridad si no se implementa con cautela.
+*   **Parámetros:**
+    *   `enabled` (`bool`): `true` para activar la sesión rápida, `false` para desactivarla.
+*   **Retorno:** `Future<void>`: La operación se completa sin devolver un valor específico.
+
+### `Future<bool> sesionRapidaActiva()`
+*   **Descripción:** Consulta el estado actual de la funcionalidad de sesión rápida para el tutor. Esto permite a la UI adaptar sus opciones (ej. mostrar botón de "Login con Biometría").
+*   **Retorno:**
+    *   `true`: Si la sesión rápida está habilitada para el tutor.
+    *   `false`: Si está deshabilitada.
+
+---

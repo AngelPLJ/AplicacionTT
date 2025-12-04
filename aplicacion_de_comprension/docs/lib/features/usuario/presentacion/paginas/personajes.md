@@ -1,114 +1,89 @@
-Claro, aquí tienes la documentación completa del archivo de código en un único bloque Markdown, como has solicitado.
-
-```markdown
-### Resumen del Archivo
-
-**Propósito General:**
-Este archivo define la interfaz de usuario para la pantalla de selección de perfiles de usuario. Permite a los jugadores ver los perfiles existentes, seleccionar uno para jugar o crear un nuevo perfil. Es una pantalla fundamental para la gestión de usuarios en la aplicación.
-
-**Funcionalidad Principal:**
-*   **Visualización de Perfiles:** Muestra una lista de perfiles de usuario obtenidos en tiempo real en una cuadrícula (`GridView`).
-*   **Selección de Perfil Activo:** Al tocar la tarjeta de un perfil, este se establece como el perfil activo para la sesión de juego actual.
-*   **Creación de Perfiles:** Incluye un botón para añadir un nuevo perfil, que abre un cuadro de diálogo para introducir el nombre del nuevo usuario.
-*   **Manejo de Estado Asíncrono:** Gestiona de forma elegante los estados de carga (`loading`), error (`error`) y datos disponibles (`data`) durante la obtención de la lista de perfiles.
-
-**Dependencias Clave:**
-*   **`flutter/material.dart`**: Utilizado para todos los componentes de la interfaz de usuario, como `Scaffold`, `AppBar`, `GridView`, `Card`, `AlertDialog`, etc.
-*   **`flutter_riverpod`**: Es la dependencia principal para la gestión del estado. Se utiliza para:
-    *   `StreamProvider`: Para proporcionar un flujo de datos (`stream`) con la lista de perfiles desde el repositorio.
-    *   `ConsumerWidget` y `WidgetRef`: Para conectar la UI con los proveedores de estado, permitiendo que el widget reaccione a los cambios y pueda invocar acciones.
-*   **`perfil.dart`**: Importa el modelo de datos `Perfil`, que define la estructura de un perfil de usuario.
-*   **`proveedor.dart`**: Proporciona el `repoPerfilProvider`, que es el punto de acceso al repositorio de datos encargado de la lógica de negocio de los perfiles (crear, leer, seleccionar).
-
-**Rol dentro de la Aplicación:**
-Este archivo actúa como una "puerta de entrada" o "selector de cuenta" para el usuario. Generalmente, es una de las primeras pantallas que el usuario ve, permitiéndole elegir con qué identidad jugará. Centraliza la interacción del usuario con la gestión de perfiles antes de entrar a la funcionalidad principal de la aplicación.
+Aquí tienes la documentación Markdown para `personajes.dart`, actuando como un Senior Technical Writer experto en Flutter:
 
 ---
 
-### Código Documentado
+# `personajes.dart` - Página de Selección de Perfil
 
-```dart
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../entidades/perfil.dart';
-import '../../../../core/proveedor.dart';
+Este archivo contiene la implementación de la página de selección de perfiles (`CharacterSelectPage`), permitiendo a los usuarios elegir entre perfiles existentes, crear nuevos o eliminar perfiles previos. Es un componente central en el flujo de inicio de la aplicación, proporcionando una interfaz intuitiva para la gestión de usuarios.
 
-/// Proveedor de Riverpod que expone un stream (`Stream`) de la lista de perfiles de usuario.
-///
-/// Este [StreamProvider] se conecta al repositorio de perfiles (`repoPerfilProvider`)
-/// y escucha los cambios en la colección de perfiles, emitiendo la lista
-/// actualizada (`List<Perfil>`) cada vez que hay una modificación.
-final profilesStreamProvider = StreamProvider<List<Perfil>>((ref) =>
-  ref.read(repoPerfilProvider).mirarPerfiles());
+## Resumen
 
-/// Widget que representa la pantalla de selección de perfiles de usuario.
-///
-/// Muestra una cuadrícula con los perfiles existentes y una opción para añadir uno nuevo.
-/// Utiliza [ConsumerWidget] de Riverpod para interactuar con los proveedores de estado,
-/// como [profilesStreamProvider] para obtener la lista de perfiles de forma reactiva.
-class CharacterSelectPage extends ConsumerWidget {
-  /// Constructor para la página de selección de personajes.
-  const CharacterSelectPage({super.key});
+La `CharacterSelectPage` es la interfaz principal para que los usuarios (o "personajes") seleccionen su perfil activo. Utiliza `flutter_riverpod` para observar una lista de perfiles en tiempo real y presentarlos en una cuadrícula responsiva. La página incluye funcionalidades para:
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Observa el estado del StreamProvider. El valor será un AsyncValue,
-    // que encapsula los estados de carga, datos y error.
-    final async = ref.watch(profilesStreamProvider);
+*   **Seleccionar un perfil**: Al tocar una tarjeta de perfil, se establece como activo y se navega al menú principal.
+*   **Crear un nuevo perfil**: A través de un diálogo que solicita un nombre y permite elegir un avatar.
+*   **Eliminar un perfil existente**: Requiere la autenticación con un PIN de tutor para mayor seguridad.
+*   **Visualización dinámica**: Muestra un fondo de imagen, un indicador de carga mientras se obtienen los perfiles y un mensaje de error si la carga falla.
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('¿Quién va a jugar?')),
-      // El método `when` de AsyncValue permite construir diferentes UI
-      // para cada estado del stream.
-      body: async.when(
-        data: (profiles) => GridView.count(
-          crossAxisCount: 2,
-          padding: const EdgeInsets.all(16),
-          children: [
-            // Mapea la lista de perfiles a widgets de tarjeta seleccionables.
-            ...profiles.map((p) => GestureDetector(
-              onTap: () => ref.read(repoPerfilProvider).elegirActivo(p.id),
-              child: Card(child: Center(child: Text(p.nombre))),
-            )),
-            // Añade una tarjeta fija al final para crear un nuevo perfil.
-            GestureDetector(
-              onTap: () => _createProfileDialog(context, ref),
-              child: const Card(child: Center(child: Icon(Icons.add))),
-            ),
-          ],
-        ),
-        // Muestra un indicador de progreso mientras se cargan los datos.
-        loading: () => const Center(child: CircularProgressIndicator()),
-        // Muestra un mensaje de error si el stream falla.
-        error: (e, _) => Center(child: Text('Error: $e')),
-      ),
-    );
-  }
+## Arquitectura
 
-  /// Muestra un diálogo modal para que el usuario pueda crear un nuevo perfil.
-  ///
-  /// Contiene un campo de texto para el nombre del perfil y dos botones: "Cancelar" y "Crear".
-  /// Al pulsar "Crear", invoca el método `crearPerfil` del repositorio a través
-  /// de [ref] y luego cierra el diálogo.
-  ///
-  /// [c] es el [BuildContext] del widget padre.
-  /// [ref] es la referencia de Riverpod para acceder a los proveedores.
-  Future<void> _createProfileDialog(BuildContext c, WidgetRef ref) async {
-    final nameCtrl = TextEditingController();
-    await showDialog(context: c, builder: (_) => AlertDialog(
-      title: const Text('Nuevo perfil'),
-      content: TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Nombre')),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(c), child: const Text('Cancelar')),
-        FilledButton(onPressed: () async {
-          // Llama al método del repositorio para crear el perfil.
-          await ref.read(repoPerfilProvider).crearPerfil(name: nameCtrl.text, avatarCode: 'fox');
-          // Cierra el diálogo si el contexto todavía es válido.
-          if (c.mounted) Navigator.pop(c);
-        }, child: const Text('Crear'))
-      ],
-    ));
-  }
-}
-```
-```
+### Estructura de Widgets
+
+La `CharacterSelectPage` es un `ConsumerWidget` que se construye sobre un `Scaffold` para la estructura básica de la página.
+
+*   **`Scaffold`**: Contiene un `AppBar` personalizado con el título de la aplicación y un `body`.
+*   **`Stack`**: Permite superponer elementos:
+    *   Un `Container` para la imagen de fondo dinámica, obtenida a través de `obtenerFondoEstacion()`.
+    *   Un `Center` widget que contiene el contenido principal de la página, el cual depende del estado del `profilesStreamProvider`.
+*   **`async.when`**: Gestiona los tres estados posibles de un `AsyncValue`:
+    *   `data`: Cuando los perfiles se cargan exitosamente, se renderiza un `GridView.extent`.
+    *   `loading`: Muestra un `PantallaCarga()` personalizada.
+    *   `error`: Muestra un mensaje de error en el centro de la pantalla.
+*   **`GridView.extent`**: Es la clave para la presentación responsiva de los perfiles.
+    *   `maxCrossAxisExtent`: Define el ancho máximo de cada elemento, permitiendo que la cuadrícula se ajuste automáticamente al tamaño de la pantalla.
+    *   `childAspectRatio`, `mainAxisSpacing`, `crossAxisSpacing`, `padding`: Controlan el diseño y espaciado de las tarjetas.
+*   **`Card` (para perfiles existentes)**: Cada perfil se representa con una `Card` elevada.
+    *   `Stack`: Dentro de la tarjeta para superponer el contenido del perfil y el botón de eliminar.
+    *   `Positioned.fill` con `InkWell`: Hace que toda la tarjeta sea táctil para la selección del perfil. Contiene una `Column` con la imagen del avatar y el nombre del perfil.
+    *   `Positioned` con `IconButton`: Coloca un botón de "Eliminar" en la esquina superior derecha de la tarjeta, activando el diálogo de eliminación.
+*   **`GestureDetector` (para crear nuevo perfil)**: Una `Card` separada que actúa como botón para crear un nuevo perfil, solo si el número de perfiles es inferior a 7.
+
+### Integración con Riverpod
+
+La página hace un uso extensivo de `flutter_riverpod` para la gestión de estado y la inyección de dependencias.
+
+*   **`profilesStreamProvider`**:
+    *   Tipo: `StreamProvider<List<Perfil>>`
+    *   Propósito: Proporciona una secuencia en tiempo real de todos los perfiles disponibles en la base de datos. Cada vez que se añade, actualiza o elimina un perfil, este `StreamProvider` emitirá una nueva lista, actualizando automáticamente la interfaz de usuario.
+    *   Fuente de datos: `ref.read(repoPerfilProvider).mirarPerfiles()`, que delega la lógica de acceso a datos al repositorio de perfiles.
+*   **`repoPerfilProvider`**:
+    *   Uso: Se lee directamente para realizar operaciones de escritura:
+        *   `elegirActivo(p.id)`: Para establecer el perfil seleccionado como el perfil activo de la aplicación.
+        *   `crearPerfil(name: ..., avatarCode: ...)`: Para añadir un nuevo perfil a la base de datos.
+        *   `eliminarPerfil(perfil.id)`: Para borrar un perfil existente.
+*   **`repoTutorProvider`**:
+    *   Uso: Se lee para la autenticación del tutor:
+        *   `autenticar(pinLimpio)`: Utilizado durante el proceso de eliminación de perfiles para verificar el PIN de seguridad del tutor.
+
+## Componentes y Funcionalidades Clave
+
+1.  **Carga y Visualización de Perfiles**:
+    *   El `profilesStreamProvider` asegura que la UI se mantenga sincronizada con la lista de perfiles.
+    *   `GridView.extent` permite una presentación flexible y responsiva de los avatares y nombres de los perfiles.
+    *   Cada perfil se visualiza en una `Card` interactiva con su avatar (`AssetImage`) y nombre.
+
+2.  **Selección de Perfil**:
+    *   Al hacer tap en la `InkWell` de un perfil, se invoca `ref.read(repoPerfilProvider).elegirActivo(p.id)`.
+    *   Una vez que el perfil se establece como activo, la página navega a `MainMenuPage` usando `Navigator.pushReplacement` para evitar que el usuario regrese a la selección de perfiles con el botón de retroceso.
+
+3.  **Creación de Nuevo Perfil (`_createProfileDialog`)**:
+    *   Se presenta un `AlertDialog` personalizado.
+    *   Utiliza `StatefulBuilder` para gestionar el estado del diálogo (nombre del perfil, selección de avatar, mensaje de error).
+    *   Un `TextField` para que el usuario ingrese el nombre del perfil.
+    *   Un `Wrap` de `GestureDetector` muestra los avatares disponibles, permitiendo al usuario seleccionar uno. El avatar seleccionado se destaca visualmente.
+    *   Se realiza una validación básica del nombre antes de llamar a `ref.read(repoPerfilProvider).crearPerfil()`.
+
+4.  **Eliminación de Perfil (`_mostrarDialogoEliminar`)**:
+    *   Se presenta un `AlertDialog` de confirmación que solicita el PIN del tutor.
+    *   También utiliza `StatefulBuilder` para manejar el estado del diálogo, especialmente para mostrar errores de validación del PIN.
+    *   Un `TextField` oculto (`obscureText: true`) para ingresar el PIN.
+    *   `ref.read(repoTutorProvider).autenticar(pinLimpio)` se utiliza para verificar el PIN.
+    *   Solo si el PIN es correcto, se procede con `ref.read(repoPerfilProvider).eliminarPerfil(perfil.id)`. Si el PIN es incorrecto, se muestra un mensaje de error en el `TextField`.
+
+5.  **Límite de Perfiles**:
+    *   El botón para crear un nuevo perfil solo se muestra si el número actual de perfiles es inferior a 7, implementando una regla de negocio para limitar la cantidad de perfiles.
+
+6.  **Gestión de Fondo**:
+    *   La función `obtenerFondoEstacion()` (definida externamente) se utiliza para cargar dinámicamente una imagen de fondo que mejora la estética de la página.
+
+---

@@ -1,64 +1,130 @@
-Claro, aquí tienes la documentación completa del archivo de código, siguiendo todas tus instrucciones.
-
-````markdown
-### Resumen de `secure_storage.dart`
-
-Este archivo define una abstracción para interactuar con el almacenamiento seguro del dispositivo. Su propósito es crear una capa desacoplada que permita guardar y leer datos sensibles (como tokens de autenticación, claves de API, etc.) de forma segura y persistente.
-
-La arquitectura se basa en el principio de inversión de dependencias:
-1.  **`SecureStorage` (Clase Abstracta):** Actúa como una interfaz o contrato. Define los métodos que cualquier implementación de almacenamiento seguro debe tener (`write` y `read`), pero no se preocupa por los detalles de cómo se realizan esas operaciones.
-2.  **`SecureStorageImpl` (Clase Concreta):** Es la implementación real del contrato `SecureStorage`. Utiliza una dependencia externa para llevar a cabo las operaciones de guardado y lectura.
-
-#### Dependencias Principales
-*   **`flutter_secure_storage`**: Es el paquete utilizado por `SecureStorageImpl` para interactuar con el almacenamiento seguro nativo de cada plataforma (Keychain en iOS y Keystore en Android).
-
-#### Rol en la Aplicación
-Este módulo es fundamental en arquitecturas limpias y de software escalable. Permite que las capas superiores de la aplicación (como repositorios de autenticación o gestores de estado) dependan de la interfaz `SecureStorage` en lugar de una implementación concreta. Esto facilita enormemente las pruebas unitarias (al poder "mockear" o simular la interfaz) y permite cambiar la librería de almacenamiento subyacente en el futuro con un impacto mínimo en el resto del código.
+¡Excelente iniciativa encapsular la lógica de almacenamiento seguro! Como Senior Technical Writer experto en Flutter, procederé a documentar `seguridad.dart` con un enfoque en la claridad, la arquitectura y las buenas prácticas.
 
 ---
 
-### Código Documentado
+# Documentación Técnica: `seguridad.dart`
+
+Este documento detalla la implementación del servicio de almacenamiento seguro en la aplicación, encapsulando la funcionalidad de `flutter_secure_storage`.
+
+## 1. Resumen
+
+El archivo `seguridad.dart` define e implementa un servicio de almacenamiento seguro para datos sensibles en aplicaciones Flutter. Su objetivo principal es proporcionar una interfaz abstracta y limpia para interactuar con el almacenamiento seguro del dispositivo, garantizando que la información crítica (como tokens de autenticación, claves API, configuraciones de usuario sensibles, etc.) se almacene de forma protegida, aprovechando las capacidades de seguridad nativas de cada plataforma (Keychain en iOS, Keystore en Android).
+
+Al introducir una abstracción (`SecureStorage`), se mejora la modularidad, la capacidad de prueba y la mantenibilidad del código, desacoplando la lógica de negocio de la implementación específica del almacenamiento seguro.
+
+## 2. Arquitectura (Widget / Provider / Repository)
+
+Este componente se posiciona claramente en la capa de **Repositorio** o **Servicio** dentro de una arquitectura Flutter limpia (como Clean Architecture, BLoC con Repository Pattern, MVVM, etc.).
+
+*   **Capa de Repositorio/Servicio:** `SecureStorage` (y su implementación `SecureStorageImpl`) actúa como un repositorio de datos local, específicamente para datos sensibles. Abstrae la fuente de datos (en este caso, `flutter_secure_storage`) de las capas superiores de la aplicación.
+
+*   **Relación con Widgets:**
+    *   No hay interacción directa entre `seguridad.dart` y los `Widget`s.
+    *   Los `Widget`s o los `ViewModel`/`BloC`/`Cubit` que los alimentan no deberían tener conocimiento de `SecureStorageImpl`. En su lugar, interactuarían con un repositorio de nivel superior (ej. `AuthRepository`, `UserRepository`) que a su vez utilizaría `SecureStorage` como una dependencia para guardar o leer datos sensibles.
+
+*   **Integración con Providers / Inyección de Dependencias (DI):**
+    *   `SecureStorageImpl` está diseñado para ser inyectado como una dependencia en otras partes de la aplicación.
+    *   Frameworks como `provider`, `Riverpod`, `GetIt` o incluso un patrón de "Service Locator" simple serían ideales para proporcionar una instancia de `SecureStorageImpl` (o un mock durante las pruebas) a los repositorios que lo necesiten.
+    *   Esta inyección de dependencias es crucial para mantener el código testable y modular.
+
+### Flujo Arquitectónico Típico:
+
+```
+UI (Widgets)
+  ↓
+State Management (Bloc/Cubit/ViewModel/Provider)
+  ↓
+Application/Domain Layer (Use Cases / Business Logic)
+  ↓
+Infrastructure/Data Layer (Repositories)
+    ↓
+    SecureStorage (Interfaz)
+      ↓
+      SecureStorageImpl (Implementación - usa flutter_secure_storage)
+```
+
+## 3. Componentes Clave
+
+El archivo `seguridad.dart` se compone de dos elementos principales que trabajan en conjunto para ofrecer el servicio de almacenamiento seguro:
+
+### 3.1. `abstract class SecureStorage`
+
+*   **Descripción:** Esta clase abstracta define el contrato, o la interfaz, para todas las operaciones de almacenamiento seguro. Establece qué funcionalidades deben estar disponibles sin especificar cómo se implementarán.
+*   **Propósito:**
+    *   **Abstracción:** Desacopla la lógica de negocio de la implementación concreta del almacenamiento seguro.
+    *   **Testabilidad:** Permite que durante las pruebas unitarias, la implementación real de `SecureStorageImpl` pueda ser reemplazada por una versión mock o fake, facilitando el aislamiento y la verificación de la lógica dependiente.
+    *   **Flexibilidad:** En el futuro, si se necesitara cambiar la librería subyacente para el almacenamiento seguro, solo sería necesario crear una nueva implementación que satisfaga esta interfaz, sin afectar a las capas superiores.
+
+*   **Métodos Definidos:**
+    *   `Future<void> write(String key, String value);`
+        *   **Parámetros:**
+            *   `key` (String): La clave única bajo la cual se almacenará el valor.
+            *   `value` (String): El valor a almacenar de forma segura.
+        *   **Retorno:** `Future<void>`: Una operación asíncrona que completa cuando el valor ha sido escrito.
+    *   `Future<String?> read(String key);`
+        *   **Parámetros:**
+            *   `key` (String): La clave del valor que se desea recuperar.
+        *   **Retorno:** `Future<String?>`: Una operación asíncrona que devuelve el valor asociado a la clave, o `null` si la clave no existe o el valor no pudo ser recuperado.
+
+### 3.2. `class SecureStorageImpl implements SecureStorage`
+
+*   **Descripción:** Esta es la implementación concreta de la interfaz `SecureStorage`. Contiene la lógica real para interactuar con el paquete `flutter_secure_storage`.
+*   **Propósito:** Proporcionar la funcionalidad operativa para el almacenamiento y recuperación de datos sensibles, delegando la tarea de seguridad a una librería externa de confianza.
+
+*   **Dependencia Interna:**
+    *   `final _s = const FlutterSecureStorage();`
+        *   Se inicializa una instancia de `FlutterSecureStorage`. Esta instancia es la que interactúa directamente con los mecanismos de almacenamiento seguro nativos del sistema operativo.
+
+*   **Implementación de Métodos:**
+    *   `@override Future<void> write(String key, String value) => _s.write(key: key, value: value);`
+        *   Delega la llamada al método `write` de la instancia interna de `FlutterSecureStorage`, pasando la `key` y el `value` directamente.
+    *   `@override Future<String?> read(String key) => _s.read(key: key);`
+        *   Delega la llamada al método `read` de la instancia interna de `FlutterSecureStorage`, pasando la `key`.
+
+### 3.3. Dependencia Externa: `flutter_secure_storage`
+
+*   **Descripción:** Aunque no está directamente en el archivo `seguridad.dart`, es el pilar fundamental de la seguridad en esta implementación. Es un paquete de Flutter que proporciona una forma de almacenar datos de forma segura en el dispositivo.
+*   **Mecanismos de Seguridad:**
+    *   **iOS:** Utiliza Keychain para almacenar los datos.
+    *   **Android:** Utiliza Keystore y Shared Preferences (encriptadas) para el almacenamiento.
+*   **Importancia:** Garantiza que los datos sensibles no se almacenen en texto plano o en lugares fácilmente accesibles, mitigando riesgos de seguridad en caso de acceso no autorizado al sistema de archivos del dispositivo.
+
+---
+
+### Ejemplo de Uso Típico (dentro de un `AuthRepository`):
 
 ```dart
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+// auth_repository.dart
+import 'package:yourapp/seguridad.dart'; // Importa la interfaz
 
-/// Define una interfaz abstracta para interactuar con el almacenamiento seguro del dispositivo.
-///
-/// Esta clase sirve como un contrato que desacopla la lógica de la aplicación
-/// de la implementación concreta del almacenamiento seguro. Esto facilita
-/// las pruebas (usando mocks) y permite cambiar la librería subyacente
-/// sin afectar al resto del código.
-abstract class SecureStorage {
-  /// Escribe un par clave-valor en el almacenamiento seguro.
-  ///
-  /// - [key]: El identificador único para el valor a almacenar.
-  /// - [value]: El valor (string) que se desea guardar de forma segura.
-  Future<void> write(String key, String value);
+class AuthRepository {
+  final SecureStorage _secureStorage; // Depende de la abstracción
 
-  /// Lee un valor del almacenamiento seguro a partir de su clave.
-  ///
-  /// - [key]: El identificador del valor que se desea recuperar.
-  ///
-  /// Devuelve el valor asociado a la [key] en un [Future] o `null` si la clave no existe.
-  Future<String?> read(String key);
+  AuthRepository(this._secureStorage); // Inyección de dependencia
+
+  Future<void> saveAuthToken(String token) async {
+    await _secureStorage.write(key: 'auth_token', value: token);
+  }
+
+  Future<String?> getAuthToken() async {
+    return await _secureStorage.read(key: 'auth_token');
+  }
+
+  Future<void> deleteAuthToken() async {
+    // secure_storage podría extenderse para incluir delete
+    // Por ahora, solo escribimos un valor vacío o null para "borrar"
+    await _secureStorage.write(key: 'auth_token', value: ''); 
+  }
 }
 
-/// Implementación concreta de la interfaz [SecureStorage].
-///
-/// Utiliza el paquete `flutter_secure_storage` para interactuar con el
-/// Keychain de iOS y el Keystore de Android, proporcionando una capa
-/// de almacenamiento persistente y segura para datos sensibles.
-class SecureStorageImpl implements SecureStorage {
-  /// Instancia privada y constante del cliente de `FlutterSecureStorage`.
-  final _s = const FlutterSecureStorage();
-
-  /// Guarda el par [key]-[value] en el almacenamiento seguro del dispositivo.
-  @override
-  Future<void> write(String key, String value) => _s.write(key: key, value: value);
-
-  /// Lee el valor asociado a la [key] desde el almacenamiento seguro del dispositivo.
-  @override
-  Future<String?> read(String key) => _s.read(key: key);
-}
+// main.dart o app_bootstrap.dart (para configurar la DI)
+// ...
+// final secureStorage = SecureStorageImpl();
+// final authRepository = AuthRepository(secureStorage);
+//
+// Provider<AuthRepository>(
+//   create: (context) => authRepository,
+//   child: MyApp(),
+// );
+// ...
 ```
-````
