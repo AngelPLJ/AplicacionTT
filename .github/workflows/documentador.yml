@@ -21,7 +21,7 @@ jobs:
           python-version: '3.10'
       
       - name: Instalar dependencias de Python
-        run: pip install google-generativeai
+        run: pip install tqdm google-generativeai
 
       - name: Ejecutar el script de documentación
         env:
