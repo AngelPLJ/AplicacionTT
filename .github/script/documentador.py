@@ -1,127 +1,110 @@
 import google.generativeai as genai
 import os
+import asyncio
+import time
 from pathlib import Path
+from tqdm.asyncio import tqdm  # Para barra de progreso
 
 # --- Configuración ---
-try:
-    # Configura la API key desde los secretos de GitHub
-    api_key = os.environ['GEMINI_API_KEY']
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-2.5-pro')
-except KeyError:
+API_KEY = os.environ.get('GEMINI_API_KEY')
+if not API_KEY:
     print("Error: La variable de entorno GEMINI_API_KEY no está configurada.")
     exit(1)
 
-# El directorio raíz del proyecto de Flutter dentro del repositorio
+genai.configure(api_key=API_KEY)
+
+# Usamos Flash para rapidez y bajo costo, o Pro para mayor razonamiento.
+# Asegúrate de usar un modelo existente.
+MODEL_NAME = 'gemini-2.5-pro' 
 project_root = Path("aplicacion_de_comprension")
 
-# Lista de archivos a documentar (rutas relativas al project_root)
-files_to_document = [
-    "lib/features/usuario/entidades/configuracion.dart",
-    "lib/core/database/database.dart",
-    "lib/core/hasher.dart",
-    "lib/core/proveedor.dart",
-    "lib/core/seguridad.dart",
-    "lib/features/secciones/presentacion/paginas/introduccion.dart",
-    "lib/features/secciones/presentacion/paginas/resorte.dart",
-    "lib/features/secciones/repositorios/autenticacion.dart",
-    "lib/features/secciones/repositorios/repoconfig.dart",
-    "lib/features/secciones/repositorios/repoperfil.dart",
-    "lib/features/secciones/repositorios/repotutor.dart",
-    "lib/features/usuario/entidades/perfil.dart",
-    "lib/features/usuario/entidades/usuario.dart",
-    "lib/features/usuario/presentacion/controladores/cargar.dart",
-    "lib/features/usuario/presentacion/controladores/contautenticacion.dart",
-    "lib/features/usuario/presentacion/estados/autenticacion.dart",
-    "lib/features/usuario/presentacion/paginas/login.dart",
-    "lib/features/usuario/presentacion/paginas/personajes.dart",
-    "lib/features/usuario/presentacion/paginas/registro.dart",
-    "lib/features/usuario/repositorios/autenticacion.dart",
-    "lib/features/usuario/repositorios/repoconfig.dart",
-    "lib/features/usuario/repositorios/repoperfil.dart",
-    "lib/features/usuario/repositorios/repotutor.dart",
-    "lib/main.dart"
+# Límite de concurrencia para evitar errores 429 (Too Many Requests)
+# Ajusta esto según tu tier de API (5-10 suele ser seguro para tier gratuito)
+CONCURRENCY_LIMIT = 5 
+
+# Archivos a ignorar (generados por build_runner, configuraciones, etc.)
+IGNORE_PATTERNS = [
+    ".g.dart", 
+    ".freezed.dart", 
+    "firebase_options.dart", 
+    "generated_plugin_registrant.dart"
 ]
 
 # --- Funciones ---
 
-def generate_detailed_doc(file_path: Path):
-    """Genera documentación detallada para un solo archivo."""
-    print(f"Generando documentación para: {file_path}...")
-    try:
-        content = file_path.read_text(encoding='utf-8')
-        
-        prompt = f"""
-        Eres un programador experto en Flutter y Dart especializado en crear documentación técnica clara y concisa.
-        Tu tarea es documentar el siguiente archivo de código.
+def find_dart_files(root_path: Path):
+    """Busca recursivamente archivos .dart, excluyendo los generados."""
+    dart_files = []
+    if not root_path.exists():
+        print(f"Error: No se encuentra el directorio {root_path}")
+        return []
 
-        **Instrucciones:**
-        1.  Analiza el propósito general del archivo.
-        2.  Documenta cada clase, método, y propiedad importante usando los comentarios de documentación de Dart (`///`).
-        3.  Genera un resumen en formato Markdown que explique la funcionalidad del archivo, sus dependencias principales y su rol dentro de la aplicación.
-        4.  El resultado final debe ser un único bloque de texto en formato Markdown.
+    for path in root_path.rglob("*.dart"):
+        # Filtrar archivos ignorados
+        if any(path.name.endswith(ignored) for ignored in IGNORE_PATTERNS):
+            continue
+        # Filtrar carpetas ocultas o de build
+        if ".dart_tool" in str(path) or "build" in str(path):
+            continue
+            
+        dart_files.append(path)
+    return dart_files
 
-        **Código a documentar:**
-        ```dart
-        {content}
-        ```
-        """
-        
-        response = model.generate_content(prompt)
-        return response.text
-    except Exception as e:
-        return f"Error al procesar el archivo {file_path}: {e}"
+async def generate_detailed_doc_async(model, file_path: Path, semaphore):
+    """Genera documentación asíncrona respetando el semáforo."""
+    async with semaphore: # Solo permite X ejecuciones simultáneas
+        try:
+            content = file_path.read_text(encoding='utf-8')
+            if not content.strip():
+                return None # Archivo vacío
 
-def generate_index_doc(file_list):
-    """Genera el archivo de índice DOCUMENTACION.md."""
-    print("Generando el archivo de índice (DOCUMENTACION.md)...")
+            prompt = f"""
+            Actúa como un Senior Technical Writer especializado en Flutter.
+            Genera documentación en Markdown para el siguiente archivo: `{file_path.name}`.
+            
+            **Código fuente:**
+            ```dart
+            {content}
+            ```
+
+            **Requisitos de salida (Markdown):**
+            1.  **Resumen:** Qué hace este archivo y su responsabilidad.
+            2.  **Arquitectura:** Si es un Widget, un Provider, un Modelo o un Repositorio.
+            3.  **Componentes Clave:** Tabla o lista de clases/métodos principales.
+            4.  **No incluyas el código completo de nuevo**, solo fragmentos si es necesario para explicar.
+            """
+            
+            # Llamada asíncrona a Gemini
+            response = await model.generate_content_async(prompt)
+            return response.text
+            
+        except Exception as e:
+            # Manejo básico de errores de cuota (429) con reintento simple
+            if "429" in str(e):
+                print(f"\nRate limit en {file_path.name}, reintentando en 10s...")
+                await asyncio.sleep(10)
+                return await generate_detailed_doc_async(model, file_path, semaphore)
+            return f"Error procesando {file_path.name}: {e}"
+
+async def main():
+    model = genai.GenerativeModel(MODEL_NAME)
     
-    # Prepara la lista de archivos para el prompt
-    file_structure = "\n".join([f"- `{file}`" for file in file_list])
+    # 1. Buscar archivos automáticamente
+    print(f"🔍 Buscando archivos .dart en {project_root}...")
+    files_to_process = find_dart_files(project_root)
     
-    prompt = f"""
-    Eres un arquitecto de software creando el índice para la documentación de un proyecto Flutter.
-    La estructura de archivos del proyecto es la siguiente:
-    {file_structure}
+    if not files_to_process:
+        print("No se encontraron archivos para documentar.")
+        return
 
-    **Instrucciones:**
-    1.  Crea un documento llamado `DOCUMENTACION.md`.
-    2.  Organiza la documentación por módulos (ej: Core, Features, etc.) basándote en la estructura de carpetas.
-    3.  Para cada archivo, escribe una descripción de una sola línea sobre su posible propósito.
-    4.  Crea un enlace relativo en formato Markdown para cada archivo que apunte a su documentación detallada en la carpeta `docs/`. Por ejemplo, para `lib/core/hasher.dart`, el enlace debe ser `[hasher.dart](./docs/lib/core/hasher.dart.md)`.
-
-    El resultado debe ser un documento Markdown completo y bien estructurado.
-    """
+    print(f"📝 Se encontraron {len(files_to_process)} archivos para documentar.")
     
-    response = model.generate_content(prompt)
-    return response.text
+    # 2. Preparar tareas asíncronas
+    semaphore = asyncio.Semaphore(CONCURRENCY_LIMIT)
+    tasks = []
+    
+    # Creamos las tareas pero no las ejecutamos aún
+    for file_path in files_to_process:
+        tasks.append(generate_detailed_doc_async(model, file_path, semaphore))
 
-# --- Ejecución Principal ---
-
-# 1. Generar documentación detallada para cada archivo
-for file_str in files_to_document:
-    file_path = project_root / file_str
-    if file_path.exists():
-        # Generar documentación
-        markdown_content = generate_detailed_doc(file_path)
-        
-        # Crear la ruta de salida para el archivo de documentación
-        output_path = project_root / "docs" / file_str
-        output_path = output_path.with_suffix(".md") # Cambiar la extensión a .md
-        
-        # Asegurarse de que el directorio de salida exista
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        
-        # Escribir el contenido
-        output_path.write_text(markdown_content, encoding='utf-8')
-        print(f"Documentación guardada en: {output_path}")
-    else:
-        print(f"Advertencia: El archivo no se encontró: {file_path}")
-
-# 2. Generar el archivo de índice
-index_content = generate_index_doc(files_to_document)
-index_path = project_root / "DOCUMENTACION.md"
-index_path.write_text(index_content, encoding='utf-8')
-print(f"Índice de documentación guardado en: {index_path}")
-
-print("¡Proceso de documentación completado!")
+    # 3. Ejecutar en
