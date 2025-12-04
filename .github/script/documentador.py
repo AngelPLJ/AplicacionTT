@@ -107,4 +107,41 @@ async def main():
     for file_path in files_to_process:
         tasks.append(generate_detailed_doc_async(model, file_path, semaphore))
 
-    # 3. Ejecutar en
+    # 3. Ejecutar en paralelo (con barra de progreso)
+    # gather ejecuta todo, tqdm muestra el avance
+    results = await tqdm.gather(*tasks, desc="Generando Docs con IA")
+
+    # 4. Guardar resultados
+    docs_created = []
+    for file_path, doc_content in zip(files_to_process, results):
+        if doc_content and "Error" not in doc_content:
+            # Recrear estructura de carpetas dentro de 'docs'
+            relative_path = file_path.relative_to(project_root)
+            output_path = project_root / "docs" / relative_path.with_suffix(".md")
+            
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            output_path.write_text(doc_content, encoding='utf-8')
+            docs_created.append(str(relative_path))
+        else:
+            print(f"Falló: {file_path.name} -> {doc_content[:50]}...")
+
+    # 5. Generar Índice Global
+    if docs_created:
+        print("\n📚 Generando índice maestro...")
+        index_prompt = f"""
+        Crea un archivo `DOCUMENTACION.md` (formato Markdown) que sirva como índice.
+        Organiza los siguientes archivos en una estructura lógica (Core, Features, UI, Data).
+        Agrega una breve descripción de una línea para cada uno y el enlace relativo.
+        
+        Lista de archivos documentados:
+        {chr(10).join(docs_created)}
+        """
+        response = await model.generate_content_async(index_prompt)
+        
+        index_path = project_root / "DOCUMENTACION.md"
+        index_path.write_text(response.text, encoding='utf-8')
+        print(f"✅ Documentación finalizada. Índice guardado en: {index_path}")
+
+if __name__ == "__main__":
+    # Ejecutar el bucle asíncrono
+    asyncio.run(main())
