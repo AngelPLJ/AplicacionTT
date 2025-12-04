@@ -1,28 +1,26 @@
 import google.generativeai as genai
 import os
 import asyncio
-import time
 from pathlib import Path
-from tqdm.asyncio import tqdm  # Para barra de progreso
+from tqdm.asyncio import tqdm
 
 # --- Configuración ---
 API_KEY = os.environ.get('GEMINI_API_KEY')
 if not API_KEY:
-    print("Error: La variable de entorno GEMINI_API_KEY no está configurada.")
+    print("Error: GEMINI_API_KEY no configurada.", flush=True)
     exit(1)
 
 genai.configure(api_key=API_KEY)
 
-# Usamos Flash para rapidez y bajo costo, o Pro para mayor razonamiento.
-# Asegúrate de usar un modelo existente.
-MODEL_NAME = 'gemini-2.5-pro' 
+MODEL_NAME = 'gemini-2.5-flash'
 project_root = Path("aplicacion_de_comprension")
 
-# Límite de concurrencia para evitar errores 429 (Too Many Requests)
-# Ajusta esto según tu tier de API (5-10 suele ser seguro para tier gratuito)
-CONCURRENCY_LIMIT = 5 
+# REDUCIMOS CONCURRENCIA: 3 es más seguro para evitar bloqueos
+CONCURRENCY_LIMIT = 1 
 
-# Archivos a ignorar (generados por build_runner, configuraciones, etc.)
+# TIEMPO MÁXIMO POR ARCHIVO (Segundos)
+TIMEOUT_PER_FILE = 120
+
 IGNORE_PATTERNS = [
     ".g.dart", 
     ".freezed.dart", 
@@ -33,115 +31,98 @@ IGNORE_PATTERNS = [
 # --- Funciones ---
 
 def find_dart_files(root_path: Path):
-    """Busca recursivamente archivos .dart, excluyendo los generados."""
     dart_files = []
     if not root_path.exists():
         print(f"Error: No se encuentra el directorio {root_path}")
         return []
 
     for path in root_path.rglob("*.dart"):
-        # Filtrar archivos ignorados
         if any(path.name.endswith(ignored) for ignored in IGNORE_PATTERNS):
             continue
-        # Filtrar carpetas ocultas o de build
         if ".dart_tool" in str(path) or "build" in str(path):
             continue
-            
         dart_files.append(path)
     return dart_files
 
 async def generate_detailed_doc_async(model, file_path: Path, semaphore):
-    """Genera documentación asíncrona respetando el semáforo."""
-    async with semaphore: # Solo permite X ejecuciones simultáneas
+    async with semaphore:
         try:
             content = file_path.read_text(encoding='utf-8')
             if not content.strip():
-                return None # Archivo vacío
+                return None
 
             prompt = f"""
-            Actúa como un Senior Technical Writer especializado en Flutter.
-            Genera documentación en Markdown para el siguiente archivo: `{file_path.name}`.
+            Actúa como un Senior Technical Writer experto en Flutter.
+            Genera documentación Markdown para: `{file_path.name}`.
             
-            **Código fuente:**
+            **Código:**
             ```dart
             {content}
             ```
 
-            **Requisitos de salida (Markdown):**
-            1.  **Resumen:** Qué hace este archivo y su responsabilidad.
-            2.  **Arquitectura:** Si es un Widget, un Provider, un Modelo o un Repositorio.
-            3.  **Componentes Clave:** Tabla o lista de clases/métodos principales.
-            4.  **No incluyas el código completo de nuevo**, solo fragmentos si es necesario para explicar.
+            **Salida:** Resumen, Arquitectura (Widget/Provider/Repo), y Componentes Clave.
             """
             
-            # Llamada asíncrona a Gemini
-            response = await model.generate_content_async(prompt)
+            # --- PROTECCIÓN CONTRA CONGELAMIENTO ---
+            # Si la API no responde en 60s, cancelamos este archivo
+            response = await asyncio.wait_for(
+                model.generate_content_async(prompt),
+                timeout=TIMEOUT_PER_FILE
+            )
             return response.text
             
+        except asyncio.TimeoutError:
+            return f"Error: Tiempo de espera agotado ({TIMEOUT_PER_FILE}s) para {file_path.name}"
         except Exception as e:
-            # Manejo básico de errores de cuota (429) con reintento simple
             if "429" in str(e):
-                print(f"\nRate limit en {file_path.name}, reintentando en 10s...")
-                await asyncio.sleep(10)
-                return await generate_detailed_doc_async(model, file_path, semaphore)
+                return "Error: Rate limit (429) excedido."
             return f"Error procesando {file_path.name}: {e}"
 
 async def main():
     model = genai.GenerativeModel(MODEL_NAME)
     
-    # 1. Buscar archivos automáticamente
-    print(f"🔍 Buscando archivos .dart en {project_root}...")
+    print(f"🔍 Buscando archivos en {project_root}...", flush=True)
     files_to_process = find_dart_files(project_root)
     
     if not files_to_process:
-        print("No se encontraron archivos para documentar.")
+        print("No se encontraron archivos.", flush=True)
         return
 
-    print(f"📝 Se encontraron {len(files_to_process)} archivos para documentar.")
+    print(f"📝 {len(files_to_process)} archivos encontrados. Procesando con límite de {CONCURRENCY_LIMIT} hilos...", flush=True)
     
-    # 2. Preparar tareas asíncronas
     semaphore = asyncio.Semaphore(CONCURRENCY_LIMIT)
-    tasks = []
-    
-    # Creamos las tareas pero no las ejecutamos aún
-    for file_path in files_to_process:
-        tasks.append(generate_detailed_doc_async(model, file_path, semaphore))
+    tasks = [generate_detailed_doc_async(model, f, semaphore) for f in files_to_process]
 
-    # 3. Ejecutar en paralelo (con barra de progreso)
-    # gather ejecuta todo, tqdm muestra el avance
-    results = await tqdm.gather(*tasks, desc="Generando Docs con IA")
+    # Ejecutar tareas
+    results = await tqdm.gather(*tasks, desc="Generando Docs")
 
-    # 4. Guardar resultados
+    # Guardar
     docs_created = []
     for file_path, doc_content in zip(files_to_process, results):
         if doc_content and "Error" not in doc_content:
-            # Recrear estructura de carpetas dentro de 'docs'
             relative_path = file_path.relative_to(project_root)
             output_path = project_root / "docs" / relative_path.with_suffix(".md")
-            
             output_path.parent.mkdir(parents=True, exist_ok=True)
             output_path.write_text(doc_content, encoding='utf-8')
             docs_created.append(str(relative_path))
         else:
-            print(f"Falló: {file_path.name} -> {doc_content[:50]}...")
+            # Imprimir error para depuración
+            print(f"\n❌ {file_path.name}: {doc_content}")
 
-    # 5. Generar Índice Global
+    # Índice
     if docs_created:
-        print("\n📚 Generando índice maestro...")
-        index_prompt = f"""
-        Crea un archivo `DOCUMENTACION.md` (formato Markdown) que sirva como índice.
-        Organiza los siguientes archivos en una estructura lógica (Core, Features, UI, Data).
-        Agrega una breve descripción de una línea para cada uno y el enlace relativo.
-        
-        Lista de archivos documentados:
-        {chr(10).join(docs_created)}
-        """
-        response = await model.generate_content_async(index_prompt)
-        
-        index_path = project_root / "DOCUMENTACION.md"
-        index_path.write_text(response.text, encoding='utf-8')
-        print(f"✅ Documentación finalizada. Índice guardado en: {index_path}")
+        print("\n📚 Generando índice...", flush=True)
+        try:
+            index_prompt = f"Crea un índice Markdown (DOCUMENTACION.md) para estos archivos:\n{chr(10).join(docs_created)}"
+            response = await asyncio.wait_for(
+                model.generate_content_async(index_prompt), 
+                timeout=60
+            )
+            index_path = project_root / "DOCUMENTACION.md"
+            index_path.write_text(response.text, encoding='utf-8')
+            print("✅ Hecho.", flush=True)
+        except Exception as e:
+            print(f"Error generando índice: {e}")
 
 if __name__ == "__main__":
-    # Ejecutar el bucle asíncrono
     asyncio.run(main())
