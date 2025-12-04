@@ -4,7 +4,7 @@ import 'package:cryptography/cryptography.dart';
 
 abstract class PasswordHasher {
   Future<String> hash(String password, {List<int>? salt});
-  Future<bool> verify(String password, String stored);
+  Future<bool> verify(String password, String stored, {List<int>? salt});
   List<int> generateSalt([int length = 16]);
 }
 
@@ -33,17 +33,28 @@ class Pbkdf2Hasher implements PasswordHasher {
   }
 
   @override
-  Future<bool> verify(String password, String stored) async {
-    final parts = stored.split(':');
-    if (parts.length != 4) return false;
-    final salt = base64Decode(parts[2].split('=')[1]); // después de i=210000,
-    final hash = await this.hash(password, salt: salt);
-    // Comparación tiempo-constante
-    final a = utf8.encode(hash);
+  // 2. CORRECCIÓN: Aceptamos el parámetro salt aquí también
+  Future<bool> verify(String password, String stored, {List<int>? salt}) async {
+    List<int> saltToUse;
+
+    if (salt != null) {
+      saltToUse = salt;
+    } else {
+      final parts = stored.split(':');
+      if (parts.length < 5) return false; 
+      saltToUse = base64Decode(parts[3]); 
+    }
+
+    final calculatedHash = await this.hash(password, salt: saltToUse);
+
+    final a = utf8.encode(calculatedHash);
     final b = utf8.encode(stored);
+    
     if (a.length != b.length) return false;
     var diff = 0;
-    for (var i = 0; i < a.length; i++) { diff |= a[i] ^ b[i]; }
+    for (var i = 0; i < a.length; i++) {
+      diff |= a[i] ^ b[i];
+    }
     return diff == 0;
   }
 }

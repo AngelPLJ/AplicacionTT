@@ -40,7 +40,13 @@ class RepoTutorImpl implements RepoTutor {
   @override
   Future<bool> autenticar(String secreto) async {
     final row = await db.select(db.tutor).getSingle();
-    return hasher.verify(secreto, row.pinSeguridad);
+    final saltString = await sec.read(_kSaltKey);
+    if (saltString == null) {
+      // Si no hay salt guardado por algún error de corrupción, no podemos verificar
+      return false; 
+    }
+    final salt = base64Decode(saltString);
+    return hasher.verify(secreto, row.pinSeguridad, salt: salt);
   }
 
   @override

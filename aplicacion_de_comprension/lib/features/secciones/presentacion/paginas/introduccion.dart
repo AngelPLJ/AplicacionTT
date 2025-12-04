@@ -33,7 +33,7 @@ class _IntroduccionState extends ConsumerState<Introduccion> {
   Widget build(BuildContext context) {
     final pages = const [
       _IntroPage(
-        title: 'Bienvenidos a mi app',
+        title: 'Bienvenid@',
         text:
             'Aplico es una aplicación educativa creada para fortalecer la comprensión lectora en estudiantes de primaria.',
       ),
@@ -69,7 +69,15 @@ class _IntroduccionState extends ConsumerState<Introduccion> {
         child: Center(
           child: Stack(
             children: [
-              
+              Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/imagenes/fondoIntro.jpg'),
+                    fit: BoxFit.cover,
+                    alignment: Alignment(0.35, 0),
+                  ),
+                ),
+              ),
               Positioned(
                 child: Column(
                   children: [

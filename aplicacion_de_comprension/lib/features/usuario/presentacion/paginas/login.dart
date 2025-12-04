@@ -47,10 +47,11 @@ class _S extends ConsumerState<Login> {
                   .login(secret: secretCtrl.text, remember: remember); // <-- .notifier + nombrados
               setState(() { loading = false; });
               if (!ok) { setState(() { error = 'Credenciales inválidas'; }); return; }
-              if (!mounted) return;
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const CharacterSelectPage()),
-              );
+              if(context.mounted) {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const CharacterSelectPage()),
+                );
+              }
             },
             child: isLoading ? const CircularProgressIndicator() : const Text('Entrar'),
           ),

@@ -7,6 +7,11 @@ import './seguridad.dart';
 import '../infraestructura/repotutorimpl.dart';
 import '../infraestructura/repoconfigimpl.dart';
 import '../infraestructura/repoperfilimpl.dart';
+import '../infraestructura/repoprogresoimpl.dart';
+import '../infraestructura/repocontimpl.dart';
+
+import '../features/perfiles/repositorios/repo_contenido.dart';
+import '../features/perfiles/repositorios/repo_progreso.dart';
 import '../features/usuario/repositorios/repotutor.dart';
 import '../features/usuario/repositorios/repoperfil.dart';
 import '../features/usuario/repositorios/repoconfig.dart';
@@ -28,3 +33,18 @@ final repoPerfilProvider = Provider<RepoPerfil>((ref) =>
 
 final repoConfigProvider = Provider<RepoConfig>((ref) =>
     RepoConfImpl(ref.read(dbProvider)));
+
+// PROVEEDOR DE CONTENIDO (Estático)
+final repoContenidoProvider = Provider<RepoContenido>((ref) => 
+    RepoContenidoImpl(ref.read(dbProvider)));
+
+// PROVEEDOR DE PROGRESO (Dinámico/Estadísticas)
+final repoProgresoProvider = Provider<RepoProgreso>((ref) => 
+    RepoProgresoImpl(ref.read(dbProvider)));
+
+// PROVEEDOR FUTURO PARA INICIALIZAR LA DB (SEED)
+// Puedes llamar a esto en tu main.dart o en la pantalla de carga
+final databaseInitializerProvider = FutureProvider<void>((ref) async {
+  final contenido = ref.read(repoContenidoProvider);
+  await contenido.poblarBaseDeDatos();
+});

@@ -13,6 +13,10 @@ class ProfileRepositoryImpl implements RepoPerfil {
 
   @override
   Future<Perfil> crearPerfil({required String name, required String avatarCode}) async {
+    final usuariosCreados = await db.select(db.usuarios).get();
+    if (usuariosCreados.length >= 7) {
+      throw Exception('Número máximo de perfiles alcanzado');
+    }
     final tutorRow = await db.select(db.tutor).getSingle(); // hay un único tutor
     final id = const Uuid().v4();
 
@@ -70,5 +74,22 @@ class ProfileRepositoryImpl implements RepoPerfil {
       codigoAvatar: r.icono,
       activo: r.activo,
     );
+  }
+
+  @override
+  Future<void> eliminarPerfil(String id) async {
+    await (db.delete(db.usuarios)..where((tbl) => tbl.id.equals(id))).go();
+    
+    // Opcional: Si borraste el perfil activo, limpia la preferencia
+    final activeId = await db.getKv(_kActiveProfile);
+    if (activeId == id) {
+       await db.upsertKv(_kActiveProfile, '');
+    }
+  }
+
+  @override
+  Future<void> cerrarSesion() async {
+    await db.upsertKv(_kActiveProfile, '');
+    await db.update(db.usuarios).write(const UsuariosCompanion(activo: Value(false)));
   }
 }

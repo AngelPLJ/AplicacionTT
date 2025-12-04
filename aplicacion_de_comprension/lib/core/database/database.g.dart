@@ -2744,11 +2744,11 @@ class $UsuariosHasNumerosTable extends UsuariosHasNumeros
     'usuarioId',
   );
   @override
-  late final GeneratedColumn<int> usuarioId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> usuarioId = GeneratedColumn<String>(
     'usuario_id',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES usuarios (id)',
@@ -2844,7 +2844,7 @@ class $UsuariosHasNumerosTable extends UsuariosHasNumeros
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return UsuariosHasNumero(
       usuarioId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}usuario_id'],
       )!,
       numeroId: attachedDatabase.typeMapping.read(
@@ -2870,7 +2870,7 @@ class $UsuariosHasNumerosTable extends UsuariosHasNumeros
 
 class UsuariosHasNumero extends DataClass
     implements Insertable<UsuariosHasNumero> {
-  final int usuarioId;
+  final String usuarioId;
   final int numeroId;
   final int aciertos;
   final int total;
@@ -2883,7 +2883,7 @@ class UsuariosHasNumero extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['usuario_id'] = Variable<int>(usuarioId);
+    map['usuario_id'] = Variable<String>(usuarioId);
     map['numero_id'] = Variable<int>(numeroId);
     map['aciertos'] = Variable<int>(aciertos);
     map['total'] = Variable<int>(total);
@@ -2905,7 +2905,7 @@ class UsuariosHasNumero extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UsuariosHasNumero(
-      usuarioId: serializer.fromJson<int>(json['usuarioId']),
+      usuarioId: serializer.fromJson<String>(json['usuarioId']),
       numeroId: serializer.fromJson<int>(json['numeroId']),
       aciertos: serializer.fromJson<int>(json['aciertos']),
       total: serializer.fromJson<int>(json['total']),
@@ -2915,7 +2915,7 @@ class UsuariosHasNumero extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'usuarioId': serializer.toJson<int>(usuarioId),
+      'usuarioId': serializer.toJson<String>(usuarioId),
       'numeroId': serializer.toJson<int>(numeroId),
       'aciertos': serializer.toJson<int>(aciertos),
       'total': serializer.toJson<int>(total),
@@ -2923,7 +2923,7 @@ class UsuariosHasNumero extends DataClass
   }
 
   UsuariosHasNumero copyWith({
-    int? usuarioId,
+    String? usuarioId,
     int? numeroId,
     int? aciertos,
     int? total,
@@ -2966,7 +2966,7 @@ class UsuariosHasNumero extends DataClass
 }
 
 class UsuariosHasNumerosCompanion extends UpdateCompanion<UsuariosHasNumero> {
-  final Value<int> usuarioId;
+  final Value<String> usuarioId;
   final Value<int> numeroId;
   final Value<int> aciertos;
   final Value<int> total;
@@ -2979,7 +2979,7 @@ class UsuariosHasNumerosCompanion extends UpdateCompanion<UsuariosHasNumero> {
     this.rowid = const Value.absent(),
   });
   UsuariosHasNumerosCompanion.insert({
-    required int usuarioId,
+    required String usuarioId,
     required int numeroId,
     required int aciertos,
     required int total,
@@ -2989,7 +2989,7 @@ class UsuariosHasNumerosCompanion extends UpdateCompanion<UsuariosHasNumero> {
        aciertos = Value(aciertos),
        total = Value(total);
   static Insertable<UsuariosHasNumero> custom({
-    Expression<int>? usuarioId,
+    Expression<String>? usuarioId,
     Expression<int>? numeroId,
     Expression<int>? aciertos,
     Expression<int>? total,
@@ -3005,7 +3005,7 @@ class UsuariosHasNumerosCompanion extends UpdateCompanion<UsuariosHasNumero> {
   }
 
   UsuariosHasNumerosCompanion copyWith({
-    Value<int>? usuarioId,
+    Value<String>? usuarioId,
     Value<int>? numeroId,
     Value<int>? aciertos,
     Value<int>? total,
@@ -3024,7 +3024,7 @@ class UsuariosHasNumerosCompanion extends UpdateCompanion<UsuariosHasNumero> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (usuarioId.present) {
-      map['usuario_id'] = Variable<int>(usuarioId.value);
+      map['usuario_id'] = Variable<String>(usuarioId.value);
     }
     if (numeroId.present) {
       map['numero_id'] = Variable<int>(numeroId.value);
@@ -3064,11 +3064,11 @@ class $UsuariosHasFonemasTable extends UsuariosHasFonemas
     'usuarioId',
   );
   @override
-  late final GeneratedColumn<int> usuarioId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> usuarioId = GeneratedColumn<String>(
     'usuario_id',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES usuarios (id)',
@@ -3164,7 +3164,7 @@ class $UsuariosHasFonemasTable extends UsuariosHasFonemas
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return UsuariosHasFonema(
       usuarioId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}usuario_id'],
       )!,
       fonemaId: attachedDatabase.typeMapping.read(
@@ -3190,7 +3190,7 @@ class $UsuariosHasFonemasTable extends UsuariosHasFonemas
 
 class UsuariosHasFonema extends DataClass
     implements Insertable<UsuariosHasFonema> {
-  final int usuarioId;
+  final String usuarioId;
   final int fonemaId;
   final int aciertos;
   final int total;
@@ -3203,7 +3203,7 @@ class UsuariosHasFonema extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['usuario_id'] = Variable<int>(usuarioId);
+    map['usuario_id'] = Variable<String>(usuarioId);
     map['fonema_id'] = Variable<int>(fonemaId);
     map['aciertos'] = Variable<int>(aciertos);
     map['total'] = Variable<int>(total);
@@ -3225,7 +3225,7 @@ class UsuariosHasFonema extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UsuariosHasFonema(
-      usuarioId: serializer.fromJson<int>(json['usuarioId']),
+      usuarioId: serializer.fromJson<String>(json['usuarioId']),
       fonemaId: serializer.fromJson<int>(json['fonemaId']),
       aciertos: serializer.fromJson<int>(json['aciertos']),
       total: serializer.fromJson<int>(json['total']),
@@ -3235,7 +3235,7 @@ class UsuariosHasFonema extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'usuarioId': serializer.toJson<int>(usuarioId),
+      'usuarioId': serializer.toJson<String>(usuarioId),
       'fonemaId': serializer.toJson<int>(fonemaId),
       'aciertos': serializer.toJson<int>(aciertos),
       'total': serializer.toJson<int>(total),
@@ -3243,7 +3243,7 @@ class UsuariosHasFonema extends DataClass
   }
 
   UsuariosHasFonema copyWith({
-    int? usuarioId,
+    String? usuarioId,
     int? fonemaId,
     int? aciertos,
     int? total,
@@ -3286,7 +3286,7 @@ class UsuariosHasFonema extends DataClass
 }
 
 class UsuariosHasFonemasCompanion extends UpdateCompanion<UsuariosHasFonema> {
-  final Value<int> usuarioId;
+  final Value<String> usuarioId;
   final Value<int> fonemaId;
   final Value<int> aciertos;
   final Value<int> total;
@@ -3299,7 +3299,7 @@ class UsuariosHasFonemasCompanion extends UpdateCompanion<UsuariosHasFonema> {
     this.rowid = const Value.absent(),
   });
   UsuariosHasFonemasCompanion.insert({
-    required int usuarioId,
+    required String usuarioId,
     required int fonemaId,
     required int aciertos,
     required int total,
@@ -3309,7 +3309,7 @@ class UsuariosHasFonemasCompanion extends UpdateCompanion<UsuariosHasFonema> {
        aciertos = Value(aciertos),
        total = Value(total);
   static Insertable<UsuariosHasFonema> custom({
-    Expression<int>? usuarioId,
+    Expression<String>? usuarioId,
     Expression<int>? fonemaId,
     Expression<int>? aciertos,
     Expression<int>? total,
@@ -3325,7 +3325,7 @@ class UsuariosHasFonemasCompanion extends UpdateCompanion<UsuariosHasFonema> {
   }
 
   UsuariosHasFonemasCompanion copyWith({
-    Value<int>? usuarioId,
+    Value<String>? usuarioId,
     Value<int>? fonemaId,
     Value<int>? aciertos,
     Value<int>? total,
@@ -3344,7 +3344,7 @@ class UsuariosHasFonemasCompanion extends UpdateCompanion<UsuariosHasFonema> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (usuarioId.present) {
-      map['usuario_id'] = Variable<int>(usuarioId.value);
+      map['usuario_id'] = Variable<String>(usuarioId.value);
     }
     if (fonemaId.present) {
       map['fonema_id'] = Variable<int>(fonemaId.value);
@@ -3384,11 +3384,11 @@ class $UsuariosHasPalabrasTable extends UsuariosHasPalabras
     'usuarioId',
   );
   @override
-  late final GeneratedColumn<int> usuarioId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> usuarioId = GeneratedColumn<String>(
     'usuario_id',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES usuarios (id)',
@@ -3484,7 +3484,7 @@ class $UsuariosHasPalabrasTable extends UsuariosHasPalabras
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return UsuariosHasPalabra(
       usuarioId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}usuario_id'],
       )!,
       palabraId: attachedDatabase.typeMapping.read(
@@ -3510,7 +3510,7 @@ class $UsuariosHasPalabrasTable extends UsuariosHasPalabras
 
 class UsuariosHasPalabra extends DataClass
     implements Insertable<UsuariosHasPalabra> {
-  final int usuarioId;
+  final String usuarioId;
   final int palabraId;
   final int aciertos;
   final int total;
@@ -3523,7 +3523,7 @@ class UsuariosHasPalabra extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['usuario_id'] = Variable<int>(usuarioId);
+    map['usuario_id'] = Variable<String>(usuarioId);
     map['palabra_id'] = Variable<int>(palabraId);
     map['aciertos'] = Variable<int>(aciertos);
     map['total'] = Variable<int>(total);
@@ -3545,7 +3545,7 @@ class UsuariosHasPalabra extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UsuariosHasPalabra(
-      usuarioId: serializer.fromJson<int>(json['usuarioId']),
+      usuarioId: serializer.fromJson<String>(json['usuarioId']),
       palabraId: serializer.fromJson<int>(json['palabraId']),
       aciertos: serializer.fromJson<int>(json['aciertos']),
       total: serializer.fromJson<int>(json['total']),
@@ -3555,7 +3555,7 @@ class UsuariosHasPalabra extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'usuarioId': serializer.toJson<int>(usuarioId),
+      'usuarioId': serializer.toJson<String>(usuarioId),
       'palabraId': serializer.toJson<int>(palabraId),
       'aciertos': serializer.toJson<int>(aciertos),
       'total': serializer.toJson<int>(total),
@@ -3563,7 +3563,7 @@ class UsuariosHasPalabra extends DataClass
   }
 
   UsuariosHasPalabra copyWith({
-    int? usuarioId,
+    String? usuarioId,
     int? palabraId,
     int? aciertos,
     int? total,
@@ -3606,7 +3606,7 @@ class UsuariosHasPalabra extends DataClass
 }
 
 class UsuariosHasPalabrasCompanion extends UpdateCompanion<UsuariosHasPalabra> {
-  final Value<int> usuarioId;
+  final Value<String> usuarioId;
   final Value<int> palabraId;
   final Value<int> aciertos;
   final Value<int> total;
@@ -3619,7 +3619,7 @@ class UsuariosHasPalabrasCompanion extends UpdateCompanion<UsuariosHasPalabra> {
     this.rowid = const Value.absent(),
   });
   UsuariosHasPalabrasCompanion.insert({
-    required int usuarioId,
+    required String usuarioId,
     required int palabraId,
     required int aciertos,
     required int total,
@@ -3629,7 +3629,7 @@ class UsuariosHasPalabrasCompanion extends UpdateCompanion<UsuariosHasPalabra> {
        aciertos = Value(aciertos),
        total = Value(total);
   static Insertable<UsuariosHasPalabra> custom({
-    Expression<int>? usuarioId,
+    Expression<String>? usuarioId,
     Expression<int>? palabraId,
     Expression<int>? aciertos,
     Expression<int>? total,
@@ -3645,7 +3645,7 @@ class UsuariosHasPalabrasCompanion extends UpdateCompanion<UsuariosHasPalabra> {
   }
 
   UsuariosHasPalabrasCompanion copyWith({
-    Value<int>? usuarioId,
+    Value<String>? usuarioId,
     Value<int>? palabraId,
     Value<int>? aciertos,
     Value<int>? total,
@@ -3664,7 +3664,7 @@ class UsuariosHasPalabrasCompanion extends UpdateCompanion<UsuariosHasPalabra> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (usuarioId.present) {
-      map['usuario_id'] = Variable<int>(usuarioId.value);
+      map['usuario_id'] = Variable<String>(usuarioId.value);
     }
     if (palabraId.present) {
       map['palabra_id'] = Variable<int>(palabraId.value);
@@ -3938,11 +3938,11 @@ class $UsuariosHasActividadesTable extends UsuariosHasActividades
     'usuarioId',
   );
   @override
-  late final GeneratedColumn<int> usuarioId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> usuarioId = GeneratedColumn<String>(
     'usuario_id',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES usuarios (id)',
@@ -4044,7 +4044,7 @@ class $UsuariosHasActividadesTable extends UsuariosHasActividades
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return UsuariosHasActividade(
       usuarioId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}usuario_id'],
       )!,
       actividadId: attachedDatabase.typeMapping.read(
@@ -4070,7 +4070,7 @@ class $UsuariosHasActividadesTable extends UsuariosHasActividades
 
 class UsuariosHasActividade extends DataClass
     implements Insertable<UsuariosHasActividade> {
-  final int usuarioId;
+  final String usuarioId;
   final int actividadId;
   final int aciertos;
   final int? total;
@@ -4083,7 +4083,7 @@ class UsuariosHasActividade extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['usuario_id'] = Variable<int>(usuarioId);
+    map['usuario_id'] = Variable<String>(usuarioId);
     map['actividad_id'] = Variable<int>(actividadId);
     map['aciertos'] = Variable<int>(aciertos);
     if (!nullToAbsent || total != null) {
@@ -4109,7 +4109,7 @@ class UsuariosHasActividade extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UsuariosHasActividade(
-      usuarioId: serializer.fromJson<int>(json['usuarioId']),
+      usuarioId: serializer.fromJson<String>(json['usuarioId']),
       actividadId: serializer.fromJson<int>(json['actividadId']),
       aciertos: serializer.fromJson<int>(json['aciertos']),
       total: serializer.fromJson<int?>(json['total']),
@@ -4119,7 +4119,7 @@ class UsuariosHasActividade extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'usuarioId': serializer.toJson<int>(usuarioId),
+      'usuarioId': serializer.toJson<String>(usuarioId),
       'actividadId': serializer.toJson<int>(actividadId),
       'aciertos': serializer.toJson<int>(aciertos),
       'total': serializer.toJson<int?>(total),
@@ -4127,7 +4127,7 @@ class UsuariosHasActividade extends DataClass
   }
 
   UsuariosHasActividade copyWith({
-    int? usuarioId,
+    String? usuarioId,
     int? actividadId,
     int? aciertos,
     Value<int?> total = const Value.absent(),
@@ -4175,7 +4175,7 @@ class UsuariosHasActividade extends DataClass
 
 class UsuariosHasActividadesCompanion
     extends UpdateCompanion<UsuariosHasActividade> {
-  final Value<int> usuarioId;
+  final Value<String> usuarioId;
   final Value<int> actividadId;
   final Value<int> aciertos;
   final Value<int?> total;
@@ -4188,7 +4188,7 @@ class UsuariosHasActividadesCompanion
     this.rowid = const Value.absent(),
   });
   UsuariosHasActividadesCompanion.insert({
-    required int usuarioId,
+    required String usuarioId,
     required int actividadId,
     required int aciertos,
     this.total = const Value.absent(),
@@ -4197,7 +4197,7 @@ class UsuariosHasActividadesCompanion
        actividadId = Value(actividadId),
        aciertos = Value(aciertos);
   static Insertable<UsuariosHasActividade> custom({
-    Expression<int>? usuarioId,
+    Expression<String>? usuarioId,
     Expression<int>? actividadId,
     Expression<int>? aciertos,
     Expression<int>? total,
@@ -4213,7 +4213,7 @@ class UsuariosHasActividadesCompanion
   }
 
   UsuariosHasActividadesCompanion copyWith({
-    Value<int>? usuarioId,
+    Value<String>? usuarioId,
     Value<int>? actividadId,
     Value<int>? aciertos,
     Value<int?>? total,
@@ -4232,7 +4232,7 @@ class UsuariosHasActividadesCompanion
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (usuarioId.present) {
-      map['usuario_id'] = Variable<int>(usuarioId.value);
+      map['usuario_id'] = Variable<String>(usuarioId.value);
     }
     if (actividadId.present) {
       map['actividad_id'] = Variable<int>(actividadId.value);
@@ -4286,11 +4286,11 @@ class $ModulosHasUsuariosTable extends ModulosHasUsuarios
     'usuarioId',
   );
   @override
-  late final GeneratedColumn<int> usuarioId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> usuarioId = GeneratedColumn<String>(
     'usuario_id',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES usuarios (id)',
@@ -4359,7 +4359,7 @@ class $ModulosHasUsuariosTable extends ModulosHasUsuarios
         data['${effectivePrefix}modulo_id'],
       )!,
       usuarioId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}usuario_id'],
       )!,
       progreso: attachedDatabase.typeMapping.read(
@@ -4378,7 +4378,7 @@ class $ModulosHasUsuariosTable extends ModulosHasUsuarios
 class ModulosHasUsuario extends DataClass
     implements Insertable<ModulosHasUsuario> {
   final int moduloId;
-  final int usuarioId;
+  final String usuarioId;
   final double progreso;
   const ModulosHasUsuario({
     required this.moduloId,
@@ -4389,7 +4389,7 @@ class ModulosHasUsuario extends DataClass
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['modulo_id'] = Variable<int>(moduloId);
-    map['usuario_id'] = Variable<int>(usuarioId);
+    map['usuario_id'] = Variable<String>(usuarioId);
     map['progreso'] = Variable<double>(progreso);
     return map;
   }
@@ -4409,7 +4409,7 @@ class ModulosHasUsuario extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ModulosHasUsuario(
       moduloId: serializer.fromJson<int>(json['moduloId']),
-      usuarioId: serializer.fromJson<int>(json['usuarioId']),
+      usuarioId: serializer.fromJson<String>(json['usuarioId']),
       progreso: serializer.fromJson<double>(json['progreso']),
     );
   }
@@ -4418,14 +4418,14 @@ class ModulosHasUsuario extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'moduloId': serializer.toJson<int>(moduloId),
-      'usuarioId': serializer.toJson<int>(usuarioId),
+      'usuarioId': serializer.toJson<String>(usuarioId),
       'progreso': serializer.toJson<double>(progreso),
     };
   }
 
   ModulosHasUsuario copyWith({
     int? moduloId,
-    int? usuarioId,
+    String? usuarioId,
     double? progreso,
   }) => ModulosHasUsuario(
     moduloId: moduloId ?? this.moduloId,
@@ -4463,7 +4463,7 @@ class ModulosHasUsuario extends DataClass
 
 class ModulosHasUsuariosCompanion extends UpdateCompanion<ModulosHasUsuario> {
   final Value<int> moduloId;
-  final Value<int> usuarioId;
+  final Value<String> usuarioId;
   final Value<double> progreso;
   final Value<int> rowid;
   const ModulosHasUsuariosCompanion({
@@ -4474,7 +4474,7 @@ class ModulosHasUsuariosCompanion extends UpdateCompanion<ModulosHasUsuario> {
   });
   ModulosHasUsuariosCompanion.insert({
     required int moduloId,
-    required int usuarioId,
+    required String usuarioId,
     required double progreso,
     this.rowid = const Value.absent(),
   }) : moduloId = Value(moduloId),
@@ -4482,7 +4482,7 @@ class ModulosHasUsuariosCompanion extends UpdateCompanion<ModulosHasUsuario> {
        progreso = Value(progreso);
   static Insertable<ModulosHasUsuario> custom({
     Expression<int>? moduloId,
-    Expression<int>? usuarioId,
+    Expression<String>? usuarioId,
     Expression<double>? progreso,
     Expression<int>? rowid,
   }) {
@@ -4496,7 +4496,7 @@ class ModulosHasUsuariosCompanion extends UpdateCompanion<ModulosHasUsuario> {
 
   ModulosHasUsuariosCompanion copyWith({
     Value<int>? moduloId,
-    Value<int>? usuarioId,
+    Value<String>? usuarioId,
     Value<double>? progreso,
     Value<int>? rowid,
   }) {
@@ -4515,7 +4515,7 @@ class ModulosHasUsuariosCompanion extends UpdateCompanion<ModulosHasUsuario> {
       map['modulo_id'] = Variable<int>(moduloId.value);
     }
     if (usuarioId.present) {
-      map['usuario_id'] = Variable<int>(usuarioId.value);
+      map['usuario_id'] = Variable<String>(usuarioId.value);
     }
     if (progreso.present) {
       map['progreso'] = Variable<double>(progreso.value);
@@ -4548,11 +4548,11 @@ class $UsuariosHasMedallasTable extends UsuariosHasMedallas
     'usuarioId',
   );
   @override
-  late final GeneratedColumn<int> usuarioId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> usuarioId = GeneratedColumn<String>(
     'usuario_id',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES usuarios (id)',
@@ -4612,7 +4612,7 @@ class $UsuariosHasMedallasTable extends UsuariosHasMedallas
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return UsuariosHasMedalla(
       usuarioId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}usuario_id'],
       )!,
       medallaId: attachedDatabase.typeMapping.read(
@@ -4630,13 +4630,13 @@ class $UsuariosHasMedallasTable extends UsuariosHasMedallas
 
 class UsuariosHasMedalla extends DataClass
     implements Insertable<UsuariosHasMedalla> {
-  final int usuarioId;
+  final String usuarioId;
   final int medallaId;
   const UsuariosHasMedalla({required this.usuarioId, required this.medallaId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['usuario_id'] = Variable<int>(usuarioId);
+    map['usuario_id'] = Variable<String>(usuarioId);
     map['medalla_id'] = Variable<int>(medallaId);
     return map;
   }
@@ -4654,7 +4654,7 @@ class UsuariosHasMedalla extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UsuariosHasMedalla(
-      usuarioId: serializer.fromJson<int>(json['usuarioId']),
+      usuarioId: serializer.fromJson<String>(json['usuarioId']),
       medallaId: serializer.fromJson<int>(json['medallaId']),
     );
   }
@@ -4662,12 +4662,12 @@ class UsuariosHasMedalla extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'usuarioId': serializer.toJson<int>(usuarioId),
+      'usuarioId': serializer.toJson<String>(usuarioId),
       'medallaId': serializer.toJson<int>(medallaId),
     };
   }
 
-  UsuariosHasMedalla copyWith({int? usuarioId, int? medallaId}) =>
+  UsuariosHasMedalla copyWith({String? usuarioId, int? medallaId}) =>
       UsuariosHasMedalla(
         usuarioId: usuarioId ?? this.usuarioId,
         medallaId: medallaId ?? this.medallaId,
@@ -4699,7 +4699,7 @@ class UsuariosHasMedalla extends DataClass
 }
 
 class UsuariosHasMedallasCompanion extends UpdateCompanion<UsuariosHasMedalla> {
-  final Value<int> usuarioId;
+  final Value<String> usuarioId;
   final Value<int> medallaId;
   final Value<int> rowid;
   const UsuariosHasMedallasCompanion({
@@ -4708,13 +4708,13 @@ class UsuariosHasMedallasCompanion extends UpdateCompanion<UsuariosHasMedalla> {
     this.rowid = const Value.absent(),
   });
   UsuariosHasMedallasCompanion.insert({
-    required int usuarioId,
+    required String usuarioId,
     required int medallaId,
     this.rowid = const Value.absent(),
   }) : usuarioId = Value(usuarioId),
        medallaId = Value(medallaId);
   static Insertable<UsuariosHasMedalla> custom({
-    Expression<int>? usuarioId,
+    Expression<String>? usuarioId,
     Expression<int>? medallaId,
     Expression<int>? rowid,
   }) {
@@ -4726,7 +4726,7 @@ class UsuariosHasMedallasCompanion extends UpdateCompanion<UsuariosHasMedalla> {
   }
 
   UsuariosHasMedallasCompanion copyWith({
-    Value<int>? usuarioId,
+    Value<String>? usuarioId,
     Value<int>? medallaId,
     Value<int>? rowid,
   }) {
@@ -4741,7 +4741,7 @@ class UsuariosHasMedallasCompanion extends UpdateCompanion<UsuariosHasMedalla> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (usuarioId.present) {
-      map['usuario_id'] = Variable<int>(usuarioId.value);
+      map['usuario_id'] = Variable<String>(usuarioId.value);
     }
     if (medallaId.present) {
       map['medalla_id'] = Variable<int>(medallaId.value);
@@ -5373,6 +5373,160 @@ final class $$UsuariosTableReferences
       manager.$state.copyWith(prefetchedData: [item]),
     );
   }
+
+  static MultiTypedResultKey<$UsuariosHasNumerosTable, List<UsuariosHasNumero>>
+  _usuariosHasNumerosRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.usuariosHasNumeros,
+        aliasName: $_aliasNameGenerator(
+          db.usuarios.id,
+          db.usuariosHasNumeros.usuarioId,
+        ),
+      );
+
+  $$UsuariosHasNumerosTableProcessedTableManager get usuariosHasNumerosRefs {
+    final manager = $$UsuariosHasNumerosTableTableManager(
+      $_db,
+      $_db.usuariosHasNumeros,
+    ).filter((f) => f.usuarioId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _usuariosHasNumerosRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$UsuariosHasFonemasTable, List<UsuariosHasFonema>>
+  _usuariosHasFonemasRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.usuariosHasFonemas,
+        aliasName: $_aliasNameGenerator(
+          db.usuarios.id,
+          db.usuariosHasFonemas.usuarioId,
+        ),
+      );
+
+  $$UsuariosHasFonemasTableProcessedTableManager get usuariosHasFonemasRefs {
+    final manager = $$UsuariosHasFonemasTableTableManager(
+      $_db,
+      $_db.usuariosHasFonemas,
+    ).filter((f) => f.usuarioId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _usuariosHasFonemasRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $UsuariosHasPalabrasTable,
+    List<UsuariosHasPalabra>
+  >
+  _usuariosHasPalabrasRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.usuariosHasPalabras,
+        aliasName: $_aliasNameGenerator(
+          db.usuarios.id,
+          db.usuariosHasPalabras.usuarioId,
+        ),
+      );
+
+  $$UsuariosHasPalabrasTableProcessedTableManager get usuariosHasPalabrasRefs {
+    final manager = $$UsuariosHasPalabrasTableTableManager(
+      $_db,
+      $_db.usuariosHasPalabras,
+    ).filter((f) => f.usuarioId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _usuariosHasPalabrasRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $UsuariosHasActividadesTable,
+    List<UsuariosHasActividade>
+  >
+  _usuariosHasActividadesRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.usuariosHasActividades,
+        aliasName: $_aliasNameGenerator(
+          db.usuarios.id,
+          db.usuariosHasActividades.usuarioId,
+        ),
+      );
+
+  $$UsuariosHasActividadesTableProcessedTableManager
+  get usuariosHasActividadesRefs {
+    final manager = $$UsuariosHasActividadesTableTableManager(
+      $_db,
+      $_db.usuariosHasActividades,
+    ).filter((f) => f.usuarioId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _usuariosHasActividadesRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ModulosHasUsuariosTable, List<ModulosHasUsuario>>
+  _modulosHasUsuariosRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.modulosHasUsuarios,
+        aliasName: $_aliasNameGenerator(
+          db.usuarios.id,
+          db.modulosHasUsuarios.usuarioId,
+        ),
+      );
+
+  $$ModulosHasUsuariosTableProcessedTableManager get modulosHasUsuariosRefs {
+    final manager = $$ModulosHasUsuariosTableTableManager(
+      $_db,
+      $_db.modulosHasUsuarios,
+    ).filter((f) => f.usuarioId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _modulosHasUsuariosRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $UsuariosHasMedallasTable,
+    List<UsuariosHasMedalla>
+  >
+  _usuariosHasMedallasRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.usuariosHasMedallas,
+        aliasName: $_aliasNameGenerator(
+          db.usuarios.id,
+          db.usuariosHasMedallas.usuarioId,
+        ),
+      );
+
+  $$UsuariosHasMedallasTableProcessedTableManager get usuariosHasMedallasRefs {
+    final manager = $$UsuariosHasMedallasTableTableManager(
+      $_db,
+      $_db.usuariosHasMedallas,
+    ).filter((f) => f.usuarioId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _usuariosHasMedallasRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$UsuariosTableFilterComposer
@@ -5425,6 +5579,157 @@ class $$UsuariosTableFilterComposer
           ),
     );
     return composer;
+  }
+
+  Expression<bool> usuariosHasNumerosRefs(
+    Expression<bool> Function($$UsuariosHasNumerosTableFilterComposer f) f,
+  ) {
+    final $$UsuariosHasNumerosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.usuariosHasNumeros,
+      getReferencedColumn: (t) => t.usuarioId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosHasNumerosTableFilterComposer(
+            $db: $db,
+            $table: $db.usuariosHasNumeros,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> usuariosHasFonemasRefs(
+    Expression<bool> Function($$UsuariosHasFonemasTableFilterComposer f) f,
+  ) {
+    final $$UsuariosHasFonemasTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.usuariosHasFonemas,
+      getReferencedColumn: (t) => t.usuarioId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosHasFonemasTableFilterComposer(
+            $db: $db,
+            $table: $db.usuariosHasFonemas,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> usuariosHasPalabrasRefs(
+    Expression<bool> Function($$UsuariosHasPalabrasTableFilterComposer f) f,
+  ) {
+    final $$UsuariosHasPalabrasTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.usuariosHasPalabras,
+      getReferencedColumn: (t) => t.usuarioId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosHasPalabrasTableFilterComposer(
+            $db: $db,
+            $table: $db.usuariosHasPalabras,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> usuariosHasActividadesRefs(
+    Expression<bool> Function($$UsuariosHasActividadesTableFilterComposer f) f,
+  ) {
+    final $$UsuariosHasActividadesTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.usuariosHasActividades,
+          getReferencedColumn: (t) => t.usuarioId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$UsuariosHasActividadesTableFilterComposer(
+                $db: $db,
+                $table: $db.usuariosHasActividades,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<bool> modulosHasUsuariosRefs(
+    Expression<bool> Function($$ModulosHasUsuariosTableFilterComposer f) f,
+  ) {
+    final $$ModulosHasUsuariosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.modulosHasUsuarios,
+      getReferencedColumn: (t) => t.usuarioId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ModulosHasUsuariosTableFilterComposer(
+            $db: $db,
+            $table: $db.modulosHasUsuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> usuariosHasMedallasRefs(
+    Expression<bool> Function($$UsuariosHasMedallasTableFilterComposer f) f,
+  ) {
+    final $$UsuariosHasMedallasTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.usuariosHasMedallas,
+      getReferencedColumn: (t) => t.usuarioId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosHasMedallasTableFilterComposer(
+            $db: $db,
+            $table: $db.usuariosHasMedallas,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
   }
 }
 
@@ -5524,6 +5829,162 @@ class $$UsuariosTableAnnotationComposer
     );
     return composer;
   }
+
+  Expression<T> usuariosHasNumerosRefs<T extends Object>(
+    Expression<T> Function($$UsuariosHasNumerosTableAnnotationComposer a) f,
+  ) {
+    final $$UsuariosHasNumerosTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.usuariosHasNumeros,
+          getReferencedColumn: (t) => t.usuarioId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$UsuariosHasNumerosTableAnnotationComposer(
+                $db: $db,
+                $table: $db.usuariosHasNumeros,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> usuariosHasFonemasRefs<T extends Object>(
+    Expression<T> Function($$UsuariosHasFonemasTableAnnotationComposer a) f,
+  ) {
+    final $$UsuariosHasFonemasTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.usuariosHasFonemas,
+          getReferencedColumn: (t) => t.usuarioId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$UsuariosHasFonemasTableAnnotationComposer(
+                $db: $db,
+                $table: $db.usuariosHasFonemas,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> usuariosHasPalabrasRefs<T extends Object>(
+    Expression<T> Function($$UsuariosHasPalabrasTableAnnotationComposer a) f,
+  ) {
+    final $$UsuariosHasPalabrasTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.usuariosHasPalabras,
+          getReferencedColumn: (t) => t.usuarioId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$UsuariosHasPalabrasTableAnnotationComposer(
+                $db: $db,
+                $table: $db.usuariosHasPalabras,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> usuariosHasActividadesRefs<T extends Object>(
+    Expression<T> Function($$UsuariosHasActividadesTableAnnotationComposer a) f,
+  ) {
+    final $$UsuariosHasActividadesTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.usuariosHasActividades,
+          getReferencedColumn: (t) => t.usuarioId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$UsuariosHasActividadesTableAnnotationComposer(
+                $db: $db,
+                $table: $db.usuariosHasActividades,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> modulosHasUsuariosRefs<T extends Object>(
+    Expression<T> Function($$ModulosHasUsuariosTableAnnotationComposer a) f,
+  ) {
+    final $$ModulosHasUsuariosTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.modulosHasUsuarios,
+          getReferencedColumn: (t) => t.usuarioId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ModulosHasUsuariosTableAnnotationComposer(
+                $db: $db,
+                $table: $db.modulosHasUsuarios,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> usuariosHasMedallasRefs<T extends Object>(
+    Expression<T> Function($$UsuariosHasMedallasTableAnnotationComposer a) f,
+  ) {
+    final $$UsuariosHasMedallasTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.usuariosHasMedallas,
+          getReferencedColumn: (t) => t.usuarioId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$UsuariosHasMedallasTableAnnotationComposer(
+                $db: $db,
+                $table: $db.usuariosHasMedallas,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$UsuariosTableTableManager
@@ -5539,7 +6000,15 @@ class $$UsuariosTableTableManager
           $$UsuariosTableUpdateCompanionBuilder,
           (Usuario, $$UsuariosTableReferences),
           Usuario,
-          PrefetchHooks Function({bool tutorId})
+          PrefetchHooks Function({
+            bool tutorId,
+            bool usuariosHasNumerosRefs,
+            bool usuariosHasFonemasRefs,
+            bool usuariosHasPalabrasRefs,
+            bool usuariosHasActividadesRefs,
+            bool modulosHasUsuariosRefs,
+            bool usuariosHasMedallasRefs,
+          })
         > {
   $$UsuariosTableTableManager(_$AppDatabase db, $UsuariosTable table)
     : super(
@@ -5592,47 +6061,190 @@ class $$UsuariosTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({tutorId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (tutorId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.tutorId,
-                                referencedTable: $$UsuariosTableReferences
-                                    ._tutorIdTable(db),
-                                referencedColumn: $$UsuariosTableReferences
-                                    ._tutorIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
+          prefetchHooksCallback:
+              ({
+                tutorId = false,
+                usuariosHasNumerosRefs = false,
+                usuariosHasFonemasRefs = false,
+                usuariosHasPalabrasRefs = false,
+                usuariosHasActividadesRefs = false,
+                modulosHasUsuariosRefs = false,
+                usuariosHasMedallasRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (usuariosHasNumerosRefs) db.usuariosHasNumeros,
+                    if (usuariosHasFonemasRefs) db.usuariosHasFonemas,
+                    if (usuariosHasPalabrasRefs) db.usuariosHasPalabras,
+                    if (usuariosHasActividadesRefs) db.usuariosHasActividades,
+                    if (modulosHasUsuariosRefs) db.modulosHasUsuarios,
+                    if (usuariosHasMedallasRefs) db.usuariosHasMedallas,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (tutorId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.tutorId,
+                                    referencedTable: $$UsuariosTableReferences
+                                        ._tutorIdTable(db),
+                                    referencedColumn: $$UsuariosTableReferences
+                                        ._tutorIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (usuariosHasNumerosRefs)
+                        await $_getPrefetchedData<
+                          Usuario,
+                          $UsuariosTable,
+                          UsuariosHasNumero
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UsuariosTableReferences
+                              ._usuariosHasNumerosRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$UsuariosTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).usuariosHasNumerosRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.usuarioId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (usuariosHasFonemasRefs)
+                        await $_getPrefetchedData<
+                          Usuario,
+                          $UsuariosTable,
+                          UsuariosHasFonema
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UsuariosTableReferences
+                              ._usuariosHasFonemasRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$UsuariosTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).usuariosHasFonemasRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.usuarioId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (usuariosHasPalabrasRefs)
+                        await $_getPrefetchedData<
+                          Usuario,
+                          $UsuariosTable,
+                          UsuariosHasPalabra
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UsuariosTableReferences
+                              ._usuariosHasPalabrasRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$UsuariosTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).usuariosHasPalabrasRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.usuarioId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (usuariosHasActividadesRefs)
+                        await $_getPrefetchedData<
+                          Usuario,
+                          $UsuariosTable,
+                          UsuariosHasActividade
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UsuariosTableReferences
+                              ._usuariosHasActividadesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$UsuariosTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).usuariosHasActividadesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.usuarioId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (modulosHasUsuariosRefs)
+                        await $_getPrefetchedData<
+                          Usuario,
+                          $UsuariosTable,
+                          ModulosHasUsuario
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UsuariosTableReferences
+                              ._modulosHasUsuariosRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$UsuariosTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).modulosHasUsuariosRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.usuarioId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (usuariosHasMedallasRefs)
+                        await $_getPrefetchedData<
+                          Usuario,
+                          $UsuariosTable,
+                          UsuariosHasMedalla
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UsuariosTableReferences
+                              ._usuariosHasMedallasRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$UsuariosTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).usuariosHasMedallasRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.usuarioId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -5649,7 +6261,15 @@ typedef $$UsuariosTableProcessedTableManager =
       $$UsuariosTableUpdateCompanionBuilder,
       (Usuario, $$UsuariosTableReferences),
       Usuario,
-      PrefetchHooks Function({bool tutorId})
+      PrefetchHooks Function({
+        bool tutorId,
+        bool usuariosHasNumerosRefs,
+        bool usuariosHasFonemasRefs,
+        bool usuariosHasPalabrasRefs,
+        bool usuariosHasActividadesRefs,
+        bool modulosHasUsuariosRefs,
+        bool usuariosHasMedallasRefs,
+      })
     >;
 typedef $$ConfiguracionesTableCreateCompanionBuilder =
     ConfiguracionesCompanion Function({
@@ -8042,7 +8662,7 @@ typedef $$MedallasTableProcessedTableManager =
     >;
 typedef $$UsuariosHasNumerosTableCreateCompanionBuilder =
     UsuariosHasNumerosCompanion Function({
-      required int usuarioId,
+      required String usuarioId,
       required int numeroId,
       required int aciertos,
       required int total,
@@ -8050,7 +8670,7 @@ typedef $$UsuariosHasNumerosTableCreateCompanionBuilder =
     });
 typedef $$UsuariosHasNumerosTableUpdateCompanionBuilder =
     UsuariosHasNumerosCompanion Function({
-      Value<int> usuarioId,
+      Value<String> usuarioId,
       Value<int> numeroId,
       Value<int> aciertos,
       Value<int> total,
@@ -8069,6 +8689,25 @@ final class $$UsuariosHasNumerosTableReferences
     super.$_table,
     super.$_typedResult,
   );
+
+  static $UsuariosTable _usuarioIdTable(_$AppDatabase db) =>
+      db.usuarios.createAlias(
+        $_aliasNameGenerator(db.usuariosHasNumeros.usuarioId, db.usuarios.id),
+      );
+
+  $$UsuariosTableProcessedTableManager get usuarioId {
+    final $_column = $_itemColumn<String>('usuario_id')!;
+
+    final manager = $$UsuariosTableTableManager(
+      $_db,
+      $_db.usuarios,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_usuarioIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static $NumerosTable _numeroIdTable(_$AppDatabase db) =>
       db.numeros.createAlias(
@@ -8108,6 +8747,29 @@ class $$UsuariosHasNumerosTableFilterComposer
     column: $table.total,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$UsuariosTableFilterComposer get usuarioId {
+    final $$UsuariosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableFilterComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   $$NumerosTableFilterComposer get numeroId {
     final $$NumerosTableFilterComposer composer = $composerBuilder(
@@ -8152,6 +8814,29 @@ class $$UsuariosHasNumerosTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  $$UsuariosTableOrderingComposer get usuarioId {
+    final $$UsuariosTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableOrderingComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$NumerosTableOrderingComposer get numeroId {
     final $$NumerosTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -8191,6 +8876,29 @@ class $$UsuariosHasNumerosTableAnnotationComposer
   GeneratedColumn<int> get total =>
       $composableBuilder(column: $table.total, builder: (column) => column);
 
+  $$UsuariosTableAnnotationComposer get usuarioId {
+    final $$UsuariosTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableAnnotationComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$NumerosTableAnnotationComposer get numeroId {
     final $$NumerosTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -8228,7 +8936,7 @@ class $$UsuariosHasNumerosTableTableManager
           $$UsuariosHasNumerosTableUpdateCompanionBuilder,
           (UsuariosHasNumero, $$UsuariosHasNumerosTableReferences),
           UsuariosHasNumero,
-          PrefetchHooks Function({bool numeroId})
+          PrefetchHooks Function({bool usuarioId, bool numeroId})
         > {
   $$UsuariosHasNumerosTableTableManager(
     _$AppDatabase db,
@@ -8248,7 +8956,7 @@ class $$UsuariosHasNumerosTableTableManager
               ),
           updateCompanionCallback:
               ({
-                Value<int> usuarioId = const Value.absent(),
+                Value<String> usuarioId = const Value.absent(),
                 Value<int> numeroId = const Value.absent(),
                 Value<int> aciertos = const Value.absent(),
                 Value<int> total = const Value.absent(),
@@ -8262,7 +8970,7 @@ class $$UsuariosHasNumerosTableTableManager
               ),
           createCompanionCallback:
               ({
-                required int usuarioId,
+                required String usuarioId,
                 required int numeroId,
                 required int aciertos,
                 required int total,
@@ -8282,7 +8990,7 @@ class $$UsuariosHasNumerosTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({numeroId = false}) {
+          prefetchHooksCallback: ({usuarioId = false, numeroId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -8302,6 +9010,21 @@ class $$UsuariosHasNumerosTableTableManager
                       dynamic
                     >
                   >(state) {
+                    if (usuarioId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.usuarioId,
+                                referencedTable:
+                                    $$UsuariosHasNumerosTableReferences
+                                        ._usuarioIdTable(db),
+                                referencedColumn:
+                                    $$UsuariosHasNumerosTableReferences
+                                        ._usuarioIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
                     if (numeroId) {
                       state =
                           state.withJoin(
@@ -8341,11 +9064,11 @@ typedef $$UsuariosHasNumerosTableProcessedTableManager =
       $$UsuariosHasNumerosTableUpdateCompanionBuilder,
       (UsuariosHasNumero, $$UsuariosHasNumerosTableReferences),
       UsuariosHasNumero,
-      PrefetchHooks Function({bool numeroId})
+      PrefetchHooks Function({bool usuarioId, bool numeroId})
     >;
 typedef $$UsuariosHasFonemasTableCreateCompanionBuilder =
     UsuariosHasFonemasCompanion Function({
-      required int usuarioId,
+      required String usuarioId,
       required int fonemaId,
       required int aciertos,
       required int total,
@@ -8353,7 +9076,7 @@ typedef $$UsuariosHasFonemasTableCreateCompanionBuilder =
     });
 typedef $$UsuariosHasFonemasTableUpdateCompanionBuilder =
     UsuariosHasFonemasCompanion Function({
-      Value<int> usuarioId,
+      Value<String> usuarioId,
       Value<int> fonemaId,
       Value<int> aciertos,
       Value<int> total,
@@ -8372,6 +9095,25 @@ final class $$UsuariosHasFonemasTableReferences
     super.$_table,
     super.$_typedResult,
   );
+
+  static $UsuariosTable _usuarioIdTable(_$AppDatabase db) =>
+      db.usuarios.createAlias(
+        $_aliasNameGenerator(db.usuariosHasFonemas.usuarioId, db.usuarios.id),
+      );
+
+  $$UsuariosTableProcessedTableManager get usuarioId {
+    final $_column = $_itemColumn<String>('usuario_id')!;
+
+    final manager = $$UsuariosTableTableManager(
+      $_db,
+      $_db.usuarios,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_usuarioIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static $FonemasTable _fonemaIdTable(_$AppDatabase db) =>
       db.fonemas.createAlias(
@@ -8411,6 +9153,29 @@ class $$UsuariosHasFonemasTableFilterComposer
     column: $table.total,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$UsuariosTableFilterComposer get usuarioId {
+    final $$UsuariosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableFilterComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   $$FonemasTableFilterComposer get fonemaId {
     final $$FonemasTableFilterComposer composer = $composerBuilder(
@@ -8455,6 +9220,29 @@ class $$UsuariosHasFonemasTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  $$UsuariosTableOrderingComposer get usuarioId {
+    final $$UsuariosTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableOrderingComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$FonemasTableOrderingComposer get fonemaId {
     final $$FonemasTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -8494,6 +9282,29 @@ class $$UsuariosHasFonemasTableAnnotationComposer
   GeneratedColumn<int> get total =>
       $composableBuilder(column: $table.total, builder: (column) => column);
 
+  $$UsuariosTableAnnotationComposer get usuarioId {
+    final $$UsuariosTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableAnnotationComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$FonemasTableAnnotationComposer get fonemaId {
     final $$FonemasTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -8531,7 +9342,7 @@ class $$UsuariosHasFonemasTableTableManager
           $$UsuariosHasFonemasTableUpdateCompanionBuilder,
           (UsuariosHasFonema, $$UsuariosHasFonemasTableReferences),
           UsuariosHasFonema,
-          PrefetchHooks Function({bool fonemaId})
+          PrefetchHooks Function({bool usuarioId, bool fonemaId})
         > {
   $$UsuariosHasFonemasTableTableManager(
     _$AppDatabase db,
@@ -8551,7 +9362,7 @@ class $$UsuariosHasFonemasTableTableManager
               ),
           updateCompanionCallback:
               ({
-                Value<int> usuarioId = const Value.absent(),
+                Value<String> usuarioId = const Value.absent(),
                 Value<int> fonemaId = const Value.absent(),
                 Value<int> aciertos = const Value.absent(),
                 Value<int> total = const Value.absent(),
@@ -8565,7 +9376,7 @@ class $$UsuariosHasFonemasTableTableManager
               ),
           createCompanionCallback:
               ({
-                required int usuarioId,
+                required String usuarioId,
                 required int fonemaId,
                 required int aciertos,
                 required int total,
@@ -8585,7 +9396,7 @@ class $$UsuariosHasFonemasTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({fonemaId = false}) {
+          prefetchHooksCallback: ({usuarioId = false, fonemaId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -8605,6 +9416,21 @@ class $$UsuariosHasFonemasTableTableManager
                       dynamic
                     >
                   >(state) {
+                    if (usuarioId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.usuarioId,
+                                referencedTable:
+                                    $$UsuariosHasFonemasTableReferences
+                                        ._usuarioIdTable(db),
+                                referencedColumn:
+                                    $$UsuariosHasFonemasTableReferences
+                                        ._usuarioIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
                     if (fonemaId) {
                       state =
                           state.withJoin(
@@ -8644,11 +9470,11 @@ typedef $$UsuariosHasFonemasTableProcessedTableManager =
       $$UsuariosHasFonemasTableUpdateCompanionBuilder,
       (UsuariosHasFonema, $$UsuariosHasFonemasTableReferences),
       UsuariosHasFonema,
-      PrefetchHooks Function({bool fonemaId})
+      PrefetchHooks Function({bool usuarioId, bool fonemaId})
     >;
 typedef $$UsuariosHasPalabrasTableCreateCompanionBuilder =
     UsuariosHasPalabrasCompanion Function({
-      required int usuarioId,
+      required String usuarioId,
       required int palabraId,
       required int aciertos,
       required int total,
@@ -8656,7 +9482,7 @@ typedef $$UsuariosHasPalabrasTableCreateCompanionBuilder =
     });
 typedef $$UsuariosHasPalabrasTableUpdateCompanionBuilder =
     UsuariosHasPalabrasCompanion Function({
-      Value<int> usuarioId,
+      Value<String> usuarioId,
       Value<int> palabraId,
       Value<int> aciertos,
       Value<int> total,
@@ -8675,6 +9501,25 @@ final class $$UsuariosHasPalabrasTableReferences
     super.$_table,
     super.$_typedResult,
   );
+
+  static $UsuariosTable _usuarioIdTable(_$AppDatabase db) =>
+      db.usuarios.createAlias(
+        $_aliasNameGenerator(db.usuariosHasPalabras.usuarioId, db.usuarios.id),
+      );
+
+  $$UsuariosTableProcessedTableManager get usuarioId {
+    final $_column = $_itemColumn<String>('usuario_id')!;
+
+    final manager = $$UsuariosTableTableManager(
+      $_db,
+      $_db.usuarios,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_usuarioIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static $PalabrasTable _palabraIdTable(_$AppDatabase db) =>
       db.palabras.createAlias(
@@ -8714,6 +9559,29 @@ class $$UsuariosHasPalabrasTableFilterComposer
     column: $table.total,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$UsuariosTableFilterComposer get usuarioId {
+    final $$UsuariosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableFilterComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   $$PalabrasTableFilterComposer get palabraId {
     final $$PalabrasTableFilterComposer composer = $composerBuilder(
@@ -8758,6 +9626,29 @@ class $$UsuariosHasPalabrasTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  $$UsuariosTableOrderingComposer get usuarioId {
+    final $$UsuariosTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableOrderingComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$PalabrasTableOrderingComposer get palabraId {
     final $$PalabrasTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -8797,6 +9688,29 @@ class $$UsuariosHasPalabrasTableAnnotationComposer
   GeneratedColumn<int> get total =>
       $composableBuilder(column: $table.total, builder: (column) => column);
 
+  $$UsuariosTableAnnotationComposer get usuarioId {
+    final $$UsuariosTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableAnnotationComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$PalabrasTableAnnotationComposer get palabraId {
     final $$PalabrasTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -8834,7 +9748,7 @@ class $$UsuariosHasPalabrasTableTableManager
           $$UsuariosHasPalabrasTableUpdateCompanionBuilder,
           (UsuariosHasPalabra, $$UsuariosHasPalabrasTableReferences),
           UsuariosHasPalabra,
-          PrefetchHooks Function({bool palabraId})
+          PrefetchHooks Function({bool usuarioId, bool palabraId})
         > {
   $$UsuariosHasPalabrasTableTableManager(
     _$AppDatabase db,
@@ -8857,7 +9771,7 @@ class $$UsuariosHasPalabrasTableTableManager
               ),
           updateCompanionCallback:
               ({
-                Value<int> usuarioId = const Value.absent(),
+                Value<String> usuarioId = const Value.absent(),
                 Value<int> palabraId = const Value.absent(),
                 Value<int> aciertos = const Value.absent(),
                 Value<int> total = const Value.absent(),
@@ -8871,7 +9785,7 @@ class $$UsuariosHasPalabrasTableTableManager
               ),
           createCompanionCallback:
               ({
-                required int usuarioId,
+                required String usuarioId,
                 required int palabraId,
                 required int aciertos,
                 required int total,
@@ -8891,7 +9805,7 @@ class $$UsuariosHasPalabrasTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({palabraId = false}) {
+          prefetchHooksCallback: ({usuarioId = false, palabraId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -8911,6 +9825,21 @@ class $$UsuariosHasPalabrasTableTableManager
                       dynamic
                     >
                   >(state) {
+                    if (usuarioId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.usuarioId,
+                                referencedTable:
+                                    $$UsuariosHasPalabrasTableReferences
+                                        ._usuarioIdTable(db),
+                                referencedColumn:
+                                    $$UsuariosHasPalabrasTableReferences
+                                        ._usuarioIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
                     if (palabraId) {
                       state =
                           state.withJoin(
@@ -8950,7 +9879,7 @@ typedef $$UsuariosHasPalabrasTableProcessedTableManager =
       $$UsuariosHasPalabrasTableUpdateCompanionBuilder,
       (UsuariosHasPalabra, $$UsuariosHasPalabrasTableReferences),
       UsuariosHasPalabra,
-      PrefetchHooks Function({bool palabraId})
+      PrefetchHooks Function({bool usuarioId, bool palabraId})
     >;
 typedef $$ActividadesHasModulosTableCreateCompanionBuilder =
     ActividadesHasModulosCompanion Function({
@@ -9331,7 +10260,7 @@ typedef $$ActividadesHasModulosTableProcessedTableManager =
     >;
 typedef $$UsuariosHasActividadesTableCreateCompanionBuilder =
     UsuariosHasActividadesCompanion Function({
-      required int usuarioId,
+      required String usuarioId,
       required int actividadId,
       required int aciertos,
       Value<int?> total,
@@ -9339,7 +10268,7 @@ typedef $$UsuariosHasActividadesTableCreateCompanionBuilder =
     });
 typedef $$UsuariosHasActividadesTableUpdateCompanionBuilder =
     UsuariosHasActividadesCompanion Function({
-      Value<int> usuarioId,
+      Value<String> usuarioId,
       Value<int> actividadId,
       Value<int> aciertos,
       Value<int?> total,
@@ -9358,6 +10287,28 @@ final class $$UsuariosHasActividadesTableReferences
     super.$_table,
     super.$_typedResult,
   );
+
+  static $UsuariosTable _usuarioIdTable(_$AppDatabase db) =>
+      db.usuarios.createAlias(
+        $_aliasNameGenerator(
+          db.usuariosHasActividades.usuarioId,
+          db.usuarios.id,
+        ),
+      );
+
+  $$UsuariosTableProcessedTableManager get usuarioId {
+    final $_column = $_itemColumn<String>('usuario_id')!;
+
+    final manager = $$UsuariosTableTableManager(
+      $_db,
+      $_db.usuarios,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_usuarioIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static $ActividadesTable _actividadIdTable(_$AppDatabase db) =>
       db.actividades.createAlias(
@@ -9400,6 +10351,29 @@ class $$UsuariosHasActividadesTableFilterComposer
     column: $table.total,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$UsuariosTableFilterComposer get usuarioId {
+    final $$UsuariosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableFilterComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   $$ActividadesTableFilterComposer get actividadId {
     final $$ActividadesTableFilterComposer composer = $composerBuilder(
@@ -9444,6 +10418,29 @@ class $$UsuariosHasActividadesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  $$UsuariosTableOrderingComposer get usuarioId {
+    final $$UsuariosTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableOrderingComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$ActividadesTableOrderingComposer get actividadId {
     final $$ActividadesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -9483,6 +10480,29 @@ class $$UsuariosHasActividadesTableAnnotationComposer
   GeneratedColumn<int> get total =>
       $composableBuilder(column: $table.total, builder: (column) => column);
 
+  $$UsuariosTableAnnotationComposer get usuarioId {
+    final $$UsuariosTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableAnnotationComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$ActividadesTableAnnotationComposer get actividadId {
     final $$ActividadesTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -9520,7 +10540,7 @@ class $$UsuariosHasActividadesTableTableManager
           $$UsuariosHasActividadesTableUpdateCompanionBuilder,
           (UsuariosHasActividade, $$UsuariosHasActividadesTableReferences),
           UsuariosHasActividade,
-          PrefetchHooks Function({bool actividadId})
+          PrefetchHooks Function({bool usuarioId, bool actividadId})
         > {
   $$UsuariosHasActividadesTableTableManager(
     _$AppDatabase db,
@@ -9546,7 +10566,7 @@ class $$UsuariosHasActividadesTableTableManager
               ),
           updateCompanionCallback:
               ({
-                Value<int> usuarioId = const Value.absent(),
+                Value<String> usuarioId = const Value.absent(),
                 Value<int> actividadId = const Value.absent(),
                 Value<int> aciertos = const Value.absent(),
                 Value<int?> total = const Value.absent(),
@@ -9560,7 +10580,7 @@ class $$UsuariosHasActividadesTableTableManager
               ),
           createCompanionCallback:
               ({
-                required int usuarioId,
+                required String usuarioId,
                 required int actividadId,
                 required int aciertos,
                 Value<int?> total = const Value.absent(),
@@ -9580,7 +10600,7 @@ class $$UsuariosHasActividadesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({actividadId = false}) {
+          prefetchHooksCallback: ({usuarioId = false, actividadId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -9600,6 +10620,21 @@ class $$UsuariosHasActividadesTableTableManager
                       dynamic
                     >
                   >(state) {
+                    if (usuarioId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.usuarioId,
+                                referencedTable:
+                                    $$UsuariosHasActividadesTableReferences
+                                        ._usuarioIdTable(db),
+                                referencedColumn:
+                                    $$UsuariosHasActividadesTableReferences
+                                        ._usuarioIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
                     if (actividadId) {
                       state =
                           state.withJoin(
@@ -9639,19 +10674,19 @@ typedef $$UsuariosHasActividadesTableProcessedTableManager =
       $$UsuariosHasActividadesTableUpdateCompanionBuilder,
       (UsuariosHasActividade, $$UsuariosHasActividadesTableReferences),
       UsuariosHasActividade,
-      PrefetchHooks Function({bool actividadId})
+      PrefetchHooks Function({bool usuarioId, bool actividadId})
     >;
 typedef $$ModulosHasUsuariosTableCreateCompanionBuilder =
     ModulosHasUsuariosCompanion Function({
       required int moduloId,
-      required int usuarioId,
+      required String usuarioId,
       required double progreso,
       Value<int> rowid,
     });
 typedef $$ModulosHasUsuariosTableUpdateCompanionBuilder =
     ModulosHasUsuariosCompanion Function({
       Value<int> moduloId,
-      Value<int> usuarioId,
+      Value<String> usuarioId,
       Value<double> progreso,
       Value<int> rowid,
     });
@@ -9687,6 +10722,25 @@ final class $$ModulosHasUsuariosTableReferences
       manager.$state.copyWith(prefetchedData: [item]),
     );
   }
+
+  static $UsuariosTable _usuarioIdTable(_$AppDatabase db) =>
+      db.usuarios.createAlias(
+        $_aliasNameGenerator(db.modulosHasUsuarios.usuarioId, db.usuarios.id),
+      );
+
+  $$UsuariosTableProcessedTableManager get usuarioId {
+    final $_column = $_itemColumn<String>('usuario_id')!;
+
+    final manager = $$UsuariosTableTableManager(
+      $_db,
+      $_db.usuarios,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_usuarioIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 }
 
 class $$ModulosHasUsuariosTableFilterComposer
@@ -9717,6 +10771,29 @@ class $$ModulosHasUsuariosTableFilterComposer
           }) => $$ModulosTableFilterComposer(
             $db: $db,
             $table: $db.modulos,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$UsuariosTableFilterComposer get usuarioId {
+    final $$UsuariosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableFilterComposer(
+            $db: $db,
+            $table: $db.usuarios,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9763,6 +10840,29 @@ class $$ModulosHasUsuariosTableOrderingComposer
     );
     return composer;
   }
+
+  $$UsuariosTableOrderingComposer get usuarioId {
+    final $$UsuariosTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableOrderingComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ModulosHasUsuariosTableAnnotationComposer
@@ -9799,6 +10899,29 @@ class $$ModulosHasUsuariosTableAnnotationComposer
     );
     return composer;
   }
+
+  $$UsuariosTableAnnotationComposer get usuarioId {
+    final $$UsuariosTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableAnnotationComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ModulosHasUsuariosTableTableManager
@@ -9814,7 +10937,7 @@ class $$ModulosHasUsuariosTableTableManager
           $$ModulosHasUsuariosTableUpdateCompanionBuilder,
           (ModulosHasUsuario, $$ModulosHasUsuariosTableReferences),
           ModulosHasUsuario,
-          PrefetchHooks Function({bool moduloId})
+          PrefetchHooks Function({bool moduloId, bool usuarioId})
         > {
   $$ModulosHasUsuariosTableTableManager(
     _$AppDatabase db,
@@ -9835,7 +10958,7 @@ class $$ModulosHasUsuariosTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> moduloId = const Value.absent(),
-                Value<int> usuarioId = const Value.absent(),
+                Value<String> usuarioId = const Value.absent(),
                 Value<double> progreso = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ModulosHasUsuariosCompanion(
@@ -9847,7 +10970,7 @@ class $$ModulosHasUsuariosTableTableManager
           createCompanionCallback:
               ({
                 required int moduloId,
-                required int usuarioId,
+                required String usuarioId,
                 required double progreso,
                 Value<int> rowid = const Value.absent(),
               }) => ModulosHasUsuariosCompanion.insert(
@@ -9864,7 +10987,7 @@ class $$ModulosHasUsuariosTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({moduloId = false}) {
+          prefetchHooksCallback: ({moduloId = false, usuarioId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -9899,6 +11022,21 @@ class $$ModulosHasUsuariosTableTableManager
                               )
                               as T;
                     }
+                    if (usuarioId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.usuarioId,
+                                referencedTable:
+                                    $$ModulosHasUsuariosTableReferences
+                                        ._usuarioIdTable(db),
+                                referencedColumn:
+                                    $$ModulosHasUsuariosTableReferences
+                                        ._usuarioIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
 
                     return state;
                   },
@@ -9923,17 +11061,17 @@ typedef $$ModulosHasUsuariosTableProcessedTableManager =
       $$ModulosHasUsuariosTableUpdateCompanionBuilder,
       (ModulosHasUsuario, $$ModulosHasUsuariosTableReferences),
       ModulosHasUsuario,
-      PrefetchHooks Function({bool moduloId})
+      PrefetchHooks Function({bool moduloId, bool usuarioId})
     >;
 typedef $$UsuariosHasMedallasTableCreateCompanionBuilder =
     UsuariosHasMedallasCompanion Function({
-      required int usuarioId,
+      required String usuarioId,
       required int medallaId,
       Value<int> rowid,
     });
 typedef $$UsuariosHasMedallasTableUpdateCompanionBuilder =
     UsuariosHasMedallasCompanion Function({
-      Value<int> usuarioId,
+      Value<String> usuarioId,
       Value<int> medallaId,
       Value<int> rowid,
     });
@@ -9950,6 +11088,25 @@ final class $$UsuariosHasMedallasTableReferences
     super.$_table,
     super.$_typedResult,
   );
+
+  static $UsuariosTable _usuarioIdTable(_$AppDatabase db) =>
+      db.usuarios.createAlias(
+        $_aliasNameGenerator(db.usuariosHasMedallas.usuarioId, db.usuarios.id),
+      );
+
+  $$UsuariosTableProcessedTableManager get usuarioId {
+    final $_column = $_itemColumn<String>('usuario_id')!;
+
+    final manager = $$UsuariosTableTableManager(
+      $_db,
+      $_db.usuarios,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_usuarioIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 
   static $MedallasTable _medallaIdTable(_$AppDatabase db) =>
       db.medallas.createAlias(
@@ -9980,6 +11137,29 @@ class $$UsuariosHasMedallasTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  $$UsuariosTableFilterComposer get usuarioId {
+    final $$UsuariosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableFilterComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$MedallasTableFilterComposer get medallaId {
     final $$MedallasTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -10013,6 +11193,29 @@ class $$UsuariosHasMedallasTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  $$UsuariosTableOrderingComposer get usuarioId {
+    final $$UsuariosTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableOrderingComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$MedallasTableOrderingComposer get medallaId {
     final $$MedallasTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -10046,6 +11249,29 @@ class $$UsuariosHasMedallasTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  $$UsuariosTableAnnotationComposer get usuarioId {
+    final $$UsuariosTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableAnnotationComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$MedallasTableAnnotationComposer get medallaId {
     final $$MedallasTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -10083,7 +11309,7 @@ class $$UsuariosHasMedallasTableTableManager
           $$UsuariosHasMedallasTableUpdateCompanionBuilder,
           (UsuariosHasMedalla, $$UsuariosHasMedallasTableReferences),
           UsuariosHasMedalla,
-          PrefetchHooks Function({bool medallaId})
+          PrefetchHooks Function({bool usuarioId, bool medallaId})
         > {
   $$UsuariosHasMedallasTableTableManager(
     _$AppDatabase db,
@@ -10106,7 +11332,7 @@ class $$UsuariosHasMedallasTableTableManager
               ),
           updateCompanionCallback:
               ({
-                Value<int> usuarioId = const Value.absent(),
+                Value<String> usuarioId = const Value.absent(),
                 Value<int> medallaId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UsuariosHasMedallasCompanion(
@@ -10116,7 +11342,7 @@ class $$UsuariosHasMedallasTableTableManager
               ),
           createCompanionCallback:
               ({
-                required int usuarioId,
+                required String usuarioId,
                 required int medallaId,
                 Value<int> rowid = const Value.absent(),
               }) => UsuariosHasMedallasCompanion.insert(
@@ -10132,7 +11358,7 @@ class $$UsuariosHasMedallasTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({medallaId = false}) {
+          prefetchHooksCallback: ({usuarioId = false, medallaId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -10152,6 +11378,21 @@ class $$UsuariosHasMedallasTableTableManager
                       dynamic
                     >
                   >(state) {
+                    if (usuarioId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.usuarioId,
+                                referencedTable:
+                                    $$UsuariosHasMedallasTableReferences
+                                        ._usuarioIdTable(db),
+                                referencedColumn:
+                                    $$UsuariosHasMedallasTableReferences
+                                        ._usuarioIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
                     if (medallaId) {
                       state =
                           state.withJoin(
@@ -10191,7 +11432,7 @@ typedef $$UsuariosHasMedallasTableProcessedTableManager =
       $$UsuariosHasMedallasTableUpdateCompanionBuilder,
       (UsuariosHasMedalla, $$UsuariosHasMedallasTableReferences),
       UsuariosHasMedalla,
-      PrefetchHooks Function({bool medallaId})
+      PrefetchHooks Function({bool usuarioId, bool medallaId})
     >;
 
 class $AppDatabaseManager {

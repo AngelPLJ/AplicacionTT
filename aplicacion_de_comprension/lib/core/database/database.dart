@@ -108,7 +108,7 @@ class Medallas extends Table {
 
 // Tabla: usuarios_has_numeros
 class UsuariosHasNumeros extends Table {
-  IntColumn get usuarioId => integer().references(Usuarios, #id)();
+  TextColumn get usuarioId => text().references(Usuarios, #id)();
   IntColumn get numeroId => integer().references(Numeros, #id)();
   IntColumn get aciertos => integer()();
   IntColumn get total => integer()();
@@ -119,7 +119,7 @@ class UsuariosHasNumeros extends Table {
 
 // Tabla: usuarios_has_fonemas
 class UsuariosHasFonemas extends Table {
-  IntColumn get usuarioId => integer().references(Usuarios, #id)();
+  TextColumn get usuarioId => text().references(Usuarios, #id)();
   IntColumn get fonemaId => integer().references(Fonemas, #id)();
   IntColumn get aciertos => integer()();
   IntColumn get total => integer()();
@@ -130,7 +130,7 @@ class UsuariosHasFonemas extends Table {
 
 // Tabla: usuarios_has_palabras
 class UsuariosHasPalabras extends Table {
-  IntColumn get usuarioId => integer().references(Usuarios, #id)();
+  TextColumn get usuarioId => text().references(Usuarios, #id)();
   IntColumn get palabraId => integer().references(Palabras, #id)();
   IntColumn get aciertos => integer()();
   IntColumn get total => integer()();
@@ -150,7 +150,7 @@ class ActividadesHasModulos extends Table {
 
 // Tabla: usuarios_has_actividades
 class UsuariosHasActividades extends Table {
-  IntColumn get usuarioId => integer().references(Usuarios, #id)();
+  TextColumn get usuarioId => text().references(Usuarios, #id)();
   IntColumn get actividadId => integer().references(Actividades, #id)();
   IntColumn get aciertos => integer()();
   IntColumn get total => integer().nullable()(); // Nullable en tu SQL
@@ -162,7 +162,7 @@ class UsuariosHasActividades extends Table {
 // Tabla: modulos_has_usuarios
 class ModulosHasUsuarios extends Table {
   IntColumn get moduloId => integer().references(Modulos, #id)();
-  IntColumn get usuarioId => integer().references(Usuarios, #id)();
+  TextColumn get usuarioId => text().references(Usuarios, #id)();
   RealColumn get progreso => real()(); 
 
   @override
@@ -171,7 +171,7 @@ class ModulosHasUsuarios extends Table {
 
 // Tabla: usuarios_has_medallas
 class UsuariosHasMedallas extends Table {
-  IntColumn get usuarioId => integer().references(Usuarios, #id)();
+  TextColumn get usuarioId => text().references(Usuarios, #id)();
   IntColumn get medallaId => integer().references(Medallas, #id)();
 
   @override

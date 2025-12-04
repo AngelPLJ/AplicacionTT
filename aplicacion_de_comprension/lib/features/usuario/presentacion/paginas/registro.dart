@@ -1,5 +1,7 @@
 // lib/features/usuario/presentacion/paginas/register_page.dart
+import 'package:aplicacion_de_comprension/features/usuario/presentacion/paginas/personajes.dart' show CharacterSelectPage;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../controladores/contautenticacion.dart';
 import '../estados/autenticacion.dart';
@@ -9,13 +11,31 @@ class Registro extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
+    ref.listen(authControllerProvider, (previous, next) {
+      if (next is AuthAuthenticated) {
+        // Navegar a la pantalla de selección de personajes después del registro exitoso
+        if(context.mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const CharacterSelectPage()),
+          );
+        }
+      }
+
+      if(next is AuthError) {
+        if(context.mounted) {
+          final snackBar = SnackBar(content: Text(next.message));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
+      }
+    });
     final authState = ref.watch(authControllerProvider);
 
     return Scaffold(
       body: switch (authState) {
         AuthLoading() => const Center(child: CircularProgressIndicator()),
         AuthError(message: final m) => _Form(errorText: m),
-        AuthAuthenticated() => const Center(child: Text('¡Cuenta creada!')),
+        AuthAuthenticated() => const Center(child: Text('¡Cuenta creada!', style: TextStyle(color: Colors.white, fontSize: 24))),
         _ => const _Form(),
       },
     );
@@ -82,6 +102,11 @@ class _FormState extends ConsumerState<_Form> {
               Padding(padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
                 child: TextField(
                   controller: passCtrl, 
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(12)
+                  ],
                   style: const TextStyle(
                     fontSize: 25,
                     letterSpacing: 8, // Espaciado entre caracteres para simular un PIN
@@ -89,7 +114,7 @@ class _FormState extends ConsumerState<_Form> {
                     fontWeight: FontWeight.bold
                   ),
                   decoration: const InputDecoration(
-                    labelText: 'Contraseña o PIN',
+                    labelText: 'PIN (solo números)',
                     labelStyle: TextStyle(
                       fontFamily: 'Roboto',
                       letterSpacing: 0, // Restablecer el espaciado para la etiqueta
@@ -105,9 +130,22 @@ class _FormState extends ConsumerState<_Form> {
               const SizedBox(height: 12),
               FilledButton(
                 onPressed: () {
+                  final pin = passCtrl.text;
+                  final nombre = nombreCtrl.text;
+                  //Agregar verificación de campos
+                  if(nombre.isEmpty || pin.isEmpty) {
+                    final snackBar = SnackBar(content: Text('Por favor, complete todos los campos.'));
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    return;
+                  }
+                  if(pin.length < 6) {
+                    final snackBar = SnackBar(content: Text('El PIN debe tener al menos 6 dígitos.'));
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    return;
+                  }
                   ref.read(authControllerProvider.notifier).crearTutor(
-                    nombre: nombreCtrl.text,
-                    secret: passCtrl.text, 
+                    nombre: nombre,
+                    secret: pin, 
                   );
                 },
                 child: const Text('Registrar'),

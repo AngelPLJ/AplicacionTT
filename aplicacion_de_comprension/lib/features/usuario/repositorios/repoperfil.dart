@@ -6,4 +6,6 @@ abstract class RepoPerfil {
   Stream<List<Perfil>> mirarPerfiles();
   Future<void> elegirActivo(String profileId);
   Future<Perfil?> getActivo();
+  Future<void> eliminarPerfil(String id);
+  Future<void> cerrarSesion();
 }
