@@ -1,72 +1,90 @@
-Claro, como arquitecto de software, he preparado el índice de documentación siguiendo tus especificaciones. Este documento está diseñado para ser claro, escalable y servir como punto de partida para la documentación detallada del proyecto.
+Aquí tienes el índice Markdown para tus archivos, estructurado lógicamente por directorios y tipos de componentes.
+
+```markdown
+# Índice de Documentación
+
+Este documento sirve como un índice organizado de los archivos principales del proyecto, facilitando la navegación y comprensión de la estructura.
 
 ---
 
-### `DOCUMENTACION.md`
+## `lib/`
 
-```markdown
-# Índice de Documentación del Proyecto
+### `lib/core/` (Núcleo del Sistema)
 
-Este documento sirve como índice central para toda la documentación técnica del proyecto. Cada entrada enlaza a un documento detallado que explica la funcionalidad, uso y dependencias del archivo correspondiente.
+Contiene archivos fundamentales y utilidades transversales.
 
-## Punto de Entrada
+*   **Entidades:**
+    *   [entidades_diagnostico.dart](lib/core/entidades_diagnostico.dart) - Definiciones de entidades relacionadas con el diagnóstico.
+*   **Seguridad:**
+    *   [seguridad.dart](lib/core/seguridad.dart) - Lógicas y utilidades de seguridad.
+*   **Utilidades:**
+    *   [cargar_pantallas.dart](lib/core/cargar_pantallas.dart) - Funcionalidad para la carga y navegación de pantallas.
+    *   [utils.dart](lib/core/utils.dart) - Funciones y utilidades generales del proyecto.
+*   **Base de Datos:**
+    *   [database/database.dart](lib/core/database/database.dart) - Configuración y lógica de la base de datos.
+*   **Widgets Globales:**
+    *   [widgets/pantalla_carga.dart](lib/core/widgets/pantalla_carga.dart) - Widget para mostrar una pantalla de carga.
+    *   [widgets/widgets_juegos.dart](lib/core/widgets/widgets_juegos.dart) - Widgets reutilizables específicos para juegos.
 
-- **[main.dart](./docs/lib/main.dart.md)**: Punto de entrada principal de la aplicación Flutter que inicializa la app y sus servicios.
+### `lib/infraestructura/` (Implementaciones de Repositorios)
 
-## Módulo Core
+Contiene las implementaciones concretas de los repositorios, generalmente interactuando con fuentes de datos externas o locales.
 
-Contiene la lógica de negocio central, utilidades y servicios compartidos a través de toda la aplicación.
+*   [repoprogresoimpl.dart](lib/infraestructura/repoprogresoimpl.dart) - Implementación del repositorio de progreso.
+*   [repoconfigimpl.dart](lib/infraestructura/repoconfigimpl.dart) - Implementación del repositorio de configuración.
+*   [repocontimpl.dart](lib/infraestructura/repocontimpl.dart) - Implementación del repositorio de contenido.
+*   [repoperfilimpl.dart](lib/infraestructura/repoperfilimpl.dart) - Implementación del repositorio de perfil.
+*   [repotutorimpl.dart](lib/infraestructura/repotutorimpl.dart) - Implementación del repositorio de tutores.
 
-- **[database.dart](./docs/lib/core/database/database.dart.md)**: Gestiona la conexión y las operaciones con la base de datos local (ej. SQLite, Hive).
-- **[hasher.dart](./docs/lib/core/hasher.dart.md)**: Provee utilidades para el hashing de datos, como contraseñas.
-- **[proveedor.dart](./docs/lib/core/proveedor.dart.md)**: Centraliza la configuración de los proveedores para la inyección de dependencias (ej. Riverpod).
-- **[seguridad.dart](./docs/lib/core/seguridad.dart.md)**: Contiene constantes y funciones relacionadas con la seguridad de la aplicación.
+### `lib/features/` (Módulos/Características)
 
-## Módulo Features
+Agrupa archivos relacionados con funcionalidades específicas (features) del sistema.
 
-Agrupa la funcionalidad de la aplicación en módulos cohesivos o "features", cada uno con su propia estructura de capas.
+#### `lib/features/perfiles/` (Módulo de Gestión de Perfiles)
 
-### Feature: Usuario
+*   **Presentación (Páginas):**
+    *   [presentacion/paginas/menu_principal.dart](lib/features/perfiles/presentacion/paginas/menu_principal.dart) - Página principal del menú.
+    *   [presentacion/paginas/evaluacion_diagnostica.dart](lib/features/perfiles/presentacion/paginas/evaluacion_diagnostica.dart) - Página de evaluación diagnóstica.
+    *   [presentacion/paginas/pantalla_actividades.dart](lib/features/perfiles/presentacion/paginas/pantalla_actividades.dart) - Pantalla para mostrar actividades.
+*   **Entidades:**
+    *   [entidades/modelos_json.dart](lib/features/perfiles/entidades/modelos_json.dart) - Modelos de datos para JSON.
+    *   [entidades/diagnostico_provider.dart](lib/features/perfiles/entidades/diagnostico_provider.dart) - Provider para la gestión del diagnóstico.
+    *   [entidades/menu_provider.dart](lib/features/perfiles/entidades/menu_provider.dart) - Provider para la gestión del menú.
+*   **Repositorios (Interfaces):**
+    *   [repositorios/repo_progreso.dart](lib/features/perfiles/repositorios/repo_progreso.dart) - Interfaz del repositorio de progreso.
+    *   [repositorios/repo_contenido.dart](lib/features/perfiles/repositorios/repo_contenido.dart) - Interfaz del repositorio de contenido.
 
-Gestiona todo lo relacionado con el usuario, como autenticación, perfil y configuración.
+#### `lib/features/secciones/` (Módulo de Secciones)
 
-#### Capa de Entidades
-- **[configuracion.dart](./docs/lib/features/usuario/entidades/configuracion.dart.md)**: Define el modelo de datos para la configuración específica del usuario.
-- **[perfil.dart](./docs/lib/features/usuario/entidades/perfil.dart.md)**: Define el modelo de datos para el perfil del usuario.
-- **[usuario.dart](./docs/lib/features/usuario/entidades/usuario.dart.md)**: Define el modelo de datos principal para la entidad de usuario.
+*   **Presentación (Páginas):**
+    *   [presentacion/paginas/resorte.dart](lib/features/secciones/presentacion/paginas/resorte.dart) - Página de la sección "Resorte".
+    *   [presentacion/paginas/introduccion.dart](lib/features/secciones/presentacion/paginas/introduccion.dart) - Página de introducción a las secciones.
+*   **Repositorios (Interfaces):**
+    *   [repositorios/autenticacion.dart](lib/features/secciones/repositorios/autenticacion.dart) - Interfaz del repositorio de autenticación para secciones (posiblemente un error de ruta o nombre, debería estar en usuario).
+    *   [repositorios/repoconfig.dart](lib/features/secciones/repositorios/repoconfig.dart) - Interfaz del repositorio de configuración para secciones.
+    *   [repositorios/repoperfil.dart](lib/features/secciones/repositorios/repoperfil.dart) - Interfaz del repositorio de perfil para secciones.
 
-#### Capa de Presentación
-##### Controladores
-- **[cargar.dart](./docs/lib/features/usuario/presentacion/controladores/cargar.dart.md)**: Controlador para gestionar estados de carga de datos del usuario.
-- **[contautenticacion.dart](./docs/lib/features/usuario/presentacion/controladores/contautenticacion.dart.md)**: Controlador que maneja la lógica de negocio para la autenticación del usuario.
+#### `lib/features/usuario/` (Módulo de Gestión de Usuario)
 
-##### Estados
-- **[autenticacion.dart](./docs/lib/features/usuario/presentacion/estados/autenticacion.dart.md)**: Define los diferentes estados posibles del flujo de autenticación (ej: autenticado, no autenticado).
+*   **Presentación (Páginas):**
+    *   [presentacion/paginas/personajes.dart](lib/features/usuario/presentacion/paginas/personajes.dart) - Página para la selección o gestión de personajes del usuario.
+*   **Entidades:**
+    *   [entidades/usuario.dart](lib/features/usuario/entidades/usuario.dart) - Definición de la entidad Usuario.
+    *   [entidades/configuracion.dart](lib/features/usuario/entidades/configuracion.dart) - Definición de la entidad Configuración de Usuario.
+    *   [entidades/perfil.dart](lib/features/usuario/entidades/perfil.dart) - Definición de la entidad Perfil de Usuario.
+*   **Repositorios (Interfaces):**
+    *   [repositorios/autenticacion.dart](lib/features/usuario/repositorios/autenticacion.dart) - Interfaz del repositorio de autenticación de usuario.
+    *   [repositorios/repoconfig.dart](lib/features/usuario/repositorios/repoconfig.dart) - Interfaz del repositorio de configuración de usuario.
+    *   [repositorios/repotutor.dart](lib/features/usuario/repositorios/repotutor.dart) - Interfaz del repositorio de tutores de usuario.
+    *   [repositorios/repoperfil.dart](lib/features/usuario/repositorios/repoperfil.dart) - Interfaz del repositorio de perfil de usuario.
 
-##### Páginas
-- **[login.dart](./docs/lib/features/usuario/presentacion/paginas/login.dart.md)**: Widget de la pantalla de inicio de sesión del usuario.
-- **[personajes.dart](./docs/lib/features/usuario/presentacion/paginas/personajes.dart.md)**: Widget de la pantalla para la selección o visualización de personajes del usuario.
-- **[registro.dart](./docs/lib/features/usuario/presentacion/paginas/registro.dart.md)**: Widget de la pantalla de registro de un nuevo usuario.
+---
 
-#### Capa de Repositorios
-- **[autenticacion.dart](./docs/lib/features/usuario/repositorios/autenticacion.dart.md)**: Repositorio para manejar las operaciones de datos de autenticación del usuario.
-- **[repoconfig.dart](./docs/lib/features/usuario/repositorios/repoconfig.dart.md)**: Repositorio para gestionar la configuración del usuario en la fuente de datos.
-- **[repoperfil.dart](./docs/lib/features/usuario/repositorios/repoperfil.dart.md)**: Repositorio para gestionar los datos del perfil del usuario.
-- **[repotutor.dart](./docs/lib/features/usuario/repositorios/repotutor.dart.md)**: Repositorio para gestionar la información relacionada con el tutor del usuario.
+## `test/`
 
-### Feature: Secciones
+### `test/` (Pruebas Automatizadas)
 
-Gestiona las diferentes secciones o módulos de contenido de la aplicación.
+Contiene las pruebas unitarias e de widgets del proyecto.
 
-#### Capa de Presentación
-##### Páginas
-- **[introduccion.dart](./docs/lib/features/secciones/presentacion/paginas/introduccion.dart.md)**: Widget de la pantalla de introducción a una sección específica de la app.
-- **[resorte.dart](./docs/lib/features/secciones/presentacion/paginas/resorte.dart.md)**: Widget de una pantalla de sección, posiblemente con animaciones (el nombre sugiere física).
-
-#### Capa de Repositorios
-- **[autenticacion.dart](./docs/lib/features/secciones/repositorios/autenticacion.dart.md)**: Repositorio para manejar la autenticación o acceso a secciones protegidas.
-- **[repoconfig.dart](./docs/lib/features/secciones/repositorios/repoconfig.dart.md)**: Repositorio para obtener la configuración específica de las secciones.
-- **[repoperfil.dart](./docs/lib/features/secciones/repositorios/repoperfil.dart.md)**: Repositorio para gestionar datos del perfil relacionados con el progreso en las secciones.
-- **[repotutor.dart](./docs/lib/features/secciones/repositorios/repotutor.dart.md)**: Repositorio para obtener información de un tutor o guía dentro de las secciones.
-
+*   [widget_test.dart](test/widget_test.dart) - Archivo de pruebas para widgets.
 ```

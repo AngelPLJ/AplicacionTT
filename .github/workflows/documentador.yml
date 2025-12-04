@@ -22,7 +22,10 @@ jobs:
       
       - name: Instalar dependencias de Python
         run: pip install tqdm google-generativeai
-
+        
+      - name: Verificar estructura de archivos
+        run: ls -R
+        
       - name: Ejecutar el script de documentación
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -38,3 +41,5 @@ jobs:
           # Opciones para configurar el autor del commit
           commit_user_name: Gemini Bot
           commit_user_email: gemini-bot@users.noreply.github.com
+          skip_dirty_check: false    # Forza el commit aunque crea que está limpio
+          create_branch: false       # Commitea en la rama actual

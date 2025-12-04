@@ -1,179 +1,227 @@
-Claro, aquí tienes la documentación completa del archivo de código, siguiendo todas tus instrucciones.
-
-```markdown
-# Documentación de `database.dart`
-
-## Resumen General
-
-Este archivo define la capa de persistencia de datos local de la aplicación utilizando el paquete `drift` (anteriormente Moor), un potente kit de herramientas de base de datos reactiva para Flutter y Dart. Establece el esquema de una base de datos SQLite y proporciona la lógica para su inicialización y acceso.
-
-El propósito principal es gestionar todos los datos del usuario, incluyendo cuentas de tutores, perfiles asociados, configuraciones de la aplicación y un almacén genérico de clave-valor.
-
-### Componentes Principales
-
-#### 1. Tablas (Esquema de la Base de Datos)
-El archivo define cinco tablas que estructuran los datos de la aplicación:
-*   **Tutor**: Almacena la información de la cuenta principal del usuario (tutor), incluyendo credenciales y fecha de creación.
-*   **Perfiles**: Gestiona los perfiles individuales (probablemente para niños o estudiantes) asociados a una cuenta de tutor.
-*   **Configuraciones**: Guarda las preferencias específicas de cada tutor, como la configuración de Texto a Voz (TTS) y el bloqueo parental.
-*   **KvStore**: Una tabla de almacenamiento genérico de clave-valor para guardar datos arbitrarios y no estructurados, como flags de estado o configuraciones simples.
-*   **Modulos**: Aunque está definida, esta tabla **no está incluida** en la anotación `@DriftDatabase`, por lo que actualmente no forma parte de la base de datos generada. Podría ser una tabla en desuso o para una funcionalidad futura.
-
-#### 2. Clase de la Base de Datos (`AppDatabase`)
-Esta es la clase central que `drift` utiliza para generar todo el código de acceso a la base de datos.
-*   **Inicialización**: Proporciona un método estático `open()` que se encarga de encontrar la ubicación adecuada en el sistema de archivos del dispositivo, crear el archivo de la base de datos (`app.db`) y establecer la conexión.
-*   **Control de Versiones**: Define una `schemaVersion` para gestionar futuras migraciones de la base de datos.
-*   **Métodos de Ayuda (Helpers)**: Incluye métodos de conveniencia para realizar operaciones comunes, como verificar si existe un tutor o leer/escribir en la tabla `KvStore`.
-
-### Dependencias Principales
-
-*   **`drift`**: El ORM (Object-Relational Mapper) principal utilizado para definir tablas como clases de Dart y generar código para consultas seguras en tipos.
-*   **`drift/native`**: Proporciona el backend de SQLite para plataformas nativas (iOS, Android, macOS, Windows, Linux).
-*   **`path_provider`**: Utilizado para obtener la ruta del directorio de documentos de la aplicación, un lugar seguro y persistente para almacenar el archivo de la base de datos.
-*   **`path`**: Una utilidad para manipular y construir rutas de sistema de archivos de manera multiplataforma.
-
-### Rol en la Aplicación
-
-Este archivo es la **fuente única de verdad** para todos los datos persistentes de la aplicación. Actúa como la capa de modelo de datos, permitiendo que el resto de la aplicación interactúe con la base de datos de una manera segura, estructurada y eficiente. Centraliza toda la lógica de la base de datos, facilitando su mantenimiento y evolución.
+¡Excelente! Analicemos este esquema de base de datos Drift para una aplicación Flutter educativa. Como Senior Technical Writer experto en Flutter, me centraré en la claridad, la precisión y la relevancia para el contexto de desarrollo.
 
 ---
 
-## Código Documentado
+# Documentación del Esquema de Base de Datos (`database.dart`)
 
-```dart
-import 'dart:io';
-import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
+Este documento describe la estructura del esquema de base de datos local para la aplicación Flutter, definida mediante la librería [Drift](https://drift.simonbinder.eu/) (anteriormente `moor`). Drift es un ORM reactivo para SQLite en Flutter y Dart, que ofrece tipado seguro, consultas en Dart y generación de código.
 
-// Importa el código autogenerado por el paquete `drift_generator`.
-// Este archivo contendrá la implementación concreta de la base de datos,
-// data classes, companions, etc.
-part 'database.g.dart';
+## Resumen
 
-/// Representa la tabla 'Tutor' en la base de datos.
-/// Almacena la información de la cuenta principal del usuario.
-class Tutor extends Table {
-  /// Identificador único del tutor (ej. un UUID). Clave primaria.
-  TextColumn get id => text()();
-  /// Nombre de usuario para el inicio de sesión. Es opcional.
-  TextColumn get usuario => text().nullable()();
-  /// Hash de la contraseña del tutor. Se debe almacenar de forma segura
-  /// utilizando algoritmos como PBKDF2, Argon2 o scrypt. Es opcional.
-  TextColumn get contrasenia => text().nullable()();
-  /// Fecha y hora en que se creó la cuenta del tutor.
-  DateTimeColumn get fechaCreacion => dateTime()();
-  @override Set<Column> get primaryKey => {id};
-}
+El archivo `database.dart` es la piedra angular de la persistencia de datos local de la aplicación. Define el esquema completo de la base de datos SQLite, incluyendo todas las tablas, sus columnas, tipos de datos, claves primarias, claves foráneas y relaciones. Utiliza Drift para generar automáticamente gran parte del código boilerplate necesario para interactuar con la base de datos de manera segura y eficiente.
 
-/// Define los perfiles de usuario asociados a un tutor.
-/// Permite que una cuenta de tutor gestione múltiples perfiles (ej. para diferentes niños).
-class Perfiles extends Table {
-  /// Identificador único del perfil (ej. un UUID). Clave primaria.
-  TextColumn get id => text()();
-  /// Clave foránea que referencia al [Tutor] propietario de este perfil.
-  TextColumn get tutorId => text().references(Tutor, #id)();
-  /// Nombre del perfil (ej. "Juan", "Ana").
-  TextColumn get nombre => text()();
-  /// Código o identificador del avatar seleccionado para el perfil.
-  TextColumn get codigoAvatar => text()();
-  /// Indica si este es el perfil actualmente activo en la aplicación.
-  BoolColumn get activo => boolean().withDefault(const Constant(false))();
-  @override Set<Column> get primaryKey => {id};
-}
+El esquema está diseñado para una aplicación educativa con las siguientes características:
+*   **Gestión de Usuarios:** Soporte para un tutor principal y múltiples usuarios secundarios (niños/estudiantes).
+*   **Configuración Personalizable:** Almacena configuraciones de la aplicación a nivel de tutor.
+*   **Contenido Educativo:** Almacena elementos como números, fonemas y palabras, categorizados por tipo.
+*   **Estructura Modular:** Define módulos y actividades educativas.
+*   **Seguimiento de Progreso:** Registra el desempeño de los usuarios en números, fonemas, palabras y actividades específicas, así como su progreso general en módulos.
+*   **Gamificación:** Incluye un sistema de medallas para reconocer logros.
+*   **Almacén de Clave-Valor:** Un mecanismo genérico para almacenar configuraciones o datos pequeños.
 
-/// Define los módulos de contenido o aprendizaje disponibles en la aplicación.
-/// NOTA: Esta tabla está definida pero no incluida en la lista de tablas de `AppDatabase`,
-/// por lo que actualmente no se genera ni se utiliza.
-class Modulos extends Table {
-  /// Identificador único del módulo.
-  TextColumn get id => text()();
-  /// Nombre descriptivo del módulo.
-  TextColumn get nombreModulo => text()();
-}
+La base de datos se inicializa como una base de datos nativa en segundo plano, asegurando que las operaciones de E/S no bloqueen el hilo principal de la UI de Flutter.
 
-/// Almacena las configuraciones específicas de un tutor.
-/// Utiliza el `tutorId` como clave primaria para asegurar una única fila de
-/// configuración por tutor (relación uno a uno).
-class Configuraciones extends Table {
-  /// Clave foránea que referencia al [Tutor]. También es la clave primaria.
-  TextColumn get tutorId => text().references(Tutor, #id)();
-  /// Indica si la funcionalidad de Texto a Voz (Text-to-Speech) está activa.
-  BoolColumn get ttsHabilitado => boolean().withDefault(const Constant(true))();
-  /// Velocidad de habla (frecuencia) para el TTS. Un valor de 0.5 es más lento, 1.0 es normal.
-  RealColumn get ttsFrecuencia => real().withDefault(const Constant(0.5))();
-  /// Tono de la voz para el TTS. Un valor de 1.0 es el tono normal.
-  RealColumn get ttsTono => real().withDefault(const Constant(1.0))();
-  /// Indica si el bloqueo parental está activado.
-  BoolColumn get parentalLock => boolean().withDefault(const Constant(false))();
-  @override Set<Column> get primaryKey => {tutorId};
-}
+## Arquitectura de la Base de Datos (Drift en el Contexto de Flutter)
 
-/// Una tabla genérica de clave-valor para almacenar datos diversos y no estructurados,
-/// como flags de estado de la aplicación, tokens, o configuraciones simples.
-class KvStore extends Table {
-  /// La clave única para el valor almacenado. Clave primaria.
-  TextColumn get key => text()();
-  /// El valor asociado a la clave, almacenado como una cadena de texto.
-  TextColumn get value => text()();
-  @override Set<Column> get primaryKey => {key};
-}
+En una arquitectura Flutter bien estructurada, este archivo `database.dart` representa la **Capa de Persistencia** o **Capa de Datos Local**. No interactúa directamente con los Widgets o la lógica de negocio compleja, sino que sirve como la interfaz de bajo nivel para SQLite.
 
-/// Anotación que indica a `drift_generator` qué tablas debe incluir
-/// en la base de datos generada.
-@DriftDatabase(tables: [Tutor, Perfiles, Configuraciones, KvStore])
-/// Clase principal de la base de datos de la aplicación, gestionada por Drift.
-/// Esta clase es el punto de entrada central para todas las operaciones de la base de datos.
-/// Hereda de la clase `_$AppDatabase` generada por `drift_generator`.
-class AppDatabase extends _$AppDatabase {
-  /// Constructor privado para forzar la creación de instancias a través del método `open`.
-  AppDatabase._(super.e);
+1.  **Capa de Persistencia (`database.dart`):**
+    *   Contiene la definición del esquema Drift (`Table` classes).
+    *   La clase `AppDatabase` es el punto de entrada principal para todas las operaciones de la base de datos.
+    *   Maneja la inicialización de la base de datos (apertura del archivo `.sqlite`).
+    *   Expone métodos básicos para interactuar con las tablas (ej., `select`, `insert`, `update`, `delete`), así como helpers específicos (`tieneTutor`, `upsertKv`, `getKv`).
 
-  @override
-  /// La versión actual del esquema de la base de datos.
-  /// Se debe incrementar este número cada vez que se realicen cambios en la estructura
-  /// de las tablas (añadir/quitar/modificar columnas) para gestionar las migraciones.
-  int get schemaVersion => 1;
+2.  **Capa de Repositorio (Repository Layer - *Conceptual*):**
+    *   **No está definida en este archivo**, pero es la capa que consumiría la instancia de `AppDatabase`.
+    *   Encapsularía todas las operaciones de la base de datos para una entidad específica (ej., `UserRepository`, `ContentRepository`).
+    *   Traduciría los objetos generados por Drift (ej., `Usuario`, `Tutor`) a modelos de dominio más puros si fuera necesario, desacoplando la lógica de negocio de la implementación de la base de datos.
+    *   Proporcionaría una API limpia y orientada a objetos a las capas superiores, ocultando los detalles de las consultas SQL o Drift.
 
-  /// Método estático y asíncrono para abrir la conexión a la base de datos.
-  ///
-  /// Se encarga de:
-  /// 1. Obtener el directorio de documentos de la aplicación.
-  /// 2. Construir la ruta al archivo de la base de datos (`app.db`).
-  /// 3. Crear un ejecutor `NativeDatabase` que se ejecuta en un hilo de fondo
-  ///    para no bloquear el hilo de la UI.
-  /// 4. Devolver una instancia de [AppDatabase] lista para ser usada.
-  static Future<AppDatabase> open() async {
-    final dir = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dir.path, 'app.db'));
-    final executor = NativeDatabase.createInBackground(file);
-    return AppDatabase._(executor);
-  }
+3.  **Capa de Lógica de Negocio / Gestión de Estado (Provider/BLoC/Riverpod/etc. - *Conceptual*):**
+    *   **No está definida en este archivo.**
+    *   Interactuaría con la Capa de Repositorio para obtener y manipular datos.
+    *   Contendría la lógica de negocio de la aplicación, como la validación de entradas, la coordinación de múltiples operaciones de datos, etc.
+    *   Expondría el estado y los métodos a la Capa de Presentación.
 
-  // --- Métodos de Ayuda (Helpers) ---
+4.  **Capa de Presentación (Widgets - *Conceptual*):**
+    *   **No está definida en este archivo.**
+    *   Construida con Widgets de Flutter.
+    *   Observaría el estado proporcionado por la Capa de Lógica de Negocio y enviaría eventos/acciones cuando el usuario interactúe con la UI.
 
-  /// Comprueba si ya existe al menos un tutor registrado en la base de datos.
-  ///
-  /// Útil para flujos de onboarding para determinar si se debe mostrar la pantalla
-  /// de registro o la de inicio de sesión.
-  /// Retorna `true` si hay al menos un tutor, `false` en caso contrario.
-  Future<bool> tieneTutor() async => (await select(tutor).get()).isNotEmpty;
+En resumen, `database.dart` es la base de datos en sí, y su `AppDatabase` se inyectaría como una dependencia en una capa de repositorio, la cual a su vez sería utilizada por la lógica de negocio y finalmente por los Widgets.
 
-  /// Inserta o actualiza un par clave-valor en la tabla [KvStore].
-  ///
-  /// Si la clave [k] ya existe, su valor se actualiza a [v].
-  /// Si no existe, se inserta una nueva fila.
-  Future<void> upsertKv(String k, String v) async =>
-      into(kvStore).insertOnConflictUpdate(KvStoreCompanion.insert(key: k, value: v));
+## Componentes Clave
 
-  /// Obtiene el valor asociado a una clave [k] de la tabla [KvStore].
-  ///
-  /// Retorna el valor como un `String?`. Si la clave no se encuentra,
-  /// retorna `null`.
-  Future<String?> getKv(String k) async =>
-      (await (select(kvStore)..where((t) => t.key.equals(k))).getSingleOrNull())?.value;
-}
+Este archivo se divide en tres secciones principales: Tablas Principales, Tablas Intermedias y Configuración de la Base de Datos.
 
-```
-```
+### 1. Tablas Principales (Catálogos)
+
+Definen las entidades fundamentales de la aplicación.
+
+*   **`Tutor`**:
+    *   **Propósito:** Almacena la información del usuario principal (tutor/administrador) de la aplicación.
+    *   **Columnas Clave:**
+        *   `id` (Text, UUID): Clave primaria, identificador único del tutor.
+        *   `usuario` (Text): Nombre de usuario o identificador para el tutor.
+        *   `pinSeguridad` (Text): Un PIN para proteger configuraciones sensibles.
+        *   `fechaCreacion` (DateTime): Fecha de creación del registro, con valor por defecto la fecha actual.
+
+*   **`KvStore`**:
+    *   **Propósito:** Un almacén genérico de clave-valor para configuraciones flexibles o datos pequeños que no encajan en una tabla estructurada.
+    *   **Columnas Clave:**
+        *   `key` (Text): Clave única del par clave-valor.
+        *   `value` (Text): Valor asociado a la clave.
+
+*   **`Usuarios`**:
+    *   **Propósito:** Almacena los perfiles de los usuarios secundarios (ej., niños) que utilizarán la aplicación.
+    *   **Columnas Clave:**
+        *   `id` (Text, UUID): Clave primaria, identificador único del usuario.
+        *   `tutorId` (Text, FK): Clave foránea que referencia `Tutor.id`, indicando a qué tutor pertenece este usuario.
+        *   `nombre` (Text, max 255): Nombre del usuario.
+        *   `icono` (Text, max 32): Nombre del archivo o identificador del icono asociado al usuario.
+        *   `activo` (Bool): Indica si el usuario está activo, por defecto `true`.
+
+*   **`Configuraciones`**:
+    *   **Propósito:** Almacena las configuraciones de la aplicación específicas para un tutor.
+    *   **Columnas Clave:**
+        *   `tutorId` (Text, FK): Clave foránea que referencia `Tutor.id`, es también la clave primaria de esta tabla, lo que implica una relación 1:1 entre `Tutor` y `Configuraciones`.
+        *   `ttsHabilitado` (Bool): Habilita/deshabilita la función de Texto-a-Voz (TTS), por defecto `true`.
+        *   `ttsVelocidad` (Real): Velocidad del TTS, por defecto `0.5`.
+        *   `musicaFondo` (Bool): Habilita/deshabilita la música de fondo, por defecto `true`.
+
+*   **`Numeros`**:
+    *   **Propósito:** Catálogo de números para actividades educativas.
+    *   **Columnas Clave:**
+        *   `id` (Int, AutoIncrement): Clave primaria autoincremental.
+        *   `numero` (Int): El valor del número.
+
+*   **`Fonemas`**:
+    *   **Propósito:** Catálogo de fonemas para actividades educativas.
+    *   **Columnas Clave:**
+        *   `id` (Int, AutoIncrement): Clave primaria autoincremental.
+        *   `fonema` (Text, max 45): El fonema en formato de texto.
+
+*   **`TipoDePalabra`**:
+    *   **Propósito:** Catálogo de categorías para palabras (ej., sustantivo, verbo, adjetivo).
+    *   **Columnas Clave:**
+        *   `id` (Int, AutoIncrement): Clave primaria autoincremental.
+        *   `tipo` (Text, max 15): Nombre del tipo de palabra.
+
+*   **`Palabras`**:
+    *   **Propósito:** Catálogo de palabras, asociadas a un tipo de palabra.
+    *   **Columnas Clave:**
+        *   `id` (Int, AutoIncrement): Clave primaria autoincremental.
+        *   `palabra` (Text, max 24): La palabra en sí.
+        *   `tipoDePalabraId` (Int, FK): Clave foránea que referencia `TipoDePalabra.id`.
+
+*   **`Modulos`**:
+    *   **Propósito:** Catálogo de módulos o unidades educativas.
+    *   **Columnas Clave:**
+        *   `id` (Int, AutoIncrement): Clave primaria autoincremental.
+        *   `nombre` (Text, max 45): Nombre del módulo.
+
+*   **`Actividades`**:
+    *   **Propósito:** Catálogo de actividades educativas individuales.
+    *   **Columnas Clave:**
+        *   `id` (Int, AutoIncrement): Clave primaria autoincremental.
+        *   `nombre` (Text, max 45, Nullable): Nombre de la actividad.
+
+*   **`Medallas`**:
+    *   **Propósito:** Catálogo de medallas o logros que los usuarios pueden obtener.
+    *   **Columnas Clave:**
+        *   `id` (Int, AutoIncrement): Clave primaria autoincremental.
+        *   `nombre` (Text, max 45): Nombre de la medalla.
+        *   `imagen` (Text, max 45): Nombre del archivo de imagen de la medalla (posiblemente un identificador).
+        *   `assetPath` (Text): Ruta completa del asset de la imagen de la medalla.
+
+### 2. Tablas Intermedias (Relaciones _has_)
+
+Estas tablas gestionan las relaciones de muchos a muchos (N:M) y el seguimiento de progreso entre las entidades principales.
+
+*   **`UsuariosHasNumeros`**:
+    *   **Propósito:** Registra el progreso de un usuario en actividades relacionadas con números.
+    *   **Columnas Clave:**
+        *   `usuarioId` (Text, FK): Referencia `Usuarios.id`.
+        *   `numeroId` (Int, FK): Referencia `Numeros.id`.
+        *   `aciertos` (Int): Número de aciertos del usuario para este número.
+        *   `total` (Int): Número total de intentos del usuario para este número.
+    *   **Clave Primaria Compuesta:** `{usuarioId, numeroId}`.
+
+*   **`UsuariosHasFonemas`**:
+    *   **Propósito:** Registra el progreso de un usuario en actividades relacionadas con fonemas.
+    *   **Columnas Clave:**
+        *   `usuarioId` (Text, FK): Referencia `Usuarios.id`.
+        *   `fonemaId` (Int, FK): Referencia `Fonemas.id`.
+        *   `aciertos` (Int): Número de aciertos.
+        *   `total` (Int): Número total de intentos.
+    *   **Clave Primaria Compuesta:** `{usuarioId, fonemaId}`.
+
+*   **`UsuariosHasPalabras`**:
+    *   **Propósito:** Registra el progreso de un usuario en actividades relacionadas con palabras.
+    *   **Columnas Clave:**
+        *   `usuarioId` (Text, FK): Referencia `Usuarios.id`.
+        *   `palabraId` (Int, FK): Referencia `Palabras.id`.
+        *   `aciertos` (Int): Número de aciertos.
+        *   `total` (Int): Número total de intentos.
+    *   **Clave Primaria Compuesta:** `{usuarioId, palabraId}`.
+
+*   **`ActividadesHasModulos`**:
+    *   **Propósito:** Define qué actividades pertenecen a qué módulos.
+    *   **Columnas Clave:**
+        *   `actividadId` (Int, FK): Referencia `Actividades.id`.
+        *   `moduloId` (Int, FK): Referencia `Modulos.id`.
+    *   **Clave Primaria Compuesta:** `{actividadId, moduloId}`.
+
+*   **`UsuariosHasActividades`**:
+    *   **Propósito:** Registra el progreso general de un usuario en una actividad específica.
+    *   **Columnas Clave:**
+        *   `usuarioId` (Text, FK): Referencia `Usuarios.id`.
+        *   `actividadId` (Int, FK): Referencia `Actividades.id`.
+        *   `aciertos` (Int): Número de aciertos del usuario en esta actividad.
+        *   `total` (Int, Nullable): Número total de intentos en esta actividad.
+    *   **Clave Primaria Compuesta:** `{usuarioId, actividadId}`.
+
+*   **`ModulosHasUsuarios`**:
+    *   **Propósito:** Registra el progreso general de un usuario en un módulo completo.
+    *   **Columnas Clave:**
+        *   `moduloId` (Int, FK): Referencia `Modulos.id`.
+        *   `usuarioId` (Text, FK): Referencia `Usuarios.id`.
+        *   `progreso` (Real): Porcentaje o valor de progreso en el módulo.
+    *   **Clave Primaria Compuesta:** `{moduloId, usuarioId}`.
+
+*   **`UsuariosHasMedallas`**:
+    *   **Propósito:** Registra las medallas obtenidas por cada usuario.
+    *   **Columnas Clave:**
+        *   `usuarioId` (Text, FK): Referencia `Usuarios.id`.
+        *   `medallaId` (Int, FK): Referencia `Medallas.id`.
+    *   **Clave Primaria Compuesta:** `{usuarioId, medallaId}`.
+
+### 3. Configuración de la Base de Datos
+
+*   **`@DriftDatabase` Anotación:**
+    *   Lista todas las clases `Table` que conforman este esquema de base de datos. Esta lista es crucial para que Drift sepa qué tablas debe generar en el archivo `database.g.dart`.
+
+*   **`AppDatabase` Clase:**
+    *   Extiende `_$AppDatabase`: Esta es la clase base generada por Drift (en `database.g.dart`) que contiene todas las propiedades de las tablas y métodos de consulta básicos.
+    *   `AppDatabase._(super.e)`: Constructor privado que toma un `QueryExecutor` (la conexión a la base de datos).
+    *   `schemaVersion` (int): Actualmente `1`. Este número es fundamental para la gestión de migraciones futuras de la base de datos. Cuando se modifique el esquema, este número deberá incrementarse.
+    *   `static Future<AppDatabase> open()`:
+        *   Este es el método principal para inicializar y abrir la conexión a la base de datos.
+        *   Obtiene el directorio de documentos de la aplicación (`getApplicationDocumentsDirectory`).
+        *   Construye la ruta al archivo `db_educativa.sqlite` dentro de ese directorio.
+        *   Crea un `NativeDatabase` que se ejecuta en un hilo de fondo (`createInBackground`), lo cual es una buena práctica para el rendimiento de la UI.
+        *   Devuelve una instancia de `AppDatabase`.
+    *   **Helpers Básicos:**
+        *   `Future<bool> tieneTutor()`: Verifica si existe al menos un tutor en la base de datos.
+        *   `Future<void> upsertKv(String k, String v)`: Inserta o actualiza un par clave-valor en la tabla `KvStore`.
+        *   `Future<String?> getKv(String k)`: Recupera el valor asociado a una clave de `KvStore`.
+
+## Notas Adicionales
+
+*   **Generación de Código:** El comentario `// Recuerda ejecutar en la terminal: dart run build_runner build` es esencial. Drift requiere la ejecución de `build_runner` para generar el archivo `database.g.dart`, que contiene las implementaciones de las tablas, modelos de datos (`Data` y `Companion`) y utilidades de consulta.
+*   **Integridad Referencial:** El uso de `.references(OtraTabla, #id)` asegura la integridad referencial, lo que significa que no se pueden crear registros de usuarios sin un tutor válido, ni registros de palabras sin un tipo de palabra existente, etc.
+*   **Valores por Defecto:** Drift permite definir valores por defecto para las columnas (ej., `withDefault(currentDate)` o `withDefault(const Constant(true))`), lo que simplifica la lógica de inserción de datos.
+*   **Columnas UUID:** Las columnas `id` de tipo `TextColumn` en `Tutor` y `Usuarios` están diseñadas para almacenar UUIDs, que deben ser generados en el lado de la aplicación antes de la inserción.
+*   **Performance:** `NativeDatabase.createInBackground` es una optimización importante para aplicaciones móviles, evitando bloqueos de la UI durante operaciones de E/S de la base de datos.
+
+Este documento proporciona una visión clara y detallada del esquema de la base de datos, su propósito y cómo se integra en una aplicación Flutter utilizando Drift.

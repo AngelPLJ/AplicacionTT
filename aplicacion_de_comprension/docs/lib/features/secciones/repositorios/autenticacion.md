@@ -1,62 +1,108 @@
-¡Claro! Aquí tienes la documentación completa del archivo `auth_repository.dart`, siguiendo tus instrucciones y el estilo de un programador experto en Flutter.
-
-***
-
-### Resumen del Archivo: `domain/repositories/auth_repository.dart`
-
-#### Descripción General
-Este archivo define el contrato (la interfaz) para el repositorio de autenticación de la aplicación. Siguiendo los principios de la Arquitectura Limpia (Clean Architecture), la clase abstracta `AuthRepository` establece las operaciones de autenticación que deben estar disponibles en la capa de dominio, sin especificar cómo se implementan.
-
-Su propósito principal es desacoplar la lógica de negocio (casos de uso) de los detalles de implementación de la fuente de datos (por ejemplo, una API REST, Firebase, una base de datos local, etc.).
-
-#### Dependencias Principales
-*   **`package:aplicacion_de_comprension/features/usuario/entidades/usuario.dart`**: Depende del modelo de entidad `Usuario`, que representa la estructura de datos de un usuario dentro de la capa de dominio.
-
-#### Rol en la Aplicación
-Este repositorio es una pieza fundamental de la capa de **Dominio**. Actúa como un puente abstracto entre la lógica de la aplicación y la infraestructura de datos.
-
-*   **Consumidores**: Los Casos de Uso (Use Cases) de la aplicación interactuarán directamente con esta interfaz `AuthRepository` para realizar acciones como registrar, iniciar sesión y verificar el estado del usuario.
-*   **Implementadores**: Una o más clases en la capa de **Datos** (o Infraestructura) implementarán esta interfaz, proporcionando el código concreto para comunicarse con la fuente de datos real. Por ejemplo, una clase `FirebaseAuthRepositoryImpl` podría implementar este contrato para usar Firebase Authentication.
+¡Absolutamente! Como Senior Technical Writer especializado en Flutter, procederé a generar la documentación Markdown para `auth_repository.dart`, enfocándome en su rol, arquitectura y componentes clave desde una perspectiva de diseño robusto y escalable.
 
 ---
+
+# Documentación del Repositorio de Autenticación
+
+## `auth_repository.dart`
 
 ```dart
 // domain/repositories/auth_repository.dart
 import 'package:aplicacion_de_comprension/features/usuario/entidades/usuario.dart';
 
-/// Define el contrato para las operaciones de autenticación en la aplicación.
-///
-/// Actúa como una abstracción entre la capa de dominio y la capa de datos,
-/// permitiendo que los casos de uso interactúen con la autenticación sin
-/// conocer los detalles de la implementación (por ejemplo, Firebase, una API REST, etc.).
 abstract class AuthRepository {
-  /// Registra un nuevo usuario en el sistema.
-  ///
-  /// Recibe el [nombre] y la [contrasenia] del usuario.
-  /// Retorna un `Future` que se completa con la entidad [Usuario] recién creada.
-  ///
-  /// Lanza una excepción si el registro falla (por ejemplo, si el usuario ya existe).
   Future<Usuario> register({required String nombre, required String contrasenia});
-
-  /// Inicia sesión de un usuario existente con sus credenciales.
-  ///
-  /// Recibe el [nombre] y la [contrasenia] del usuario.
-  /// Retorna un `Future` que se completa con la entidad [Usuario] si la autenticación es exitosa.
-  ///
-  /// Lanza una excepción si las credenciales son incorrectas.
   Future<Usuario> login({required String nombre, required String contrasenia});
-
-  /// Cierra la sesión del usuario actualmente autenticado.
-  ///
-  /// Retorna un `Future<void>` que se completa cuando la operación ha finalizado.
   Future<void> logout();
-
-  /// Obtiene el usuario actualmente autenticado en la aplicación.
-  ///
-  /// Es útil para verificar el estado de la sesión al iniciar la aplicación.
-  ///
-  /// Retorna un `Future` que se completa con la entidad [Usuario] si hay una
-  /// sesión activa, o con `null` si no hay ningún usuario autenticado.
   Future<Usuario?> currentUser();
 }
 ```
+
+---
+
+### Resumen
+
+El archivo `auth_repository.dart` define la **interfaz fundamental** para todas las operaciones de autenticación relacionadas con el usuario en la aplicación. Ubicado estratégicamente en la capa de **dominio** (`domain/repositories`), este archivo establece un **contrato** (`abstract class`) que cualquier proveedor de autenticación (ya sea Firebase, una API REST, o un almacenamiento local) debe implementar.
+
+Su propósito principal es **abstraer los detalles de implementación** de la autenticación, permitiendo que las capas superiores de la aplicación (como los Blocs/Providers y los Widgets) interactúen con un conjunto coherente y limpio de operaciones sin preocuparse por cómo se gestiona la autenticación subyacente. Todas las operaciones son asíncronas (`Future`) y manipulan la entidad `Usuario`, garantizando una fuerte tipificación y consistencia en el flujo de datos.
+
+### Arquitectura (Widget / Provider / Repo)
+
+Este `AuthRepository` es una pieza central en una arquitectura limpia y modular, como la Arquitectura Limpia (Clean Architecture) o un diseño basado en el patrón de Repositorio.
+
+1.  **Capa de Dominio (Repository - Este Archivo):**
+    *   **`AuthRepository` (Interfaz):** Es el corazón de este archivo. Define el *qué* (las operaciones que se pueden realizar) pero no el *cómo* (la lógica de implementación). Esto asegura que la lógica de negocio en la capa de dominio sea agnóstica a la infraestructura.
+    *   Depende de la entidad `Usuario`, que también reside en el dominio, asegurando que las operaciones se realicen con objetos de negocio puros.
+
+2.  **Capa de Datos / Infraestructura (Implementaciones Concretas del Repositorio):**
+    *   Aquí residirían las implementaciones concretas de `AuthRepository`. Por ejemplo, podríamos tener:
+        *   `FirebaseAuthRepository`: Implementa `AuthRepository` utilizando Firebase Authentication.
+        *   `AuthApiRepository`: Implementa `AuthRepository` realizando llamadas a una API REST.
+        *   `MockAuthRepository`: Implementa `AuthRepository` para pruebas unitarias o desarrollo sin backend.
+    *   Estas implementaciones son responsables de interactuar con servicios externos, bases de datos o APIs.
+
+3.  **Capa de Aplicación / Presentación (Providers / Widgets):**
+    *   **Providers (o BLoCs, Riverpod, etc.):** Un `Provider` (o un `Notifier`, `Cubit`, `Bloc`) en la capa de presentación **dependerá de la interfaz `AuthRepository`**, no de una implementación concreta. Esto se logra mediante la Inversión de Control (IoC) y la Inyección de Dependencias (DI).
+        ```dart
+        // Ejemplo con Riverpod o Provider
+        final authRepositoryProvider = Provider<AuthRepository>((ref) {
+          // Aquí se inyectaría la implementación concreta, por ejemplo:
+          // return FirebaseAuthRepository();
+          // O de forma más flexible, un proveedor que decida la implementación:
+          return ref.watch(firebaseAuthRepositoryProvider); // Si está configurado
+        });
+
+        class AuthNotifier extends StateNotifier<AuthState> {
+          final AuthRepository _authRepository;
+
+          AuthNotifier(this._authRepository) : super(AuthState.initial());
+
+          Future<void> login(String nombre, String contrasenia) async {
+            // ... lógica de estado ...
+            final user = await _authRepository.login(nombre: nombre, contrasenia: contrasenia);
+            // ... actualizar estado ...
+          }
+          // ... otros métodos ...
+        }
+        ```
+    *   **Widgets:** Los `Widgets` de la interfaz de usuario **no interactuarán directamente con el `AuthRepository`**. En su lugar, interactuarán con el `Provider` de autenticación (ej. `AuthNotifier`). Esto desacopla la UI de la lógica de negocio y de los detalles de acceso a datos.
+        ```dart
+        // Ejemplo en un Widget de Flutter
+        Consumer(builder: (context, ref, child) {
+          final authNotifier = ref.watch(authNotifierProvider.notifier);
+          return ElevatedButton(
+            onPressed: () => authNotifier.login('usuario', 'password'),
+            child: Text('Login'),
+          );
+        });
+        ```
+
+Este patrón de arquitectura facilita enormemente la **testabilidad** (se pueden "mockear" fácilmente las implementaciones del repositorio), la **mantenibilidad** (los cambios en el proveedor de autenticación no afectan a la lógica de negocio o la UI) y la **escalabilidad** (se puede cambiar la fuente de autenticación sin refactorizar la mitad de la aplicación).
+
+### Componentes Clave
+
+1.  **`abstract class AuthRepository`**:
+    *   **Descripción:** La definición de la interfaz principal. Es un contrato que especifica las operaciones de autenticación disponibles para el resto de la aplicación.
+    *   **Rol:** Garantiza la coherencia en la interacción con cualquier servicio de autenticación y aplica el principio de Inversión de Dependencias.
+
+2.  **`Future<Usuario> register({required String nombre, required String contrasenia})`**:
+    *   **Descripción:** Un método asíncrono para registrar un nuevo usuario en el sistema. Requiere un nombre de usuario y una contraseña.
+    *   **Retorno:** Un `Future` que completará con un objeto `Usuario` si el registro es exitoso. Si falla, el `Future` lanzará una excepción.
+
+3.  **`Future<Usuario> login({required String nombre, required String contrasenia})`**:
+    *   **Descripción:** Un método asíncrono para autenticar a un usuario existente. Requiere un nombre de usuario y una contraseña.
+    *   **Retorno:** Un `Future` que completará con un objeto `Usuario` si la autenticación es exitosa. Si las credenciales son incorrectas o hay otro error, el `Future` lanzará una excepción.
+
+4.  **`Future<void> logout()`**:
+    *   **Descripción:** Un método asíncrono para cerrar la sesión del usuario actualmente autenticado.
+    *   **Retorno:** Un `Future<void>` que completará una vez que la sesión se haya cerrado exitosamente.
+
+5.  **`Future<Usuario?> currentUser()`**:
+    *   **Descripción:** Un método asíncrono para obtener el usuario actualmente autenticado.
+    *   **Retorno:** Un `Future` que completará con un objeto `Usuario` si hay una sesión activa, o `null` si no hay ningún usuario autenticado en ese momento.
+
+6.  **`Usuario` (Entidad)**:
+    *   **Descripción:** Aunque no se define en este archivo, la entidad `Usuario` (importada desde `features/usuario/entidades/usuario.dart`) es un componente clave. Representa la información del usuario una vez autenticado o registrado.
+    *   **Rol:** Es el tipo de dato que `AuthRepository` devuelve para las operaciones de registro, inicio de sesión y obtención del usuario actual, asegurando un modelo de datos consistente en la capa de dominio.
+
+---
