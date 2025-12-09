@@ -1,6 +1,6 @@
 //lib\features\perfiles\repositorios\repo_progreso.dart
 import '../../../../core/database/database.dart';
-import '../../../../core/utils.dart';
+import '../../../core/utils/utils.dart';
 
 abstract class RepoProgreso {
   
@@ -26,4 +26,9 @@ abstract class RepoProgreso {
     required bool esAcierto
   });
   Future<List<ProgresoActividad>> getHistorialCompleto(String usuarioId);
+  Future<void> actualizarProgresoModulo({
+    required String usuarioId, 
+    required int moduloId, 
+    required double progreso
+  });
 }

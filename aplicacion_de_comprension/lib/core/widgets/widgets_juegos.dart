@@ -4,7 +4,7 @@ import '../../features/perfiles/entidades/modelos_json.dart';
 // WIDGET 1: ORDENAR ORACIÓN
 class JuegoOrdenarOracion extends StatefulWidget {
   final ActividadModelo actividad;
-  final Function(bool) onTerminar; // Callback para reportar resultado
+  final Function(bool) onTerminar;
 
   const JuegoOrdenarOracion({super.key, required this.actividad, required this.onTerminar});
 
@@ -21,18 +21,18 @@ class _JuegoOrdenarOracionState extends State<JuegoOrdenarOracion> {
   void initState() {
     super.initState();
     final contenido = widget.actividad.contenido;
+    // Creamos una copia de la lista para poder modificarla
     palabrasDisponibles = List<String>.from(contenido['oracion_desordenada']);
-    palabrasDisponibles.shuffle(); // Mezclar
+    palabrasDisponibles.shuffle(); 
     oracionArmada = [];
     solucion = contenido['solucion'];
   }
 
   void _validar() {
-    // Normalizamos quitando puntos y mayúsculas para comparar fácil
     String armada = oracionArmada.join(" ").toLowerCase().replaceAll('.', '');
     String correcta = solucion.toLowerCase().replaceAll('.', '');
     
-    bool esCorrecto = armada == correcta;
+    bool esCorrecto = armada.trim() == correcta.trim();
     widget.onTerminar(esCorrecto);
   }
 
@@ -42,55 +42,84 @@ class _JuegoOrdenarOracionState extends State<JuegoOrdenarOracion> {
       children: [
         const Padding(
           padding: EdgeInsets.all(16.0),
-          child: Text("Toca las palabras en orden:", style: TextStyle(fontSize: 18)),
+          child: Text("Toca las palabras en el orden correcto:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         ),
         
-        // Zona de la oración armada
+        // --- ZONA DE LA ORACIÓN ARMADA ---
         Container(
           width: double.infinity,
+          // Agregamos altura mínima para que se vea el recuadro aunque esté vacío
+          constraints: const BoxConstraints(minHeight: 100), 
           margin: const EdgeInsets.all(16),
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.blueAccent),
+            color: Colors.white,
+            border: Border.all(color: Colors.blueAccent, width: 2),
             borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 5, offset: const Offset(0, 3))
+            ]
           ),
-          child: Wrap(
-            spacing: 8,
-            children: oracionArmada.map((p) => ActionChip(
-              label: Text(p),
-              onPressed: () {
-                setState(() {
-                  oracionArmada.remove(p);
-                  palabrasDisponibles.add(p);
-                });
-              },
-            )).toList(),
+          child: oracionArmada.isEmpty 
+            ? const Center(child: Text("Las palabras aparecerán aquí...", style: TextStyle(color: Colors.grey)))
+            : Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: oracionArmada.map((p) => ActionChip(
+                  avatar: const Icon(Icons.remove_circle_outline, size: 16),
+                  label: Text(p, style: const TextStyle(fontSize: 16)),
+                  backgroundColor: Colors.blue.shade100,
+                  onPressed: () {
+                    setState(() {
+                      oracionArmada.remove(p);
+                      palabrasDisponibles.add(p);
+                    });
+                  },
+                )).toList(),
+              ),
+        ),
+
+        const Divider(height: 30, thickness: 1),
+        const Text("Palabras disponibles:"),
+        const SizedBox(height: 10),
+
+        // --- ZONA DE PALABRAS DISPONIBLES ---
+        Expanded( // Usamos Expanded para que ocupe el espacio restante si hay muchas palabras
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              alignment: WrapAlignment.center,
+              children: palabrasDisponibles.map((p) => ActionChip( // <--- CAMBIO AQUÍ: ActionChip
+                label: Text(p, style: const TextStyle(fontSize: 16)),
+                elevation: 2,
+                backgroundColor: Colors.grey.shade200,
+                // ActionChip usa 'onPressed', no 'onSelected'. Es más directo.
+                onPressed: () { 
+                  setState(() {
+                    palabrasDisponibles.remove(p);
+                    oracionArmada.add(p);
+                  });
+                },
+              )).toList(),
+            ),
           ),
         ),
 
-        const Divider(),
-
-        // Zona de palabras disponibles
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: palabrasDisponibles.map((p) => FilterChip(
-            label: Text(p),
-            onSelected: (_) {
-              setState(() {
-                palabrasDisponibles.remove(p);
-                oracionArmada.add(p);
-              });
-            },
-          )).toList(),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: FilledButton.icon(
+              // Deshabilitar botón si no ha usado todas las palabras
+              onPressed: palabrasDisponibles.isEmpty ? _validar : null,
+              icon: const Icon(Icons.check_circle),
+              label: const Text("Comprobar Respuesta", style: TextStyle(fontSize: 18)),
+            ),
+          ),
         ),
-
-        const Spacer(),
-        FilledButton(
-          onPressed: palabrasDisponibles.isEmpty ? _validar : null,
-          child: const Text("Comprobar"),
-        ),
-        const SizedBox(height: 20),
       ],
     );
   }
@@ -123,7 +152,15 @@ class JuegoTrivia extends StatelessWidget {
         ],
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text(pregunta, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+          child: Text(
+            pregunta,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white, // <--- Aquí cambiamos el color a blanco
+            ),
+            textAlign: TextAlign.center,
+          ),
         ),
         const Spacer(),
         ...opciones.map((opc) => Padding(

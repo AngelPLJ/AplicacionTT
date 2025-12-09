@@ -73,7 +73,6 @@ class TipoDePalabra extends Table {
 class Palabras extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get palabra => text().withLength(max: 24)();
-  // Relación con TipoDePalabra
   IntColumn get tipoDePalabraId => integer().references(TipoDePalabra, #id)();
   @override
   Set<Column> get primaryKey => {id};

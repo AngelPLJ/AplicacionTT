@@ -1,23 +1,19 @@
 // lib/features/usuario/presentacion/controladores/contautenticacion.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-// Ajusta esta ruta a tu archivo real que expone el provider del repo:
-import 'package:aplicacion_de_comprension/core/proveedor.dart'; // debe exponer: tutorRepoProvider
-import '../../repositorios/repotutor.dart'; // interfaz RepoTutor (ajusta si tu ruta es otra)
+import 'package:aplicacion_de_comprension/core/providers/proveedor.dart'; 
+import '../../repositorios/repotutor.dart';
 import '../estados/autenticacion.dart';
-// ===== Provider del controlador =====
-final authControllerProvider =
-    StateNotifierProvider<AuthController, AuthState>((ref) {
+
+final authControllerProvider = StateNotifierProvider<AuthController, AuthState>((ref) {
   final repo = ref.read(repoTutorProvider); // <-- asegúrate que exista este provider
   return AuthController(repo);
 });
 
-// ===== Controlador =====
+
 class AuthController extends StateNotifier<AuthState> {
-  final RepoTutor repo; // tu interfaz de repositorio
+  final RepoTutor repo;
   AuthController(this.repo) : super(const AuthInitial());
 
-  /// Registro local del tutor (único por dispositivo).
   Future<void> crearTutor({String? nombre, required String secret}) async {
     state = const AuthLoading();
     try {
@@ -29,7 +25,6 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
-  /// Login offline con contraseña o PIN.
   Future<bool> login({required String secret, bool remember = true}) async {
     state = const AuthLoading();
     try {

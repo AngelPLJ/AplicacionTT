@@ -80,7 +80,6 @@ class ProfileRepositoryImpl implements RepoPerfil {
   Future<void> eliminarPerfil(String id) async {
     await (db.delete(db.usuarios)..where((tbl) => tbl.id.equals(id))).go();
     
-    // Opcional: Si borraste el perfil activo, limpia la preferencia
     final activeId = await db.getKv(_kActiveProfile);
     if (activeId == id) {
        await db.upsertKv(_kActiveProfile, '');

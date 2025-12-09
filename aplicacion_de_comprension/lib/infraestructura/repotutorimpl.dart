@@ -2,8 +2,8 @@
 import 'dart:convert';
 import 'package:uuid/uuid.dart';
 import 'package:aplicacion_de_comprension/core/database/database.dart';
-import '../core/seguridad.dart';
-import '../core/hasher.dart';
+import '../core/utils/seguridad.dart';
+import '../core/utils/hasher.dart';
 import '../features/usuario/repositorios/repotutor.dart';
 
 class RepoTutorImpl implements RepoTutor {
@@ -42,7 +42,6 @@ class RepoTutorImpl implements RepoTutor {
     final row = await db.select(db.tutor).getSingle();
     final saltString = await sec.read(_kSaltKey);
     if (saltString == null) {
-      // Si no hay salt guardado por algún error de corrupción, no podemos verificar
       return false; 
     }
     final salt = base64Decode(saltString);

@@ -4,7 +4,7 @@ import '../../entidades/modelos_json.dart';
 import '../../repositorios/repo_contenido_json.dart';
 import '../../../../core/widgets/widgets_juegos.dart';
 import '../../../../core/widgets/pantalla_carga.dart';
-import '../../../../core/proveedor.dart'; // Para repoProgresoProvider y repoPerfilProvider
+import '../../../../core/providers/proveedor.dart'; // Para repoProgresoProvider y repoPerfilProvider
 
 class ActivityPlayerPage extends ConsumerStatefulWidget {
   final int actividadId;

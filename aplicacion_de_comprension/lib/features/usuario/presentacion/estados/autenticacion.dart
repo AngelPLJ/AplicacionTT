@@ -1,5 +1,4 @@
-// presentation/states/auth_state.dart
-// ===== Estados =====
+
 sealed class AuthState {
   const AuthState();
 }

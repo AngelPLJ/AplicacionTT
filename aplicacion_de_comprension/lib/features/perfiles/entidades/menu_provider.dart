@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart'; // Necesario para 'select'
-import '../../../core/proveedor.dart';
+import '../../../core/providers/proveedor.dart';
 import '../../usuario/entidades/perfil.dart';
 import '../repositorios/repo_contenido_json.dart'; // Asegúrate de importar esto
-import '../../../core/utils.dart'; // Importa ProgresoActividad
+import '../../../core/utils/utils.dart'; // Importa ProgresoActividad
 class MenuData {
   final Perfil usuario;
   final double progresoTotal;

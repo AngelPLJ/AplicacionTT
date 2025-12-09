@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import '../../core/database/database.dart';
 import '../features/perfiles/repositorios/repo_progreso.dart';
-import '../core/utils.dart';
+import '../core/utils/utils.dart';
 
 class RepoProgresoImpl implements RepoProgreso {
   final AppDatabase db;
@@ -164,5 +164,34 @@ class RepoProgresoImpl implements RepoProgreso {
     return await (db.select(db.usuariosHasActividades)
           ..where((t) => t.usuarioId.equals(usuarioId)))
         .get();
+  }
+  @override
+  Future<void> actualizarProgresoModulo({
+    required String usuarioId,
+    required int moduloId,
+    required double progreso,
+  }) async {
+    await db.transaction(() async {
+      // 1. Verificar si ya existe registro para este usuario y módulo
+      final existe = await (db.select(db.modulosHasUsuarios)
+            ..where((t) => t.usuarioId.equals(usuarioId) & t.moduloId.equals(moduloId)))
+          .getSingleOrNull();
+
+      if (existe == null) {
+        // 2. Si no existe, insertamos
+        await db.into(db.modulosHasUsuarios).insert(
+              ModulosHasUsuariosCompanion.insert(
+                moduloId: moduloId,
+                usuarioId: usuarioId,
+                progreso: progreso,
+              ),
+            );
+      } else {
+        // 3. Si existe, actualizamos
+        await (db.update(db.modulosHasUsuarios)
+              ..where((t) => t.usuarioId.equals(usuarioId) & t.moduloId.equals(moduloId)))
+            .write(ModulosHasUsuariosCompanion(progreso: Value(progreso)));
+      }
+    });
   }
 }

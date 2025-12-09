@@ -107,6 +107,8 @@ flutter:
 #   ...
   assets:
     - assets/imagenes/
+    - assets/json/
+    - assets/json/historias/
 
   fonts:
     - family: WorkSans

@@ -1,20 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import './database/database.dart';
-import './hasher.dart';
-import './seguridad.dart';
+import '../database/database.dart';
+import '../utils/hasher.dart';
+import '../utils/seguridad.dart';
 
-import '../infraestructura/repotutorimpl.dart';
-import '../infraestructura/repoconfigimpl.dart';
-import '../infraestructura/repoperfilimpl.dart';
-import '../infraestructura/repoprogresoimpl.dart';
-import '../infraestructura/repocontimpl.dart';
+import '../../infraestructura/repotutorimpl.dart';
+import '../../infraestructura/repoconfigimpl.dart';
+import '../../infraestructura/repoperfilimpl.dart';
+import '../../infraestructura/repoprogresoimpl.dart';
+import '../../infraestructura/repocontimpl.dart';
 
-import '../features/perfiles/repositorios/repo_contenido.dart';
-import '../features/perfiles/repositorios/repo_progreso.dart';
-import '../features/usuario/repositorios/repotutor.dart';
-import '../features/usuario/repositorios/repoperfil.dart';
-import '../features/usuario/repositorios/repoconfig.dart';
+import '../../features/perfiles/repositorios/repo_contenido.dart';
+import '../../features/perfiles/repositorios/repo_progreso.dart';
+import '../../features/usuario/repositorios/repotutor.dart';
+import '../../features/usuario/repositorios/repoperfil.dart';
+import '../../features/usuario/repositorios/repoconfig.dart';
 
 final dbProvider = Provider<AppDatabase>((ref) => throw UnimplementedError('Init in main'));
 
