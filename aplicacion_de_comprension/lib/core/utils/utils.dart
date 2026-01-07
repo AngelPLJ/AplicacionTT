@@ -1,7 +1,6 @@
 String obtenerFondoEstacion() {
   final mes = DateTime.now().month;
 
-  // Lógica por meses (Meteorológica estándar)
   // Primavera: Marzo (3), Abril (4), Mayo (5)
   if (mes >= 3 && mes <= 5) {
     return 'assets/imagenes/primavera.jpg';
@@ -21,12 +20,4 @@ String obtenerFondoEstacion() {
   else {
     return 'assets/imagenes/invierno.jpg';
   }
-}
-
-class ModuloConProgreso {
-  final String nombre;
-  final double porcentaje; // 0.0 a 1.0
-  final int id;
-
-  ModuloConProgreso({required this.nombre, required this.porcentaje, required this.id});
 }

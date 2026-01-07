@@ -63,17 +63,10 @@ class Fonemas extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-class TipoDePalabra extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get tipo => text().withLength(max: 15)();
-  @override
-  Set<Column> get primaryKey => {id};
-}
 
 class Palabras extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get palabra => text().withLength(max: 24)();
-  IntColumn get tipoDePalabraId => integer().references(TipoDePalabra, #id)();
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -189,7 +182,6 @@ class UsuariosHasMedallas extends Table {
   Configuraciones,
   Numeros,
   Fonemas,
-  TipoDePalabra,
   Palabras,
   Modulos,
   Actividades,

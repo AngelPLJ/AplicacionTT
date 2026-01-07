@@ -1,16 +1,39 @@
 import 'package:flutter/material.dart';
 
 class PantallaCarga extends StatelessWidget {
-  const PantallaCarga({super.key});
+  final String? mensaje;
+
+  const PantallaCarga({super.key, this.mensaje});
 
   @override
   Widget build(BuildContext context) {
-    // Usamos Container si queremos usarlo dentro de otro Scaffold,
-    // o Scaffold si es pantalla completa.
-    return Container(
-      child: const Center(
-        child: CircularProgressIndicator(
-          color: Colors.white, // Spinner blanco
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.5), // Fondo semitransparente oscuro
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Para que se ajuste al contenido
+          children: [
+            const CircularProgressIndicator(
+              color: Colors.white, // Color que resalte
+              strokeWidth: 3,
+            ),
+            if (mensaje != null) ...[
+              const SizedBox(height: 16),
+              Text(
+                mensaje!,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  decoration: TextDecoration.none, // Evita subrayado amarillo feo
+                ),
+              )
+            ]
+          ],
         ),
       ),
     );

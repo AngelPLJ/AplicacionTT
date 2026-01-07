@@ -1,14 +1,9 @@
-import 'package:aplicacion_de_comprension/core/widgets/pantalla_carga.dart';
-import 'package:aplicacion_de_comprension/features/perfiles/presentacion/paginas/menu_principal.dart';
+// lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/providers/proveedor.dart';
 import 'core/database/database.dart';
-import 'core/providers/cargar_pantallas.dart';
-import './features/usuario/presentacion/paginas/registro.dart';
-import './features/usuario/presentacion/paginas/login.dart';
-import './features/usuario/presentacion/paginas/personajes.dart';
-import './features/secciones/presentacion/paginas/introduccion.dart';
+import 'features/introduccion/presentacion/paginas/pantalla_carga.dart ';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +18,6 @@ class MyApp extends ConsumerWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final boot = ref.watch(bootProvider);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Aplico',
@@ -42,17 +36,7 @@ class MyApp extends ConsumerWidget {
           titleSmall: TextStyle(fontSize: 22.0, fontFamily: 'Roboto Slab', fontWeight: FontWeight.bold),
         ),
       ), 
-      home: boot.when(
-        data: (r) => switch (r) {
-          BootRoute.introduccion => const Introduccion(),
-          BootRoute.onboarding => const Registro(),
-          BootRoute.login => const Login(),
-          BootRoute.profiles => const CharacterSelectPage(),
-          BootRoute.mainMenu => const MainMenuPage(),
-        },
-        loading: () => const Scaffold(body:  PantallaCarga()),
-        error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
-      ),
+      home: const SplashScreen(),
     );
   }
 }

@@ -1598,197 +1598,6 @@ class FonemasCompanion extends UpdateCompanion<Fonema> {
   }
 }
 
-class $TipoDePalabraTable extends TipoDePalabra
-    with TableInfo<$TipoDePalabraTable, TipoDePalabraData> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $TipoDePalabraTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
-  );
-  static const VerificationMeta _tipoMeta = const VerificationMeta('tipo');
-  @override
-  late final GeneratedColumn<String> tipo = GeneratedColumn<String>(
-    'tipo',
-    aliasedName,
-    false,
-    additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 15),
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [id, tipo];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'tipo_de_palabra';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<TipoDePalabraData> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('tipo')) {
-      context.handle(
-        _tipoMeta,
-        tipo.isAcceptableOrUnknown(data['tipo']!, _tipoMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_tipoMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  TipoDePalabraData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TipoDePalabraData(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      tipo: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}tipo'],
-      )!,
-    );
-  }
-
-  @override
-  $TipoDePalabraTable createAlias(String alias) {
-    return $TipoDePalabraTable(attachedDatabase, alias);
-  }
-}
-
-class TipoDePalabraData extends DataClass
-    implements Insertable<TipoDePalabraData> {
-  final int id;
-  final String tipo;
-  const TipoDePalabraData({required this.id, required this.tipo});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['tipo'] = Variable<String>(tipo);
-    return map;
-  }
-
-  TipoDePalabraCompanion toCompanion(bool nullToAbsent) {
-    return TipoDePalabraCompanion(id: Value(id), tipo: Value(tipo));
-  }
-
-  factory TipoDePalabraData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return TipoDePalabraData(
-      id: serializer.fromJson<int>(json['id']),
-      tipo: serializer.fromJson<String>(json['tipo']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'tipo': serializer.toJson<String>(tipo),
-    };
-  }
-
-  TipoDePalabraData copyWith({int? id, String? tipo}) =>
-      TipoDePalabraData(id: id ?? this.id, tipo: tipo ?? this.tipo);
-  TipoDePalabraData copyWithCompanion(TipoDePalabraCompanion data) {
-    return TipoDePalabraData(
-      id: data.id.present ? data.id.value : this.id,
-      tipo: data.tipo.present ? data.tipo.value : this.tipo,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('TipoDePalabraData(')
-          ..write('id: $id, ')
-          ..write('tipo: $tipo')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(id, tipo);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is TipoDePalabraData &&
-          other.id == this.id &&
-          other.tipo == this.tipo);
-}
-
-class TipoDePalabraCompanion extends UpdateCompanion<TipoDePalabraData> {
-  final Value<int> id;
-  final Value<String> tipo;
-  const TipoDePalabraCompanion({
-    this.id = const Value.absent(),
-    this.tipo = const Value.absent(),
-  });
-  TipoDePalabraCompanion.insert({
-    this.id = const Value.absent(),
-    required String tipo,
-  }) : tipo = Value(tipo);
-  static Insertable<TipoDePalabraData> custom({
-    Expression<int>? id,
-    Expression<String>? tipo,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (tipo != null) 'tipo': tipo,
-    });
-  }
-
-  TipoDePalabraCompanion copyWith({Value<int>? id, Value<String>? tipo}) {
-    return TipoDePalabraCompanion(id: id ?? this.id, tipo: tipo ?? this.tipo);
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (tipo.present) {
-      map['tipo'] = Variable<String>(tipo.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('TipoDePalabraCompanion(')
-          ..write('id: $id, ')
-          ..write('tipo: $tipo')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class $PalabrasTable extends Palabras with TableInfo<$PalabrasTable, Palabra> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -1819,22 +1628,8 @@ class $PalabrasTable extends Palabras with TableInfo<$PalabrasTable, Palabra> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _tipoDePalabraIdMeta = const VerificationMeta(
-    'tipoDePalabraId',
-  );
   @override
-  late final GeneratedColumn<int> tipoDePalabraId = GeneratedColumn<int>(
-    'tipo_de_palabra_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES tipo_de_palabra (id)',
-    ),
-  );
-  @override
-  List<GeneratedColumn> get $columns => [id, palabra, tipoDePalabraId];
+  List<GeneratedColumn> get $columns => [id, palabra];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1858,17 +1653,6 @@ class $PalabrasTable extends Palabras with TableInfo<$PalabrasTable, Palabra> {
     } else if (isInserting) {
       context.missing(_palabraMeta);
     }
-    if (data.containsKey('tipo_de_palabra_id')) {
-      context.handle(
-        _tipoDePalabraIdMeta,
-        tipoDePalabraId.isAcceptableOrUnknown(
-          data['tipo_de_palabra_id']!,
-          _tipoDePalabraIdMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_tipoDePalabraIdMeta);
-    }
     return context;
   }
 
@@ -1886,10 +1670,6 @@ class $PalabrasTable extends Palabras with TableInfo<$PalabrasTable, Palabra> {
         DriftSqlType.string,
         data['${effectivePrefix}palabra'],
       )!,
-      tipoDePalabraId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}tipo_de_palabra_id'],
-      )!,
     );
   }
 
@@ -1902,27 +1682,17 @@ class $PalabrasTable extends Palabras with TableInfo<$PalabrasTable, Palabra> {
 class Palabra extends DataClass implements Insertable<Palabra> {
   final int id;
   final String palabra;
-  final int tipoDePalabraId;
-  const Palabra({
-    required this.id,
-    required this.palabra,
-    required this.tipoDePalabraId,
-  });
+  const Palabra({required this.id, required this.palabra});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['palabra'] = Variable<String>(palabra);
-    map['tipo_de_palabra_id'] = Variable<int>(tipoDePalabraId);
     return map;
   }
 
   PalabrasCompanion toCompanion(bool nullToAbsent) {
-    return PalabrasCompanion(
-      id: Value(id),
-      palabra: Value(palabra),
-      tipoDePalabraId: Value(tipoDePalabraId),
-    );
+    return PalabrasCompanion(id: Value(id), palabra: Value(palabra));
   }
 
   factory Palabra.fromJson(
@@ -1933,7 +1703,6 @@ class Palabra extends DataClass implements Insertable<Palabra> {
     return Palabra(
       id: serializer.fromJson<int>(json['id']),
       palabra: serializer.fromJson<String>(json['palabra']),
-      tipoDePalabraId: serializer.fromJson<int>(json['tipoDePalabraId']),
     );
   }
   @override
@@ -1942,22 +1711,15 @@ class Palabra extends DataClass implements Insertable<Palabra> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'palabra': serializer.toJson<String>(palabra),
-      'tipoDePalabraId': serializer.toJson<int>(tipoDePalabraId),
     };
   }
 
-  Palabra copyWith({int? id, String? palabra, int? tipoDePalabraId}) => Palabra(
-    id: id ?? this.id,
-    palabra: palabra ?? this.palabra,
-    tipoDePalabraId: tipoDePalabraId ?? this.tipoDePalabraId,
-  );
+  Palabra copyWith({int? id, String? palabra}) =>
+      Palabra(id: id ?? this.id, palabra: palabra ?? this.palabra);
   Palabra copyWithCompanion(PalabrasCompanion data) {
     return Palabra(
       id: data.id.present ? data.id.value : this.id,
       palabra: data.palabra.present ? data.palabra.value : this.palabra,
-      tipoDePalabraId: data.tipoDePalabraId.present
-          ? data.tipoDePalabraId.value
-          : this.tipoDePalabraId,
     );
   }
 
@@ -1965,59 +1727,46 @@ class Palabra extends DataClass implements Insertable<Palabra> {
   String toString() {
     return (StringBuffer('Palabra(')
           ..write('id: $id, ')
-          ..write('palabra: $palabra, ')
-          ..write('tipoDePalabraId: $tipoDePalabraId')
+          ..write('palabra: $palabra')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, palabra, tipoDePalabraId);
+  int get hashCode => Object.hash(id, palabra);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Palabra &&
           other.id == this.id &&
-          other.palabra == this.palabra &&
-          other.tipoDePalabraId == this.tipoDePalabraId);
+          other.palabra == this.palabra);
 }
 
 class PalabrasCompanion extends UpdateCompanion<Palabra> {
   final Value<int> id;
   final Value<String> palabra;
-  final Value<int> tipoDePalabraId;
   const PalabrasCompanion({
     this.id = const Value.absent(),
     this.palabra = const Value.absent(),
-    this.tipoDePalabraId = const Value.absent(),
   });
   PalabrasCompanion.insert({
     this.id = const Value.absent(),
     required String palabra,
-    required int tipoDePalabraId,
-  }) : palabra = Value(palabra),
-       tipoDePalabraId = Value(tipoDePalabraId);
+  }) : palabra = Value(palabra);
   static Insertable<Palabra> custom({
     Expression<int>? id,
     Expression<String>? palabra,
-    Expression<int>? tipoDePalabraId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (palabra != null) 'palabra': palabra,
-      if (tipoDePalabraId != null) 'tipo_de_palabra_id': tipoDePalabraId,
     });
   }
 
-  PalabrasCompanion copyWith({
-    Value<int>? id,
-    Value<String>? palabra,
-    Value<int>? tipoDePalabraId,
-  }) {
+  PalabrasCompanion copyWith({Value<int>? id, Value<String>? palabra}) {
     return PalabrasCompanion(
       id: id ?? this.id,
       palabra: palabra ?? this.palabra,
-      tipoDePalabraId: tipoDePalabraId ?? this.tipoDePalabraId,
     );
   }
 
@@ -2030,9 +1779,6 @@ class PalabrasCompanion extends UpdateCompanion<Palabra> {
     if (palabra.present) {
       map['palabra'] = Variable<String>(palabra.value);
     }
-    if (tipoDePalabraId.present) {
-      map['tipo_de_palabra_id'] = Variable<int>(tipoDePalabraId.value);
-    }
     return map;
   }
 
@@ -2040,8 +1786,7 @@ class PalabrasCompanion extends UpdateCompanion<Palabra> {
   String toString() {
     return (StringBuffer('PalabrasCompanion(')
           ..write('id: $id, ')
-          ..write('palabra: $palabra, ')
-          ..write('tipoDePalabraId: $tipoDePalabraId')
+          ..write('palabra: $palabra')
           ..write(')'))
         .toString();
   }
@@ -4772,7 +4517,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $NumerosTable numeros = $NumerosTable(this);
   late final $FonemasTable fonemas = $FonemasTable(this);
-  late final $TipoDePalabraTable tipoDePalabra = $TipoDePalabraTable(this);
   late final $PalabrasTable palabras = $PalabrasTable(this);
   late final $ModulosTable modulos = $ModulosTable(this);
   late final $ActividadesTable actividades = $ActividadesTable(this);
@@ -4802,7 +4546,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     configuraciones,
     numeros,
     fonemas,
-    tipoDePalabra,
     palabras,
     modulos,
     actividades,
@@ -7049,276 +6792,14 @@ typedef $$FonemasTableProcessedTableManager =
       Fonema,
       PrefetchHooks Function({bool usuariosHasFonemasRefs})
     >;
-typedef $$TipoDePalabraTableCreateCompanionBuilder =
-    TipoDePalabraCompanion Function({Value<int> id, required String tipo});
-typedef $$TipoDePalabraTableUpdateCompanionBuilder =
-    TipoDePalabraCompanion Function({Value<int> id, Value<String> tipo});
-
-final class $$TipoDePalabraTableReferences
-    extends
-        BaseReferences<_$AppDatabase, $TipoDePalabraTable, TipoDePalabraData> {
-  $$TipoDePalabraTableReferences(
-    super.$_db,
-    super.$_table,
-    super.$_typedResult,
-  );
-
-  static MultiTypedResultKey<$PalabrasTable, List<Palabra>> _palabrasRefsTable(
-    _$AppDatabase db,
-  ) => MultiTypedResultKey.fromTable(
-    db.palabras,
-    aliasName: $_aliasNameGenerator(
-      db.tipoDePalabra.id,
-      db.palabras.tipoDePalabraId,
-    ),
-  );
-
-  $$PalabrasTableProcessedTableManager get palabrasRefs {
-    final manager = $$PalabrasTableTableManager(
-      $_db,
-      $_db.palabras,
-    ).filter((f) => f.tipoDePalabraId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_palabrasRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-}
-
-class $$TipoDePalabraTableFilterComposer
-    extends Composer<_$AppDatabase, $TipoDePalabraTable> {
-  $$TipoDePalabraTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get tipo => $composableBuilder(
-    column: $table.tipo,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  Expression<bool> palabrasRefs(
-    Expression<bool> Function($$PalabrasTableFilterComposer f) f,
-  ) {
-    final $$PalabrasTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.palabras,
-      getReferencedColumn: (t) => t.tipoDePalabraId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$PalabrasTableFilterComposer(
-            $db: $db,
-            $table: $db.palabras,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-}
-
-class $$TipoDePalabraTableOrderingComposer
-    extends Composer<_$AppDatabase, $TipoDePalabraTable> {
-  $$TipoDePalabraTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get tipo => $composableBuilder(
-    column: $table.tipo,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$TipoDePalabraTableAnnotationComposer
-    extends Composer<_$AppDatabase, $TipoDePalabraTable> {
-  $$TipoDePalabraTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get tipo =>
-      $composableBuilder(column: $table.tipo, builder: (column) => column);
-
-  Expression<T> palabrasRefs<T extends Object>(
-    Expression<T> Function($$PalabrasTableAnnotationComposer a) f,
-  ) {
-    final $$PalabrasTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.palabras,
-      getReferencedColumn: (t) => t.tipoDePalabraId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$PalabrasTableAnnotationComposer(
-            $db: $db,
-            $table: $db.palabras,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-}
-
-class $$TipoDePalabraTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $TipoDePalabraTable,
-          TipoDePalabraData,
-          $$TipoDePalabraTableFilterComposer,
-          $$TipoDePalabraTableOrderingComposer,
-          $$TipoDePalabraTableAnnotationComposer,
-          $$TipoDePalabraTableCreateCompanionBuilder,
-          $$TipoDePalabraTableUpdateCompanionBuilder,
-          (TipoDePalabraData, $$TipoDePalabraTableReferences),
-          TipoDePalabraData,
-          PrefetchHooks Function({bool palabrasRefs})
-        > {
-  $$TipoDePalabraTableTableManager(_$AppDatabase db, $TipoDePalabraTable table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$TipoDePalabraTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$TipoDePalabraTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$TipoDePalabraTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<String> tipo = const Value.absent(),
-              }) => TipoDePalabraCompanion(id: id, tipo: tipo),
-          createCompanionCallback:
-              ({Value<int> id = const Value.absent(), required String tipo}) =>
-                  TipoDePalabraCompanion.insert(id: id, tipo: tipo),
-          withReferenceMapper: (p0) => p0
-              .map(
-                (e) => (
-                  e.readTable(table),
-                  $$TipoDePalabraTableReferences(db, table, e),
-                ),
-              )
-              .toList(),
-          prefetchHooksCallback: ({palabrasRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (palabrasRefs) db.palabras],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (palabrasRefs)
-                    await $_getPrefetchedData<
-                      TipoDePalabraData,
-                      $TipoDePalabraTable,
-                      Palabra
-                    >(
-                      currentTable: table,
-                      referencedTable: $$TipoDePalabraTableReferences
-                          ._palabrasRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$TipoDePalabraTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).palabrasRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where(
-                            (e) => e.tipoDePalabraId == item.id,
-                          ),
-                      typedResults: items,
-                    ),
-                ];
-              },
-            );
-          },
-        ),
-      );
-}
-
-typedef $$TipoDePalabraTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $TipoDePalabraTable,
-      TipoDePalabraData,
-      $$TipoDePalabraTableFilterComposer,
-      $$TipoDePalabraTableOrderingComposer,
-      $$TipoDePalabraTableAnnotationComposer,
-      $$TipoDePalabraTableCreateCompanionBuilder,
-      $$TipoDePalabraTableUpdateCompanionBuilder,
-      (TipoDePalabraData, $$TipoDePalabraTableReferences),
-      TipoDePalabraData,
-      PrefetchHooks Function({bool palabrasRefs})
-    >;
 typedef $$PalabrasTableCreateCompanionBuilder =
-    PalabrasCompanion Function({
-      Value<int> id,
-      required String palabra,
-      required int tipoDePalabraId,
-    });
+    PalabrasCompanion Function({Value<int> id, required String palabra});
 typedef $$PalabrasTableUpdateCompanionBuilder =
-    PalabrasCompanion Function({
-      Value<int> id,
-      Value<String> palabra,
-      Value<int> tipoDePalabraId,
-    });
+    PalabrasCompanion Function({Value<int> id, Value<String> palabra});
 
 final class $$PalabrasTableReferences
     extends BaseReferences<_$AppDatabase, $PalabrasTable, Palabra> {
   $$PalabrasTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static $TipoDePalabraTable _tipoDePalabraIdTable(_$AppDatabase db) =>
-      db.tipoDePalabra.createAlias(
-        $_aliasNameGenerator(db.palabras.tipoDePalabraId, db.tipoDePalabra.id),
-      );
-
-  $$TipoDePalabraTableProcessedTableManager get tipoDePalabraId {
-    final $_column = $_itemColumn<int>('tipo_de_palabra_id')!;
-
-    final manager = $$TipoDePalabraTableTableManager(
-      $_db,
-      $_db.tipoDePalabra,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_tipoDePalabraIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
 
   static MultiTypedResultKey<
     $UsuariosHasPalabrasTable,
@@ -7367,29 +6848,6 @@ class $$PalabrasTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  $$TipoDePalabraTableFilterComposer get tipoDePalabraId {
-    final $$TipoDePalabraTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.tipoDePalabraId,
-      referencedTable: $db.tipoDePalabra,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$TipoDePalabraTableFilterComposer(
-            $db: $db,
-            $table: $db.tipoDePalabra,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
   Expression<bool> usuariosHasPalabrasRefs(
     Expression<bool> Function($$UsuariosHasPalabrasTableFilterComposer f) f,
   ) {
@@ -7434,29 +6892,6 @@ class $$PalabrasTableOrderingComposer
     column: $table.palabra,
     builder: (column) => ColumnOrderings(column),
   );
-
-  $$TipoDePalabraTableOrderingComposer get tipoDePalabraId {
-    final $$TipoDePalabraTableOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.tipoDePalabraId,
-      referencedTable: $db.tipoDePalabra,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$TipoDePalabraTableOrderingComposer(
-            $db: $db,
-            $table: $db.tipoDePalabra,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
 }
 
 class $$PalabrasTableAnnotationComposer
@@ -7473,29 +6908,6 @@ class $$PalabrasTableAnnotationComposer
 
   GeneratedColumn<String> get palabra =>
       $composableBuilder(column: $table.palabra, builder: (column) => column);
-
-  $$TipoDePalabraTableAnnotationComposer get tipoDePalabraId {
-    final $$TipoDePalabraTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.tipoDePalabraId,
-      referencedTable: $db.tipoDePalabra,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$TipoDePalabraTableAnnotationComposer(
-            $db: $db,
-            $table: $db.tipoDePalabra,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
 
   Expression<T> usuariosHasPalabrasRefs<T extends Object>(
     Expression<T> Function($$UsuariosHasPalabrasTableAnnotationComposer a) f,
@@ -7537,10 +6949,7 @@ class $$PalabrasTableTableManager
           $$PalabrasTableUpdateCompanionBuilder,
           (Palabra, $$PalabrasTableReferences),
           Palabra,
-          PrefetchHooks Function({
-            bool tipoDePalabraId,
-            bool usuariosHasPalabrasRefs,
-          })
+          PrefetchHooks Function({bool usuariosHasPalabrasRefs})
         > {
   $$PalabrasTableTableManager(_$AppDatabase db, $PalabrasTable table)
     : super(
@@ -7557,22 +6966,12 @@ class $$PalabrasTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> palabra = const Value.absent(),
-                Value<int> tipoDePalabraId = const Value.absent(),
-              }) => PalabrasCompanion(
-                id: id,
-                palabra: palabra,
-                tipoDePalabraId: tipoDePalabraId,
-              ),
+              }) => PalabrasCompanion(id: id, palabra: palabra),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 required String palabra,
-                required int tipoDePalabraId,
-              }) => PalabrasCompanion.insert(
-                id: id,
-                palabra: palabra,
-                tipoDePalabraId: tipoDePalabraId,
-              ),
+              }) => PalabrasCompanion.insert(id: id, palabra: palabra),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
@@ -7581,72 +6980,37 @@ class $$PalabrasTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback:
-              ({tipoDePalabraId = false, usuariosHasPalabrasRefs = false}) {
-                return PrefetchHooks(
-                  db: db,
-                  explicitlyWatchedTables: [
-                    if (usuariosHasPalabrasRefs) db.usuariosHasPalabras,
-                  ],
-                  addJoins:
-                      <
-                        T extends TableManagerState<
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic
-                        >
-                      >(state) {
-                        if (tipoDePalabraId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.tipoDePalabraId,
-                                    referencedTable: $$PalabrasTableReferences
-                                        ._tipoDePalabraIdTable(db),
-                                    referencedColumn: $$PalabrasTableReferences
-                                        ._tipoDePalabraIdTable(db)
-                                        .id,
-                                  )
-                                  as T;
-                        }
-
-                        return state;
-                      },
-                  getPrefetchedDataCallback: (items) async {
-                    return [
-                      if (usuariosHasPalabrasRefs)
-                        await $_getPrefetchedData<
-                          Palabra,
-                          $PalabrasTable,
-                          UsuariosHasPalabra
-                        >(
-                          currentTable: table,
-                          referencedTable: $$PalabrasTableReferences
-                              ._usuariosHasPalabrasRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$PalabrasTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).usuariosHasPalabrasRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.palabraId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                    ];
-                  },
-                );
+          prefetchHooksCallback: ({usuariosHasPalabrasRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (usuariosHasPalabrasRefs) db.usuariosHasPalabras,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (usuariosHasPalabrasRefs)
+                    await $_getPrefetchedData<
+                      Palabra,
+                      $PalabrasTable,
+                      UsuariosHasPalabra
+                    >(
+                      currentTable: table,
+                      referencedTable: $$PalabrasTableReferences
+                          ._usuariosHasPalabrasRefsTable(db),
+                      managerFromTypedResult: (p0) => $$PalabrasTableReferences(
+                        db,
+                        table,
+                        p0,
+                      ).usuariosHasPalabrasRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.palabraId == item.id),
+                      typedResults: items,
+                    ),
+                ];
               },
+            );
+          },
         ),
       );
 }
@@ -7663,10 +7027,7 @@ typedef $$PalabrasTableProcessedTableManager =
       $$PalabrasTableUpdateCompanionBuilder,
       (Palabra, $$PalabrasTableReferences),
       Palabra,
-      PrefetchHooks Function({
-        bool tipoDePalabraId,
-        bool usuariosHasPalabrasRefs,
-      })
+      PrefetchHooks Function({bool usuariosHasPalabrasRefs})
     >;
 typedef $$ModulosTableCreateCompanionBuilder =
     ModulosCompanion Function({Value<int> id, required String nombre});
@@ -11448,8 +10809,6 @@ class $AppDatabaseManager {
       $$NumerosTableTableManager(_db, _db.numeros);
   $$FonemasTableTableManager get fonemas =>
       $$FonemasTableTableManager(_db, _db.fonemas);
-  $$TipoDePalabraTableTableManager get tipoDePalabra =>
-      $$TipoDePalabraTableTableManager(_db, _db.tipoDePalabra);
   $$PalabrasTableTableManager get palabras =>
       $$PalabrasTableTableManager(_db, _db.palabras);
   $$ModulosTableTableManager get modulos =>
