@@ -1,28 +1,28 @@
-enum TipoActividad {   
-  // Atención
-  encuentraLetraDistinta,
-  palabraEscuchada,
-  // Memoria
-  memorama,
-  memoriaFonetica,
-  // Lógica
-  ordenaOracion,
-  seleccionaImagen,
-  // Inferencia
-  quePasaraDespues,
-  comprensionFragmentos, 
+enum TipoActividad {
+  // Fonética y Auditiva
+  identificacionFonema,        // "Identificación de palabras por fonema inicial"
+  palabraEscuchada,            // "¿Qué palabra escuchaste?"
+  correspondenciaFonemaGrafema,// "Actividad de correspondencia fonema-grafema"
+  
+  encuentraLetraDistinta,      // "Encuentra la letra distinta"
+  memorama,                    // "Memorama"
+  
+  ordenaOracion,               // "Ordena la oración"
+  quePasaraDespues,            // "¿Qué pasará después?"
+  comprensionLectora,          // "Comprensión lectora"
 }
-enum HabilidadCognitiva { atencion, memoria, logica, inferencia }
+enum HabilidadCognitiva { atencion, memoria, logica, inferencia, vocabulario }
 
 class Actividad {
   final int id;
   final String nombre;
-  final List<HabilidadCognitiva> habilidades; // Lista tipada, no String
+  final List<HabilidadCognitiva> habilidades;
   final TipoActividad tipo;
   final String instruccion;
-  final dynamic contenidoVisual; // Texto o imagen
-  final List<String> opciones;
+  final Map<String, dynamic> contenido; // Cambiado a Map estricto
+  final List<String> opciones; 
   final String respuestaCorrecta;
+  final bool esDiagnostico;
 
   Actividad({
     required this.id,
@@ -30,8 +30,9 @@ class Actividad {
     required this.habilidades,
     required this.tipo,
     required this.instruccion,
-    this.contenidoVisual,
-    required this.opciones,
-    required this.respuestaCorrecta,
+    required this.contenido,
+    this.opciones = const [],
+    this.respuestaCorrecta = '',
+    this.esDiagnostico = false,
   });
 }

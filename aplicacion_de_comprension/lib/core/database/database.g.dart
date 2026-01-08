@@ -2003,13 +2003,107 @@ class $ActividadesTable extends Actividades
   late final GeneratedColumn<String> nombre = GeneratedColumn<String>(
     'nombre',
     aliasedName,
-    true,
-    additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 45),
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 150),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tipoMeta = const VerificationMeta('tipo');
+  @override
+  late final GeneratedColumn<String> tipo = GeneratedColumn<String>(
+    'tipo',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 50),
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    defaultValue: const Constant('generico'),
+  );
+  static const VerificationMeta _habilidadesMeta = const VerificationMeta(
+    'habilidades',
   );
   @override
-  List<GeneratedColumn> get $columns => [id, nombre];
+  late final GeneratedColumn<String> habilidades = GeneratedColumn<String>(
+    'habilidades',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _instruccionMeta = const VerificationMeta(
+    'instruccion',
+  );
+  @override
+  late final GeneratedColumn<String> instruccion = GeneratedColumn<String>(
+    'instruccion',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<String, dynamic>?, String>
+  contenidoVisual =
+      GeneratedColumn<String>(
+        'contenido_visual',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      ).withConverter<Map<String, dynamic>?>(
+        $ActividadesTable.$convertercontenidoVisualn,
+      );
+  @override
+  late final GeneratedColumnWithTypeConverter<List<String>, String> opciones =
+      GeneratedColumn<String>(
+        'opciones',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<List<String>>($ActividadesTable.$converteropciones);
+  static const VerificationMeta _respuestaCorrectaMeta = const VerificationMeta(
+    'respuestaCorrecta',
+  );
+  @override
+  late final GeneratedColumn<String> respuestaCorrecta =
+      GeneratedColumn<String>(
+        'respuesta_correcta',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(''),
+      );
+  static const VerificationMeta _esDiagnosticoMeta = const VerificationMeta(
+    'esDiagnostico',
+  );
+  @override
+  late final GeneratedColumn<bool> esDiagnostico = GeneratedColumn<bool>(
+    'es_diagnostico',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("es_diagnostico" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    nombre,
+    tipo,
+    habilidades,
+    instruccion,
+    contenidoVisual,
+    opciones,
+    respuestaCorrecta,
+    esDiagnostico,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2030,6 +2124,50 @@ class $ActividadesTable extends Actividades
         _nombreMeta,
         nombre.isAcceptableOrUnknown(data['nombre']!, _nombreMeta),
       );
+    } else if (isInserting) {
+      context.missing(_nombreMeta);
+    }
+    if (data.containsKey('tipo')) {
+      context.handle(
+        _tipoMeta,
+        tipo.isAcceptableOrUnknown(data['tipo']!, _tipoMeta),
+      );
+    }
+    if (data.containsKey('habilidades')) {
+      context.handle(
+        _habilidadesMeta,
+        habilidades.isAcceptableOrUnknown(
+          data['habilidades']!,
+          _habilidadesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('instruccion')) {
+      context.handle(
+        _instruccionMeta,
+        instruccion.isAcceptableOrUnknown(
+          data['instruccion']!,
+          _instruccionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('respuesta_correcta')) {
+      context.handle(
+        _respuestaCorrectaMeta,
+        respuestaCorrecta.isAcceptableOrUnknown(
+          data['respuesta_correcta']!,
+          _respuestaCorrectaMeta,
+        ),
+      );
+    }
+    if (data.containsKey('es_diagnostico')) {
+      context.handle(
+        _esDiagnosticoMeta,
+        esDiagnostico.isAcceptableOrUnknown(
+          data['es_diagnostico']!,
+          _esDiagnosticoMeta,
+        ),
+      );
     }
     return context;
   }
@@ -2047,7 +2185,39 @@ class $ActividadesTable extends Actividades
       nombre: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}nombre'],
+      )!,
+      tipo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tipo'],
+      )!,
+      habilidades: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}habilidades'],
+      )!,
+      instruccion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}instruccion'],
+      )!,
+      contenidoVisual: $ActividadesTable.$convertercontenidoVisualn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}contenido_visual'],
+        ),
       ),
+      opciones: $ActividadesTable.$converteropciones.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}opciones'],
+        )!,
+      ),
+      respuestaCorrecta: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}respuesta_correcta'],
+      )!,
+      esDiagnostico: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}es_diagnostico'],
+      )!,
     );
   }
 
@@ -2055,28 +2225,74 @@ class $ActividadesTable extends Actividades
   $ActividadesTable createAlias(String alias) {
     return $ActividadesTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<String, dynamic>, String> $convertercontenidoVisual =
+      const MapConverter();
+  static TypeConverter<Map<String, dynamic>?, String?>
+  $convertercontenidoVisualn = NullAwareTypeConverter.wrap(
+    $convertercontenidoVisual,
+  );
+  static TypeConverter<List<String>, String> $converteropciones =
+      const StringListConverter();
 }
 
 class Actividade extends DataClass implements Insertable<Actividade> {
   final int id;
-  final String? nombre;
-  const Actividade({required this.id, this.nombre});
+  final String nombre;
+  final String tipo;
+  final String habilidades;
+  final String instruccion;
+  final Map<String, dynamic>? contenidoVisual;
+  final List<String> opciones;
+  final String respuestaCorrecta;
+  final bool esDiagnostico;
+  const Actividade({
+    required this.id,
+    required this.nombre,
+    required this.tipo,
+    required this.habilidades,
+    required this.instruccion,
+    this.contenidoVisual,
+    required this.opciones,
+    required this.respuestaCorrecta,
+    required this.esDiagnostico,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    if (!nullToAbsent || nombre != null) {
-      map['nombre'] = Variable<String>(nombre);
+    map['nombre'] = Variable<String>(nombre);
+    map['tipo'] = Variable<String>(tipo);
+    map['habilidades'] = Variable<String>(habilidades);
+    map['instruccion'] = Variable<String>(instruccion);
+    if (!nullToAbsent || contenidoVisual != null) {
+      map['contenido_visual'] = Variable<String>(
+        $ActividadesTable.$convertercontenidoVisualn.toSql(contenidoVisual),
+      );
     }
+    {
+      map['opciones'] = Variable<String>(
+        $ActividadesTable.$converteropciones.toSql(opciones),
+      );
+    }
+    map['respuesta_correcta'] = Variable<String>(respuestaCorrecta);
+    map['es_diagnostico'] = Variable<bool>(esDiagnostico);
     return map;
   }
 
   ActividadesCompanion toCompanion(bool nullToAbsent) {
     return ActividadesCompanion(
       id: Value(id),
-      nombre: nombre == null && nullToAbsent
+      nombre: Value(nombre),
+      tipo: Value(tipo),
+      habilidades: Value(habilidades),
+      instruccion: Value(instruccion),
+      contenidoVisual: contenidoVisual == null && nullToAbsent
           ? const Value.absent()
-          : Value(nombre),
+          : Value(contenidoVisual),
+      opciones: Value(opciones),
+      respuestaCorrecta: Value(respuestaCorrecta),
+      esDiagnostico: Value(esDiagnostico),
     );
   }
 
@@ -2087,7 +2303,16 @@ class Actividade extends DataClass implements Insertable<Actividade> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Actividade(
       id: serializer.fromJson<int>(json['id']),
-      nombre: serializer.fromJson<String?>(json['nombre']),
+      nombre: serializer.fromJson<String>(json['nombre']),
+      tipo: serializer.fromJson<String>(json['tipo']),
+      habilidades: serializer.fromJson<String>(json['habilidades']),
+      instruccion: serializer.fromJson<String>(json['instruccion']),
+      contenidoVisual: serializer.fromJson<Map<String, dynamic>?>(
+        json['contenidoVisual'],
+      ),
+      opciones: serializer.fromJson<List<String>>(json['opciones']),
+      respuestaCorrecta: serializer.fromJson<String>(json['respuestaCorrecta']),
+      esDiagnostico: serializer.fromJson<bool>(json['esDiagnostico']),
     );
   }
   @override
@@ -2095,21 +2320,63 @@ class Actividade extends DataClass implements Insertable<Actividade> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'nombre': serializer.toJson<String?>(nombre),
+      'nombre': serializer.toJson<String>(nombre),
+      'tipo': serializer.toJson<String>(tipo),
+      'habilidades': serializer.toJson<String>(habilidades),
+      'instruccion': serializer.toJson<String>(instruccion),
+      'contenidoVisual': serializer.toJson<Map<String, dynamic>?>(
+        contenidoVisual,
+      ),
+      'opciones': serializer.toJson<List<String>>(opciones),
+      'respuestaCorrecta': serializer.toJson<String>(respuestaCorrecta),
+      'esDiagnostico': serializer.toJson<bool>(esDiagnostico),
     };
   }
 
   Actividade copyWith({
     int? id,
-    Value<String?> nombre = const Value.absent(),
+    String? nombre,
+    String? tipo,
+    String? habilidades,
+    String? instruccion,
+    Value<Map<String, dynamic>?> contenidoVisual = const Value.absent(),
+    List<String>? opciones,
+    String? respuestaCorrecta,
+    bool? esDiagnostico,
   }) => Actividade(
     id: id ?? this.id,
-    nombre: nombre.present ? nombre.value : this.nombre,
+    nombre: nombre ?? this.nombre,
+    tipo: tipo ?? this.tipo,
+    habilidades: habilidades ?? this.habilidades,
+    instruccion: instruccion ?? this.instruccion,
+    contenidoVisual: contenidoVisual.present
+        ? contenidoVisual.value
+        : this.contenidoVisual,
+    opciones: opciones ?? this.opciones,
+    respuestaCorrecta: respuestaCorrecta ?? this.respuestaCorrecta,
+    esDiagnostico: esDiagnostico ?? this.esDiagnostico,
   );
   Actividade copyWithCompanion(ActividadesCompanion data) {
     return Actividade(
       id: data.id.present ? data.id.value : this.id,
       nombre: data.nombre.present ? data.nombre.value : this.nombre,
+      tipo: data.tipo.present ? data.tipo.value : this.tipo,
+      habilidades: data.habilidades.present
+          ? data.habilidades.value
+          : this.habilidades,
+      instruccion: data.instruccion.present
+          ? data.instruccion.value
+          : this.instruccion,
+      contenidoVisual: data.contenidoVisual.present
+          ? data.contenidoVisual.value
+          : this.contenidoVisual,
+      opciones: data.opciones.present ? data.opciones.value : this.opciones,
+      respuestaCorrecta: data.respuestaCorrecta.present
+          ? data.respuestaCorrecta.value
+          : this.respuestaCorrecta,
+      esDiagnostico: data.esDiagnostico.present
+          ? data.esDiagnostico.value
+          : this.esDiagnostico,
     );
   }
 
@@ -2117,46 +2384,123 @@ class Actividade extends DataClass implements Insertable<Actividade> {
   String toString() {
     return (StringBuffer('Actividade(')
           ..write('id: $id, ')
-          ..write('nombre: $nombre')
+          ..write('nombre: $nombre, ')
+          ..write('tipo: $tipo, ')
+          ..write('habilidades: $habilidades, ')
+          ..write('instruccion: $instruccion, ')
+          ..write('contenidoVisual: $contenidoVisual, ')
+          ..write('opciones: $opciones, ')
+          ..write('respuestaCorrecta: $respuestaCorrecta, ')
+          ..write('esDiagnostico: $esDiagnostico')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, nombre);
+  int get hashCode => Object.hash(
+    id,
+    nombre,
+    tipo,
+    habilidades,
+    instruccion,
+    contenidoVisual,
+    opciones,
+    respuestaCorrecta,
+    esDiagnostico,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Actividade &&
           other.id == this.id &&
-          other.nombre == this.nombre);
+          other.nombre == this.nombre &&
+          other.tipo == this.tipo &&
+          other.habilidades == this.habilidades &&
+          other.instruccion == this.instruccion &&
+          other.contenidoVisual == this.contenidoVisual &&
+          other.opciones == this.opciones &&
+          other.respuestaCorrecta == this.respuestaCorrecta &&
+          other.esDiagnostico == this.esDiagnostico);
 }
 
 class ActividadesCompanion extends UpdateCompanion<Actividade> {
   final Value<int> id;
-  final Value<String?> nombre;
+  final Value<String> nombre;
+  final Value<String> tipo;
+  final Value<String> habilidades;
+  final Value<String> instruccion;
+  final Value<Map<String, dynamic>?> contenidoVisual;
+  final Value<List<String>> opciones;
+  final Value<String> respuestaCorrecta;
+  final Value<bool> esDiagnostico;
   const ActividadesCompanion({
     this.id = const Value.absent(),
     this.nombre = const Value.absent(),
+    this.tipo = const Value.absent(),
+    this.habilidades = const Value.absent(),
+    this.instruccion = const Value.absent(),
+    this.contenidoVisual = const Value.absent(),
+    this.opciones = const Value.absent(),
+    this.respuestaCorrecta = const Value.absent(),
+    this.esDiagnostico = const Value.absent(),
   });
   ActividadesCompanion.insert({
     this.id = const Value.absent(),
-    this.nombre = const Value.absent(),
-  });
+    required String nombre,
+    this.tipo = const Value.absent(),
+    this.habilidades = const Value.absent(),
+    this.instruccion = const Value.absent(),
+    this.contenidoVisual = const Value.absent(),
+    required List<String> opciones,
+    this.respuestaCorrecta = const Value.absent(),
+    this.esDiagnostico = const Value.absent(),
+  }) : nombre = Value(nombre),
+       opciones = Value(opciones);
   static Insertable<Actividade> custom({
     Expression<int>? id,
     Expression<String>? nombre,
+    Expression<String>? tipo,
+    Expression<String>? habilidades,
+    Expression<String>? instruccion,
+    Expression<String>? contenidoVisual,
+    Expression<String>? opciones,
+    Expression<String>? respuestaCorrecta,
+    Expression<bool>? esDiagnostico,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (nombre != null) 'nombre': nombre,
+      if (tipo != null) 'tipo': tipo,
+      if (habilidades != null) 'habilidades': habilidades,
+      if (instruccion != null) 'instruccion': instruccion,
+      if (contenidoVisual != null) 'contenido_visual': contenidoVisual,
+      if (opciones != null) 'opciones': opciones,
+      if (respuestaCorrecta != null) 'respuesta_correcta': respuestaCorrecta,
+      if (esDiagnostico != null) 'es_diagnostico': esDiagnostico,
     });
   }
 
-  ActividadesCompanion copyWith({Value<int>? id, Value<String?>? nombre}) {
+  ActividadesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? nombre,
+    Value<String>? tipo,
+    Value<String>? habilidades,
+    Value<String>? instruccion,
+    Value<Map<String, dynamic>?>? contenidoVisual,
+    Value<List<String>>? opciones,
+    Value<String>? respuestaCorrecta,
+    Value<bool>? esDiagnostico,
+  }) {
     return ActividadesCompanion(
       id: id ?? this.id,
       nombre: nombre ?? this.nombre,
+      tipo: tipo ?? this.tipo,
+      habilidades: habilidades ?? this.habilidades,
+      instruccion: instruccion ?? this.instruccion,
+      contenidoVisual: contenidoVisual ?? this.contenidoVisual,
+      opciones: opciones ?? this.opciones,
+      respuestaCorrecta: respuestaCorrecta ?? this.respuestaCorrecta,
+      esDiagnostico: esDiagnostico ?? this.esDiagnostico,
     );
   }
 
@@ -2169,6 +2513,33 @@ class ActividadesCompanion extends UpdateCompanion<Actividade> {
     if (nombre.present) {
       map['nombre'] = Variable<String>(nombre.value);
     }
+    if (tipo.present) {
+      map['tipo'] = Variable<String>(tipo.value);
+    }
+    if (habilidades.present) {
+      map['habilidades'] = Variable<String>(habilidades.value);
+    }
+    if (instruccion.present) {
+      map['instruccion'] = Variable<String>(instruccion.value);
+    }
+    if (contenidoVisual.present) {
+      map['contenido_visual'] = Variable<String>(
+        $ActividadesTable.$convertercontenidoVisualn.toSql(
+          contenidoVisual.value,
+        ),
+      );
+    }
+    if (opciones.present) {
+      map['opciones'] = Variable<String>(
+        $ActividadesTable.$converteropciones.toSql(opciones.value),
+      );
+    }
+    if (respuestaCorrecta.present) {
+      map['respuesta_correcta'] = Variable<String>(respuestaCorrecta.value);
+    }
+    if (esDiagnostico.present) {
+      map['es_diagnostico'] = Variable<bool>(esDiagnostico.value);
+    }
     return map;
   }
 
@@ -2176,7 +2547,14 @@ class ActividadesCompanion extends UpdateCompanion<Actividade> {
   String toString() {
     return (StringBuffer('ActividadesCompanion(')
           ..write('id: $id, ')
-          ..write('nombre: $nombre')
+          ..write('nombre: $nombre, ')
+          ..write('tipo: $tipo, ')
+          ..write('habilidades: $habilidades, ')
+          ..write('instruccion: $instruccion, ')
+          ..write('contenidoVisual: $contenidoVisual, ')
+          ..write('opciones: $opciones, ')
+          ..write('respuestaCorrecta: $respuestaCorrecta, ')
+          ..write('esDiagnostico: $esDiagnostico')
           ..write(')'))
         .toString();
   }
@@ -4506,6 +4884,540 @@ class UsuariosHasMedallasCompanion extends UpdateCompanion<UsuariosHasMedalla> {
   }
 }
 
+class $ResultadosDiagnosticoTable extends ResultadosDiagnostico
+    with TableInfo<$ResultadosDiagnosticoTable, ResultadosDiagnosticoData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ResultadosDiagnosticoTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _usuarioIdMeta = const VerificationMeta(
+    'usuarioId',
+  );
+  @override
+  late final GeneratedColumn<String> usuarioId = GeneratedColumn<String>(
+    'usuario_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES usuarios (id)',
+    ),
+  );
+  static const VerificationMeta _fechaMeta = const VerificationMeta('fecha');
+  @override
+  late final GeneratedColumn<DateTime> fecha = GeneratedColumn<DateTime>(
+    'fecha',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDate,
+  );
+  static const VerificationMeta _puntajeAtencionMeta = const VerificationMeta(
+    'puntajeAtencion',
+  );
+  @override
+  late final GeneratedColumn<double> puntajeAtencion = GeneratedColumn<double>(
+    'puntaje_atencion',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _puntajeMemoriaMeta = const VerificationMeta(
+    'puntajeMemoria',
+  );
+  @override
+  late final GeneratedColumn<double> puntajeMemoria = GeneratedColumn<double>(
+    'puntaje_memoria',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _puntajeLogicaMeta = const VerificationMeta(
+    'puntajeLogica',
+  );
+  @override
+  late final GeneratedColumn<double> puntajeLogica = GeneratedColumn<double>(
+    'puntaje_logica',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _puntajeInferenciaMeta = const VerificationMeta(
+    'puntajeInferencia',
+  );
+  @override
+  late final GeneratedColumn<double> puntajeInferencia =
+      GeneratedColumn<double>(
+        'puntaje_inferencia',
+        aliasedName,
+        false,
+        type: DriftSqlType.double,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _nivelGeneralMeta = const VerificationMeta(
+    'nivelGeneral',
+  );
+  @override
+  late final GeneratedColumn<String> nivelGeneral = GeneratedColumn<String>(
+    'nivel_general',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    usuarioId,
+    fecha,
+    puntajeAtencion,
+    puntajeMemoria,
+    puntajeLogica,
+    puntajeInferencia,
+    nivelGeneral,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'resultados_diagnostico';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ResultadosDiagnosticoData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('usuario_id')) {
+      context.handle(
+        _usuarioIdMeta,
+        usuarioId.isAcceptableOrUnknown(data['usuario_id']!, _usuarioIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_usuarioIdMeta);
+    }
+    if (data.containsKey('fecha')) {
+      context.handle(
+        _fechaMeta,
+        fecha.isAcceptableOrUnknown(data['fecha']!, _fechaMeta),
+      );
+    }
+    if (data.containsKey('puntaje_atencion')) {
+      context.handle(
+        _puntajeAtencionMeta,
+        puntajeAtencion.isAcceptableOrUnknown(
+          data['puntaje_atencion']!,
+          _puntajeAtencionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_puntajeAtencionMeta);
+    }
+    if (data.containsKey('puntaje_memoria')) {
+      context.handle(
+        _puntajeMemoriaMeta,
+        puntajeMemoria.isAcceptableOrUnknown(
+          data['puntaje_memoria']!,
+          _puntajeMemoriaMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_puntajeMemoriaMeta);
+    }
+    if (data.containsKey('puntaje_logica')) {
+      context.handle(
+        _puntajeLogicaMeta,
+        puntajeLogica.isAcceptableOrUnknown(
+          data['puntaje_logica']!,
+          _puntajeLogicaMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_puntajeLogicaMeta);
+    }
+    if (data.containsKey('puntaje_inferencia')) {
+      context.handle(
+        _puntajeInferenciaMeta,
+        puntajeInferencia.isAcceptableOrUnknown(
+          data['puntaje_inferencia']!,
+          _puntajeInferenciaMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_puntajeInferenciaMeta);
+    }
+    if (data.containsKey('nivel_general')) {
+      context.handle(
+        _nivelGeneralMeta,
+        nivelGeneral.isAcceptableOrUnknown(
+          data['nivel_general']!,
+          _nivelGeneralMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_nivelGeneralMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ResultadosDiagnosticoData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ResultadosDiagnosticoData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      usuarioId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}usuario_id'],
+      )!,
+      fecha: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}fecha'],
+      )!,
+      puntajeAtencion: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}puntaje_atencion'],
+      )!,
+      puntajeMemoria: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}puntaje_memoria'],
+      )!,
+      puntajeLogica: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}puntaje_logica'],
+      )!,
+      puntajeInferencia: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}puntaje_inferencia'],
+      )!,
+      nivelGeneral: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}nivel_general'],
+      )!,
+    );
+  }
+
+  @override
+  $ResultadosDiagnosticoTable createAlias(String alias) {
+    return $ResultadosDiagnosticoTable(attachedDatabase, alias);
+  }
+}
+
+class ResultadosDiagnosticoData extends DataClass
+    implements Insertable<ResultadosDiagnosticoData> {
+  final int id;
+  final String usuarioId;
+  final DateTime fecha;
+  final double puntajeAtencion;
+  final double puntajeMemoria;
+  final double puntajeLogica;
+  final double puntajeInferencia;
+  final String nivelGeneral;
+  const ResultadosDiagnosticoData({
+    required this.id,
+    required this.usuarioId,
+    required this.fecha,
+    required this.puntajeAtencion,
+    required this.puntajeMemoria,
+    required this.puntajeLogica,
+    required this.puntajeInferencia,
+    required this.nivelGeneral,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['usuario_id'] = Variable<String>(usuarioId);
+    map['fecha'] = Variable<DateTime>(fecha);
+    map['puntaje_atencion'] = Variable<double>(puntajeAtencion);
+    map['puntaje_memoria'] = Variable<double>(puntajeMemoria);
+    map['puntaje_logica'] = Variable<double>(puntajeLogica);
+    map['puntaje_inferencia'] = Variable<double>(puntajeInferencia);
+    map['nivel_general'] = Variable<String>(nivelGeneral);
+    return map;
+  }
+
+  ResultadosDiagnosticoCompanion toCompanion(bool nullToAbsent) {
+    return ResultadosDiagnosticoCompanion(
+      id: Value(id),
+      usuarioId: Value(usuarioId),
+      fecha: Value(fecha),
+      puntajeAtencion: Value(puntajeAtencion),
+      puntajeMemoria: Value(puntajeMemoria),
+      puntajeLogica: Value(puntajeLogica),
+      puntajeInferencia: Value(puntajeInferencia),
+      nivelGeneral: Value(nivelGeneral),
+    );
+  }
+
+  factory ResultadosDiagnosticoData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ResultadosDiagnosticoData(
+      id: serializer.fromJson<int>(json['id']),
+      usuarioId: serializer.fromJson<String>(json['usuarioId']),
+      fecha: serializer.fromJson<DateTime>(json['fecha']),
+      puntajeAtencion: serializer.fromJson<double>(json['puntajeAtencion']),
+      puntajeMemoria: serializer.fromJson<double>(json['puntajeMemoria']),
+      puntajeLogica: serializer.fromJson<double>(json['puntajeLogica']),
+      puntajeInferencia: serializer.fromJson<double>(json['puntajeInferencia']),
+      nivelGeneral: serializer.fromJson<String>(json['nivelGeneral']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'usuarioId': serializer.toJson<String>(usuarioId),
+      'fecha': serializer.toJson<DateTime>(fecha),
+      'puntajeAtencion': serializer.toJson<double>(puntajeAtencion),
+      'puntajeMemoria': serializer.toJson<double>(puntajeMemoria),
+      'puntajeLogica': serializer.toJson<double>(puntajeLogica),
+      'puntajeInferencia': serializer.toJson<double>(puntajeInferencia),
+      'nivelGeneral': serializer.toJson<String>(nivelGeneral),
+    };
+  }
+
+  ResultadosDiagnosticoData copyWith({
+    int? id,
+    String? usuarioId,
+    DateTime? fecha,
+    double? puntajeAtencion,
+    double? puntajeMemoria,
+    double? puntajeLogica,
+    double? puntajeInferencia,
+    String? nivelGeneral,
+  }) => ResultadosDiagnosticoData(
+    id: id ?? this.id,
+    usuarioId: usuarioId ?? this.usuarioId,
+    fecha: fecha ?? this.fecha,
+    puntajeAtencion: puntajeAtencion ?? this.puntajeAtencion,
+    puntajeMemoria: puntajeMemoria ?? this.puntajeMemoria,
+    puntajeLogica: puntajeLogica ?? this.puntajeLogica,
+    puntajeInferencia: puntajeInferencia ?? this.puntajeInferencia,
+    nivelGeneral: nivelGeneral ?? this.nivelGeneral,
+  );
+  ResultadosDiagnosticoData copyWithCompanion(
+    ResultadosDiagnosticoCompanion data,
+  ) {
+    return ResultadosDiagnosticoData(
+      id: data.id.present ? data.id.value : this.id,
+      usuarioId: data.usuarioId.present ? data.usuarioId.value : this.usuarioId,
+      fecha: data.fecha.present ? data.fecha.value : this.fecha,
+      puntajeAtencion: data.puntajeAtencion.present
+          ? data.puntajeAtencion.value
+          : this.puntajeAtencion,
+      puntajeMemoria: data.puntajeMemoria.present
+          ? data.puntajeMemoria.value
+          : this.puntajeMemoria,
+      puntajeLogica: data.puntajeLogica.present
+          ? data.puntajeLogica.value
+          : this.puntajeLogica,
+      puntajeInferencia: data.puntajeInferencia.present
+          ? data.puntajeInferencia.value
+          : this.puntajeInferencia,
+      nivelGeneral: data.nivelGeneral.present
+          ? data.nivelGeneral.value
+          : this.nivelGeneral,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ResultadosDiagnosticoData(')
+          ..write('id: $id, ')
+          ..write('usuarioId: $usuarioId, ')
+          ..write('fecha: $fecha, ')
+          ..write('puntajeAtencion: $puntajeAtencion, ')
+          ..write('puntajeMemoria: $puntajeMemoria, ')
+          ..write('puntajeLogica: $puntajeLogica, ')
+          ..write('puntajeInferencia: $puntajeInferencia, ')
+          ..write('nivelGeneral: $nivelGeneral')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    usuarioId,
+    fecha,
+    puntajeAtencion,
+    puntajeMemoria,
+    puntajeLogica,
+    puntajeInferencia,
+    nivelGeneral,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ResultadosDiagnosticoData &&
+          other.id == this.id &&
+          other.usuarioId == this.usuarioId &&
+          other.fecha == this.fecha &&
+          other.puntajeAtencion == this.puntajeAtencion &&
+          other.puntajeMemoria == this.puntajeMemoria &&
+          other.puntajeLogica == this.puntajeLogica &&
+          other.puntajeInferencia == this.puntajeInferencia &&
+          other.nivelGeneral == this.nivelGeneral);
+}
+
+class ResultadosDiagnosticoCompanion
+    extends UpdateCompanion<ResultadosDiagnosticoData> {
+  final Value<int> id;
+  final Value<String> usuarioId;
+  final Value<DateTime> fecha;
+  final Value<double> puntajeAtencion;
+  final Value<double> puntajeMemoria;
+  final Value<double> puntajeLogica;
+  final Value<double> puntajeInferencia;
+  final Value<String> nivelGeneral;
+  const ResultadosDiagnosticoCompanion({
+    this.id = const Value.absent(),
+    this.usuarioId = const Value.absent(),
+    this.fecha = const Value.absent(),
+    this.puntajeAtencion = const Value.absent(),
+    this.puntajeMemoria = const Value.absent(),
+    this.puntajeLogica = const Value.absent(),
+    this.puntajeInferencia = const Value.absent(),
+    this.nivelGeneral = const Value.absent(),
+  });
+  ResultadosDiagnosticoCompanion.insert({
+    this.id = const Value.absent(),
+    required String usuarioId,
+    this.fecha = const Value.absent(),
+    required double puntajeAtencion,
+    required double puntajeMemoria,
+    required double puntajeLogica,
+    required double puntajeInferencia,
+    required String nivelGeneral,
+  }) : usuarioId = Value(usuarioId),
+       puntajeAtencion = Value(puntajeAtencion),
+       puntajeMemoria = Value(puntajeMemoria),
+       puntajeLogica = Value(puntajeLogica),
+       puntajeInferencia = Value(puntajeInferencia),
+       nivelGeneral = Value(nivelGeneral);
+  static Insertable<ResultadosDiagnosticoData> custom({
+    Expression<int>? id,
+    Expression<String>? usuarioId,
+    Expression<DateTime>? fecha,
+    Expression<double>? puntajeAtencion,
+    Expression<double>? puntajeMemoria,
+    Expression<double>? puntajeLogica,
+    Expression<double>? puntajeInferencia,
+    Expression<String>? nivelGeneral,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (usuarioId != null) 'usuario_id': usuarioId,
+      if (fecha != null) 'fecha': fecha,
+      if (puntajeAtencion != null) 'puntaje_atencion': puntajeAtencion,
+      if (puntajeMemoria != null) 'puntaje_memoria': puntajeMemoria,
+      if (puntajeLogica != null) 'puntaje_logica': puntajeLogica,
+      if (puntajeInferencia != null) 'puntaje_inferencia': puntajeInferencia,
+      if (nivelGeneral != null) 'nivel_general': nivelGeneral,
+    });
+  }
+
+  ResultadosDiagnosticoCompanion copyWith({
+    Value<int>? id,
+    Value<String>? usuarioId,
+    Value<DateTime>? fecha,
+    Value<double>? puntajeAtencion,
+    Value<double>? puntajeMemoria,
+    Value<double>? puntajeLogica,
+    Value<double>? puntajeInferencia,
+    Value<String>? nivelGeneral,
+  }) {
+    return ResultadosDiagnosticoCompanion(
+      id: id ?? this.id,
+      usuarioId: usuarioId ?? this.usuarioId,
+      fecha: fecha ?? this.fecha,
+      puntajeAtencion: puntajeAtencion ?? this.puntajeAtencion,
+      puntajeMemoria: puntajeMemoria ?? this.puntajeMemoria,
+      puntajeLogica: puntajeLogica ?? this.puntajeLogica,
+      puntajeInferencia: puntajeInferencia ?? this.puntajeInferencia,
+      nivelGeneral: nivelGeneral ?? this.nivelGeneral,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (usuarioId.present) {
+      map['usuario_id'] = Variable<String>(usuarioId.value);
+    }
+    if (fecha.present) {
+      map['fecha'] = Variable<DateTime>(fecha.value);
+    }
+    if (puntajeAtencion.present) {
+      map['puntaje_atencion'] = Variable<double>(puntajeAtencion.value);
+    }
+    if (puntajeMemoria.present) {
+      map['puntaje_memoria'] = Variable<double>(puntajeMemoria.value);
+    }
+    if (puntajeLogica.present) {
+      map['puntaje_logica'] = Variable<double>(puntajeLogica.value);
+    }
+    if (puntajeInferencia.present) {
+      map['puntaje_inferencia'] = Variable<double>(puntajeInferencia.value);
+    }
+    if (nivelGeneral.present) {
+      map['nivel_general'] = Variable<String>(nivelGeneral.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ResultadosDiagnosticoCompanion(')
+          ..write('id: $id, ')
+          ..write('usuarioId: $usuarioId, ')
+          ..write('fecha: $fecha, ')
+          ..write('puntajeAtencion: $puntajeAtencion, ')
+          ..write('puntajeMemoria: $puntajeMemoria, ')
+          ..write('puntajeLogica: $puntajeLogica, ')
+          ..write('puntajeInferencia: $puntajeInferencia, ')
+          ..write('nivelGeneral: $nivelGeneral')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4535,6 +5447,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $ModulosHasUsuariosTable(this);
   late final $UsuariosHasMedallasTable usuariosHasMedallas =
       $UsuariosHasMedallasTable(this);
+  late final $ResultadosDiagnosticoTable resultadosDiagnostico =
+      $ResultadosDiagnosticoTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4557,6 +5471,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     usuariosHasActividades,
     modulosHasUsuarios,
     usuariosHasMedallas,
+    resultadosDiagnostico,
   ];
 }
 
@@ -5268,6 +6183,34 @@ final class $$UsuariosTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $ResultadosDiagnosticoTable,
+    List<ResultadosDiagnosticoData>
+  >
+  _resultadosDiagnosticoRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.resultadosDiagnostico,
+        aliasName: $_aliasNameGenerator(
+          db.usuarios.id,
+          db.resultadosDiagnostico.usuarioId,
+        ),
+      );
+
+  $$ResultadosDiagnosticoTableProcessedTableManager
+  get resultadosDiagnosticoRefs {
+    final manager = $$ResultadosDiagnosticoTableTableManager(
+      $_db,
+      $_db.resultadosDiagnostico,
+    ).filter((f) => f.usuarioId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _resultadosDiagnosticoRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$UsuariosTableFilterComposer
@@ -5470,6 +6413,32 @@ class $$UsuariosTableFilterComposer
                 $removeJoinBuilderFromRootComposer,
           ),
     );
+    return f(composer);
+  }
+
+  Expression<bool> resultadosDiagnosticoRefs(
+    Expression<bool> Function($$ResultadosDiagnosticoTableFilterComposer f) f,
+  ) {
+    final $$ResultadosDiagnosticoTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.resultadosDiagnostico,
+          getReferencedColumn: (t) => t.usuarioId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ResultadosDiagnosticoTableFilterComposer(
+                $db: $db,
+                $table: $db.resultadosDiagnostico,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
@@ -5726,6 +6695,32 @@ class $$UsuariosTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> resultadosDiagnosticoRefs<T extends Object>(
+    Expression<T> Function($$ResultadosDiagnosticoTableAnnotationComposer a) f,
+  ) {
+    final $$ResultadosDiagnosticoTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.resultadosDiagnostico,
+          getReferencedColumn: (t) => t.usuarioId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ResultadosDiagnosticoTableAnnotationComposer(
+                $db: $db,
+                $table: $db.resultadosDiagnostico,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$UsuariosTableTableManager
@@ -5749,6 +6744,7 @@ class $$UsuariosTableTableManager
             bool usuariosHasActividadesRefs,
             bool modulosHasUsuariosRefs,
             bool usuariosHasMedallasRefs,
+            bool resultadosDiagnosticoRefs,
           })
         > {
   $$UsuariosTableTableManager(_$AppDatabase db, $UsuariosTable table)
@@ -5811,6 +6807,7 @@ class $$UsuariosTableTableManager
                 usuariosHasActividadesRefs = false,
                 modulosHasUsuariosRefs = false,
                 usuariosHasMedallasRefs = false,
+                resultadosDiagnosticoRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -5821,6 +6818,7 @@ class $$UsuariosTableTableManager
                     if (usuariosHasActividadesRefs) db.usuariosHasActividades,
                     if (modulosHasUsuariosRefs) db.modulosHasUsuarios,
                     if (usuariosHasMedallasRefs) db.usuariosHasMedallas,
+                    if (resultadosDiagnosticoRefs) db.resultadosDiagnostico,
                   ],
                   addJoins:
                       <
@@ -5982,6 +6980,27 @@ class $$UsuariosTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (resultadosDiagnosticoRefs)
+                        await $_getPrefetchedData<
+                          Usuario,
+                          $UsuariosTable,
+                          ResultadosDiagnosticoData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UsuariosTableReferences
+                              ._resultadosDiagnosticoRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$UsuariosTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).resultadosDiagnosticoRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.usuarioId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -6010,6 +7029,7 @@ typedef $$UsuariosTableProcessedTableManager =
         bool usuariosHasActividadesRefs,
         bool modulosHasUsuariosRefs,
         bool usuariosHasMedallasRefs,
+        bool resultadosDiagnosticoRefs,
       })
     >;
 typedef $$ConfiguracionesTableCreateCompanionBuilder =
@@ -7379,9 +8399,29 @@ typedef $$ModulosTableProcessedTableManager =
       })
     >;
 typedef $$ActividadesTableCreateCompanionBuilder =
-    ActividadesCompanion Function({Value<int> id, Value<String?> nombre});
+    ActividadesCompanion Function({
+      Value<int> id,
+      required String nombre,
+      Value<String> tipo,
+      Value<String> habilidades,
+      Value<String> instruccion,
+      Value<Map<String, dynamic>?> contenidoVisual,
+      required List<String> opciones,
+      Value<String> respuestaCorrecta,
+      Value<bool> esDiagnostico,
+    });
 typedef $$ActividadesTableUpdateCompanionBuilder =
-    ActividadesCompanion Function({Value<int> id, Value<String?> nombre});
+    ActividadesCompanion Function({
+      Value<int> id,
+      Value<String> nombre,
+      Value<String> tipo,
+      Value<String> habilidades,
+      Value<String> instruccion,
+      Value<Map<String, dynamic>?> contenidoVisual,
+      Value<List<String>> opciones,
+      Value<String> respuestaCorrecta,
+      Value<bool> esDiagnostico,
+    });
 
 final class $$ActividadesTableReferences
     extends BaseReferences<_$AppDatabase, $ActividadesTable, Actividade> {
@@ -7463,6 +8503,47 @@ class $$ActividadesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get tipo => $composableBuilder(
+    column: $table.tipo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get habilidades => $composableBuilder(
+    column: $table.habilidades,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get instruccion => $composableBuilder(
+    column: $table.instruccion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    Map<String, dynamic>?,
+    Map<String, dynamic>,
+    String
+  >
+  get contenidoVisual => $composableBuilder(
+    column: $table.contenidoVisual,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<List<String>, List<String>, String>
+  get opciones => $composableBuilder(
+    column: $table.opciones,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<String> get respuestaCorrecta => $composableBuilder(
+    column: $table.respuestaCorrecta,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get esDiagnostico => $composableBuilder(
+    column: $table.esDiagnostico,
+    builder: (column) => ColumnFilters(column),
+  );
+
   Expression<bool> actividadesHasModulosRefs(
     Expression<bool> Function($$ActividadesHasModulosTableFilterComposer f) f,
   ) {
@@ -7534,6 +8615,41 @@ class $$ActividadesTableOrderingComposer
     column: $table.nombre,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get tipo => $composableBuilder(
+    column: $table.tipo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get habilidades => $composableBuilder(
+    column: $table.habilidades,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get instruccion => $composableBuilder(
+    column: $table.instruccion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get contenidoVisual => $composableBuilder(
+    column: $table.contenidoVisual,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get opciones => $composableBuilder(
+    column: $table.opciones,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get respuestaCorrecta => $composableBuilder(
+    column: $table.respuestaCorrecta,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get esDiagnostico => $composableBuilder(
+    column: $table.esDiagnostico,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ActividadesTableAnnotationComposer
@@ -7550,6 +8666,38 @@ class $$ActividadesTableAnnotationComposer
 
   GeneratedColumn<String> get nombre =>
       $composableBuilder(column: $table.nombre, builder: (column) => column);
+
+  GeneratedColumn<String> get tipo =>
+      $composableBuilder(column: $table.tipo, builder: (column) => column);
+
+  GeneratedColumn<String> get habilidades => $composableBuilder(
+    column: $table.habilidades,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get instruccion => $composableBuilder(
+    column: $table.instruccion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<Map<String, dynamic>?, String>
+  get contenidoVisual => $composableBuilder(
+    column: $table.contenidoVisual,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<List<String>, String> get opciones =>
+      $composableBuilder(column: $table.opciones, builder: (column) => column);
+
+  GeneratedColumn<String> get respuestaCorrecta => $composableBuilder(
+    column: $table.respuestaCorrecta,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get esDiagnostico => $composableBuilder(
+    column: $table.esDiagnostico,
+    builder: (column) => column,
+  );
 
   Expression<T> actividadesHasModulosRefs<T extends Object>(
     Expression<T> Function($$ActividadesHasModulosTableAnnotationComposer a) f,
@@ -7636,13 +8784,49 @@ class $$ActividadesTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<String?> nombre = const Value.absent(),
-              }) => ActividadesCompanion(id: id, nombre: nombre),
+                Value<String> nombre = const Value.absent(),
+                Value<String> tipo = const Value.absent(),
+                Value<String> habilidades = const Value.absent(),
+                Value<String> instruccion = const Value.absent(),
+                Value<Map<String, dynamic>?> contenidoVisual =
+                    const Value.absent(),
+                Value<List<String>> opciones = const Value.absent(),
+                Value<String> respuestaCorrecta = const Value.absent(),
+                Value<bool> esDiagnostico = const Value.absent(),
+              }) => ActividadesCompanion(
+                id: id,
+                nombre: nombre,
+                tipo: tipo,
+                habilidades: habilidades,
+                instruccion: instruccion,
+                contenidoVisual: contenidoVisual,
+                opciones: opciones,
+                respuestaCorrecta: respuestaCorrecta,
+                esDiagnostico: esDiagnostico,
+              ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<String?> nombre = const Value.absent(),
-              }) => ActividadesCompanion.insert(id: id, nombre: nombre),
+                required String nombre,
+                Value<String> tipo = const Value.absent(),
+                Value<String> habilidades = const Value.absent(),
+                Value<String> instruccion = const Value.absent(),
+                Value<Map<String, dynamic>?> contenidoVisual =
+                    const Value.absent(),
+                required List<String> opciones,
+                Value<String> respuestaCorrecta = const Value.absent(),
+                Value<bool> esDiagnostico = const Value.absent(),
+              }) => ActividadesCompanion.insert(
+                id: id,
+                nombre: nombre,
+                tipo: tipo,
+                habilidades: habilidades,
+                instruccion: instruccion,
+                contenidoVisual: contenidoVisual,
+                opciones: opciones,
+                respuestaCorrecta: respuestaCorrecta,
+                esDiagnostico: esDiagnostico,
+              ),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
@@ -10793,6 +11977,411 @@ typedef $$UsuariosHasMedallasTableProcessedTableManager =
       UsuariosHasMedalla,
       PrefetchHooks Function({bool usuarioId, bool medallaId})
     >;
+typedef $$ResultadosDiagnosticoTableCreateCompanionBuilder =
+    ResultadosDiagnosticoCompanion Function({
+      Value<int> id,
+      required String usuarioId,
+      Value<DateTime> fecha,
+      required double puntajeAtencion,
+      required double puntajeMemoria,
+      required double puntajeLogica,
+      required double puntajeInferencia,
+      required String nivelGeneral,
+    });
+typedef $$ResultadosDiagnosticoTableUpdateCompanionBuilder =
+    ResultadosDiagnosticoCompanion Function({
+      Value<int> id,
+      Value<String> usuarioId,
+      Value<DateTime> fecha,
+      Value<double> puntajeAtencion,
+      Value<double> puntajeMemoria,
+      Value<double> puntajeLogica,
+      Value<double> puntajeInferencia,
+      Value<String> nivelGeneral,
+    });
+
+final class $$ResultadosDiagnosticoTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $ResultadosDiagnosticoTable,
+          ResultadosDiagnosticoData
+        > {
+  $$ResultadosDiagnosticoTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $UsuariosTable _usuarioIdTable(_$AppDatabase db) =>
+      db.usuarios.createAlias(
+        $_aliasNameGenerator(
+          db.resultadosDiagnostico.usuarioId,
+          db.usuarios.id,
+        ),
+      );
+
+  $$UsuariosTableProcessedTableManager get usuarioId {
+    final $_column = $_itemColumn<String>('usuario_id')!;
+
+    final manager = $$UsuariosTableTableManager(
+      $_db,
+      $_db.usuarios,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_usuarioIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ResultadosDiagnosticoTableFilterComposer
+    extends Composer<_$AppDatabase, $ResultadosDiagnosticoTable> {
+  $$ResultadosDiagnosticoTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get fecha => $composableBuilder(
+    column: $table.fecha,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get puntajeAtencion => $composableBuilder(
+    column: $table.puntajeAtencion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get puntajeMemoria => $composableBuilder(
+    column: $table.puntajeMemoria,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get puntajeLogica => $composableBuilder(
+    column: $table.puntajeLogica,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get puntajeInferencia => $composableBuilder(
+    column: $table.puntajeInferencia,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get nivelGeneral => $composableBuilder(
+    column: $table.nivelGeneral,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$UsuariosTableFilterComposer get usuarioId {
+    final $$UsuariosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableFilterComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ResultadosDiagnosticoTableOrderingComposer
+    extends Composer<_$AppDatabase, $ResultadosDiagnosticoTable> {
+  $$ResultadosDiagnosticoTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get fecha => $composableBuilder(
+    column: $table.fecha,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get puntajeAtencion => $composableBuilder(
+    column: $table.puntajeAtencion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get puntajeMemoria => $composableBuilder(
+    column: $table.puntajeMemoria,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get puntajeLogica => $composableBuilder(
+    column: $table.puntajeLogica,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get puntajeInferencia => $composableBuilder(
+    column: $table.puntajeInferencia,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get nivelGeneral => $composableBuilder(
+    column: $table.nivelGeneral,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$UsuariosTableOrderingComposer get usuarioId {
+    final $$UsuariosTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableOrderingComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ResultadosDiagnosticoTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ResultadosDiagnosticoTable> {
+  $$ResultadosDiagnosticoTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get fecha =>
+      $composableBuilder(column: $table.fecha, builder: (column) => column);
+
+  GeneratedColumn<double> get puntajeAtencion => $composableBuilder(
+    column: $table.puntajeAtencion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get puntajeMemoria => $composableBuilder(
+    column: $table.puntajeMemoria,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get puntajeLogica => $composableBuilder(
+    column: $table.puntajeLogica,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get puntajeInferencia => $composableBuilder(
+    column: $table.puntajeInferencia,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get nivelGeneral => $composableBuilder(
+    column: $table.nivelGeneral,
+    builder: (column) => column,
+  );
+
+  $$UsuariosTableAnnotationComposer get usuarioId {
+    final $$UsuariosTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.usuarioId,
+      referencedTable: $db.usuarios,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsuariosTableAnnotationComposer(
+            $db: $db,
+            $table: $db.usuarios,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ResultadosDiagnosticoTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ResultadosDiagnosticoTable,
+          ResultadosDiagnosticoData,
+          $$ResultadosDiagnosticoTableFilterComposer,
+          $$ResultadosDiagnosticoTableOrderingComposer,
+          $$ResultadosDiagnosticoTableAnnotationComposer,
+          $$ResultadosDiagnosticoTableCreateCompanionBuilder,
+          $$ResultadosDiagnosticoTableUpdateCompanionBuilder,
+          (ResultadosDiagnosticoData, $$ResultadosDiagnosticoTableReferences),
+          ResultadosDiagnosticoData,
+          PrefetchHooks Function({bool usuarioId})
+        > {
+  $$ResultadosDiagnosticoTableTableManager(
+    _$AppDatabase db,
+    $ResultadosDiagnosticoTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ResultadosDiagnosticoTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$ResultadosDiagnosticoTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ResultadosDiagnosticoTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> usuarioId = const Value.absent(),
+                Value<DateTime> fecha = const Value.absent(),
+                Value<double> puntajeAtencion = const Value.absent(),
+                Value<double> puntajeMemoria = const Value.absent(),
+                Value<double> puntajeLogica = const Value.absent(),
+                Value<double> puntajeInferencia = const Value.absent(),
+                Value<String> nivelGeneral = const Value.absent(),
+              }) => ResultadosDiagnosticoCompanion(
+                id: id,
+                usuarioId: usuarioId,
+                fecha: fecha,
+                puntajeAtencion: puntajeAtencion,
+                puntajeMemoria: puntajeMemoria,
+                puntajeLogica: puntajeLogica,
+                puntajeInferencia: puntajeInferencia,
+                nivelGeneral: nivelGeneral,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String usuarioId,
+                Value<DateTime> fecha = const Value.absent(),
+                required double puntajeAtencion,
+                required double puntajeMemoria,
+                required double puntajeLogica,
+                required double puntajeInferencia,
+                required String nivelGeneral,
+              }) => ResultadosDiagnosticoCompanion.insert(
+                id: id,
+                usuarioId: usuarioId,
+                fecha: fecha,
+                puntajeAtencion: puntajeAtencion,
+                puntajeMemoria: puntajeMemoria,
+                puntajeLogica: puntajeLogica,
+                puntajeInferencia: puntajeInferencia,
+                nivelGeneral: nivelGeneral,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ResultadosDiagnosticoTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({usuarioId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (usuarioId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.usuarioId,
+                                referencedTable:
+                                    $$ResultadosDiagnosticoTableReferences
+                                        ._usuarioIdTable(db),
+                                referencedColumn:
+                                    $$ResultadosDiagnosticoTableReferences
+                                        ._usuarioIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ResultadosDiagnosticoTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ResultadosDiagnosticoTable,
+      ResultadosDiagnosticoData,
+      $$ResultadosDiagnosticoTableFilterComposer,
+      $$ResultadosDiagnosticoTableOrderingComposer,
+      $$ResultadosDiagnosticoTableAnnotationComposer,
+      $$ResultadosDiagnosticoTableCreateCompanionBuilder,
+      $$ResultadosDiagnosticoTableUpdateCompanionBuilder,
+      (ResultadosDiagnosticoData, $$ResultadosDiagnosticoTableReferences),
+      ResultadosDiagnosticoData,
+      PrefetchHooks Function({bool usuarioId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -10834,4 +12423,6 @@ class $AppDatabaseManager {
       $$ModulosHasUsuariosTableTableManager(_db, _db.modulosHasUsuarios);
   $$UsuariosHasMedallasTableTableManager get usuariosHasMedallas =>
       $$UsuariosHasMedallasTableTableManager(_db, _db.usuariosHasMedallas);
+  $$ResultadosDiagnosticoTableTableManager get resultadosDiagnostico =>
+      $$ResultadosDiagnosticoTableTableManager(_db, _db.resultadosDiagnostico);
 }

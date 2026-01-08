@@ -9,6 +9,7 @@ class EstadoActividad {
   final int aciertos;
   final int intentos;
   final bool completado;
+  final bool esAcierto;
   final String mensajeFeedback;
 
   EstadoActividad({
@@ -17,6 +18,7 @@ class EstadoActividad {
     this.aciertos = 0,
     this.intentos = 0,
     this.completado = false,
+    this.esAcierto = false, // <--- Inicializamos en false
     this.mensajeFeedback = '',
   });
 
@@ -24,6 +26,7 @@ class EstadoActividad {
     int? aciertos,
     int? intentos,
     bool? completado,
+    bool? esAcierto, // <--- Añadimos al copyWith
     String? mensajeFeedback,
   }) {
     return EstadoActividad(
@@ -32,6 +35,7 @@ class EstadoActividad {
       aciertos: aciertos ?? this.aciertos,
       intentos: intentos ?? this.intentos,
       completado: completado ?? this.completado,
+      esAcierto: esAcierto ?? this.esAcierto, // <--- Actualizamos
       mensajeFeedback: mensajeFeedback ?? this.mensajeFeedback,
     );
   }
@@ -40,7 +44,7 @@ class EstadoActividad {
 // 2. NOTIFIER (Lógica del Juego)
 class ActividadNotifier extends StateNotifier<EstadoActividad> {
   final RepoProgreso _repoProgreso;
-  final String? _usuarioId;
+  final String? _usuarioId; // Puede ser null si el usuario no se ha logueado aún
 
   ActividadNotifier({
     required Actividad actividadInicial,
@@ -50,35 +54,50 @@ class ActividadNotifier extends StateNotifier<EstadoActividad> {
        _usuarioId = usuarioId,
        super(EstadoActividad(actividad: actividadInicial));
 
-  // Evaluar Respuesta
-  Future<void> verificarRespuesta(dynamic respuestaUsuario) async {
-    if (state.completado || _usuarioId == null) return;
+  // Opción A: Cuando la vista ya sabe si fue correcto (Ej: Memorama, Selección Múltiple)
+  Future<void> registrarResultado(bool fueCorrecto) async {
+     if (state.completado) return; // Evitar respuestas dobles
 
-    // Sugerencia para tu Notifier
+     _actualizarEstadoYBaseDeDatos(fueCorrecto);
+  }
+
+  // Opción B: Cuando necesitamos comparar texto (Ej: Entrada de texto manual, si la tuvieras)
+  Future<void> verificarRespuesta(dynamic respuestaUsuario) async {
+    if (state.completado) return;
+
     final correcta = state.actividad.respuestaCorrecta
         .toLowerCase().replaceAll('.', '').trim();
     final usuario = respuestaUsuario.toString()
         .toLowerCase().replaceAll('.', '').trim();
     
-    final esAcierto = (correcta == usuario);
+    final fueCorrecto = (correcta == usuario);
 
-    // 1. Actualizamos el estado visual (Feedback inmediato)
+    _actualizarEstadoYBaseDeDatos(fueCorrecto);
+  }
+
+  // Método privado para centralizar la lógica de guardado
+  Future<void> _actualizarEstadoYBaseDeDatos(bool esAcierto) async {
+    // 1. Actualizamos el estado visual
     state = state.copyWith(
       intentos: state.intentos + 1,
       aciertos: state.aciertos + (esAcierto ? 1 : 0),
-      mensajeFeedback: esAcierto ? "¡Excelente!" : "Casi, inténtalo de nuevo",
-      completado: true, // En este diseño simple, 1 actividad = 1 pregunta/juego.
+      esAcierto: esAcierto, // <--- Guardamos si fue acierto en el estado
+      mensajeFeedback: esAcierto ? "¡Excelente!" : "Inténtalo de nuevo",
+      completado: true, 
     );
 
-    // 2. Guardamos en Base de Datos (Drift)
-    await _repoProgreso.guardarProgresoActividad(
-      usuarioId: _usuarioId,
-      actividadId: state.actividad.id,
-      esAcierto: esAcierto,
-    );
+    // 2. Guardamos en Base de Datos (Solo si hay usuario logueado)
+    if (_usuarioId != null) {
+      await _repoProgreso.guardarProgresoActividad(
+        usuarioId: _usuarioId,
+        actividadId: state.actividad.id,
+        esAcierto: esAcierto,
+      );
+    }
   }
   
   void reiniciar() {
+    // Reseteamos manteniendo la actividad original
     state = EstadoActividad(actividad: state.actividad);
   }
 }

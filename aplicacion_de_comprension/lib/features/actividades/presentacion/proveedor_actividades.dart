@@ -2,21 +2,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/proveedor.dart'; 
 import '../../tutor/presentacion/proveedor_tutor.dart'; 
 import '../dominio/casos/obtener_recomendacion.dart';
-
+import '../datos/implementaciones/repo_diagnostico_impl.dart';
 import '../datos/implementaciones/repo_contenido_impl.dart';
 import '../datos/implementaciones/repo_progreso_impl.dart';
 import '../dominio/entidades/actividad.dart';
 import 'controladores/controlador_actividad.dart';
+import 'controladores/controlador_diagnostico.dart';
 
 final poblarBaseDeDatosProvider = FutureProvider<void>((ref) async {
   final db = ref.watch(dbProvider);
-  final repoContenido = RepoContenidoImpl(db);
+  final repoContenido = RepoContenidoImpl(db, ref);
   await repoContenido.poblarBaseDeDatos();
 });
 
 final repoContenidoProvider = Provider<RepoContenidoImpl>((ref) {
   final db = ref.watch(dbProvider);
-  return RepoContenidoImpl(db);
+  return RepoContenidoImpl(db, ref);
 });
 
 final repoProgresoProvider = Provider<RepoProgresoImpl>((ref) {
@@ -62,4 +63,34 @@ final siguienteActividadProvider = FutureProvider.autoDispose<Actividad?>((ref) 
   final obtenerRecomendacion = ObtenerRecomendacion(repoContenido, repoProgreso);
   
   return obtenerRecomendacion(usuario.id);
+});
+
+final evaluacionProvider = StateNotifierProvider.autoDispose<EvaluacionNotifier, EstadoEvaluacion>((ref) {
+  final repoContenido = ref.read(repoContenidoProvider); 
+  final repoProgreso = ref.read(repoProgresoProvider);
+  
+  final usuarioAsync = ref.watch(perfilActivoProvider);
+  final usuarioId = usuarioAsync.value?.id ?? 'invitado'; 
+
+  return EvaluacionNotifier(repoContenido, repoProgreso, usuarioId);
+});
+
+final recomendacionPorModuloProvider = FutureProvider.family.autoDispose<Actividad?, int>((ref, moduloId) async {
+  final usuario = await ref.watch(perfilActivoProvider.future);
+  if (usuario == null) return null;
+
+  // Instanciamos repositorios
+  final repoContenido = ref.watch(repoContenidoProvider);
+  final repoProgreso = ref.watch(repoProgresoProvider);
+  
+  // Instanciamos TU caso de uso
+  final obtenerRecomendacion = ObtenerRecomendacion(repoContenido, repoProgreso);
+
+  // Ejecutamos la lógica pasando el filtro
+  return obtenerRecomendacion(usuario.id, moduloId: moduloId);
+});
+
+final textoHistoriaProvider = FutureProvider.family<String?, String>((ref, titulo) async {
+  final repo = ref.read(repoContenidoProvider);
+  return repo.obtenerTextoHistoria(titulo);
 });

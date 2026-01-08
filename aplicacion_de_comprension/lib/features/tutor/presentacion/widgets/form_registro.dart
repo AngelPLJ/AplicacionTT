@@ -80,7 +80,7 @@ class _FromRegistroState extends ConsumerState<FormRegistro> {
                       fontWeight: FontWeight.bold
                     ),
                     decoration: const InputDecoration(
-                      labelText: 'PIN (solo números)',
+                      labelText: 'PIN (de 6 digitos o más)',
                       labelStyle: TextStyle(
                         fontFamily: 'Roboto',
                         letterSpacing: 0, // Restablecer el espaciado para la etiqueta

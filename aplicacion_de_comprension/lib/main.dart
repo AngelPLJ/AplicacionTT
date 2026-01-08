@@ -26,7 +26,7 @@ class MyApp extends ConsumerWidget {
         useMaterial3: true,
         primaryColor: Colors.green,
         hintColor: Colors.lightGreen,
-        scaffoldBackgroundColor: const Color.fromARGB(255, 13, 0, 39),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 218, 200, 255),
         textTheme: const TextTheme(
           bodyLarge: TextStyle(fontSize: 24.0, fontFamily: 'Roboto Slab'),
           bodyMedium: TextStyle(fontSize: 20.0, fontFamily: 'Roboto Slab'),

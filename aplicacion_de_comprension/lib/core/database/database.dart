@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
@@ -79,8 +80,32 @@ class Modulos extends Table {
 }
 
 class Actividades extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get nombre => text().withLength(max: 45).nullable()();
+  // ID puede ser autoincrement o insertado manualmente desde el JSON
+  IntColumn get id => integer().autoIncrement()(); 
+  TextColumn get nombre => text().withLength(max: 150)();
+  
+  // NUEVAS COLUMNAS
+  // Tipo: 'ordenaOracion', 'memorama', etc.
+  TextColumn get tipo => text().withLength(max: 50).withDefault(const Constant('generico'))(); 
+  
+  // Habilidades: "Atención, Memoria" (String simple para búsquedas rápidas)
+  TextColumn get habilidades => text().withDefault(const Constant(''))(); 
+  
+  // Instrucción principal
+  TextColumn get instruccion => text().withDefault(const Constant(''))(); 
+  
+  // Contenido dinámico (Aquí va la imagen, o el texto largo, etc.)
+  TextColumn get contenidoVisual => text().map(const MapConverter()).nullable()();
+  
+  // Las opciones para los botones
+  TextColumn get opciones => text().map(const StringListConverter())();
+  
+  // La respuesta correcta (texto plano)
+  TextColumn get respuestaCorrecta => text().withDefault(const Constant(''))();
+
+  // Bandera para saber si es del examen inicial
+  BoolColumn get esDiagnostico => boolean().withDefault(const Constant(false))();
+  
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -171,9 +196,37 @@ class UsuariosHasMedallas extends Table {
   Set<Column> get primaryKey => {usuarioId, medallaId};
 }
 
+class ResultadosDiagnostico extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get usuarioId => text().references(Usuarios, #id)();
+  DateTimeColumn get fecha => dateTime().withDefault(currentDate)();
+  RealColumn get puntajeAtencion => real()();
+  RealColumn get puntajeMemoria => real()();
+  RealColumn get puntajeLogica => real()();
+  RealColumn get puntajeInferencia => real()();
+  TextColumn get nivelGeneral => text()();
+}
+
 // ==========================================
 // CONFIGURACIÓN DE LA BASE DE DATOS
 // ==========================================
+
+class StringListConverter extends TypeConverter<List<String>, String> {
+  const StringListConverter();
+  @override
+  List<String> fromSql(String fromDb) => List<String>.from(json.decode(fromDb));
+  @override
+  String toSql(List<String> value) => json.encode(value);
+}
+
+// Permite guardar objetos complejos {"url": "...", "pregunta": "..."} en una columna
+class MapConverter extends TypeConverter<Map<String, dynamic>, String> {
+  const MapConverter();
+  @override
+  Map<String, dynamic> fromSql(String fromDb) => json.decode(fromDb) as Map<String, dynamic>;
+  @override
+  String toSql(Map<String, dynamic> value) => json.encode(value);
+}
 
 @DriftDatabase(tables: [
   Tutor,
@@ -193,12 +246,13 @@ class UsuariosHasMedallas extends Table {
   UsuariosHasActividades,
   ModulosHasUsuarios,
   UsuariosHasMedallas,
+  ResultadosDiagnostico,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase._(super.e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   static Future<AppDatabase> open() async {
     final dir = await getApplicationDocumentsDirectory();
@@ -206,8 +260,6 @@ class AppDatabase extends _$AppDatabase {
     final executor = NativeDatabase.createInBackground(file);
     return AppDatabase._(executor);
   }
-  // Helpers básicos
-
   Future<bool> tieneTutor() async => (await select(tutor).get()).isNotEmpty;
   Future<void> upsertKv(String k, String v) async =>
       into(kvStore).insertOnConflictUpdate(KvStoreCompanion.insert(key: k, value: v));

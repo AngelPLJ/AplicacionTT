@@ -1,7 +1,8 @@
 import 'package:drift/drift.dart';
-import '../../../../core/database/database.dart'; // Tu archivo generado por drift
+import '../../../../core/database/database.dart'; 
 import '../../dominio/repositorios/repo_progreso.dart';
-import '../../../dashboard/dominio/entidades/progreso.dart'; // Tu modelo ModuloConProgreso
+import '../../../dashboard/dominio/entidades/progreso.dart';
+import '../../dominio/entidades/actividad.dart';
 
 class RepoProgresoImpl implements RepoProgreso {
   final AppDatabase _db;
@@ -14,20 +15,18 @@ class RepoProgresoImpl implements RepoProgreso {
     required int actividadId,
     required bool esAcierto,
   }) async {
-    // 1. Buscamos si ya existe un registro previo
     final registroPrevio = await (_db.select(_db.usuariosHasActividades)
           ..where((t) =>
-              t.usuarioId.equals(usuarioId) & t.actividadId.equals(actividadId)))
+              t.usuarioId.equals(usuarioId) & t.actividadId.equals(actividadId))
+          ..limit(1))
         .getSingleOrNull();
 
     final aciertosAnteriores = registroPrevio?.aciertos ?? 0;
     final totalAnterior = registroPrevio?.total ?? 0;
 
-    // 2. Calculamos nuevos valores (Acumulativo)
     final nuevosAciertos = aciertosAnteriores + (esAcierto ? 1 : 0);
     final nuevoTotal = totalAnterior + 1;
 
-    // 3. Upsert (Insertar o Actualizar)
     await _db.into(_db.usuariosHasActividades).insertOnConflictUpdate(
           UsuariosHasActividadesCompanion(
             usuarioId: Value(usuarioId),
@@ -36,7 +35,63 @@ class RepoProgresoImpl implements RepoProgreso {
             total: Value(nuevoTotal),
           ),
         );
+
+    await _actualizarModulosRelacionados(usuarioId, actividadId);
   }
+
+  // --- LÓGICA DE ACTUALIZACIÓN AUTOMÁTICA ---
+  Future<void> _actualizarModulosRelacionados(String usuarioId, int actividadId) async {
+    // A. Buscamos a qué módulos pertenece esta actividad (ej: Atención y Vocabulario)
+    final relaciones = await (_db.select(_db.actividadesHasModulos)
+      ..where((t) => t.actividadId.equals(actividadId)))
+      .get();
+
+    // B. Recalculamos el porcentaje para cada uno de esos módulos
+    for (var rel in relaciones) {
+      await _recalcularPorcentajeModulo(usuarioId, rel.moduloId);
+    }
+  }
+
+  Future<void> _recalcularPorcentajeModulo(String usuarioId, int moduloId) async {
+    // 1. Contar TOTAL de actividades que tiene este módulo
+    final queryTotal = _db.select(_db.actividadesHasModulos)
+      ..where((t) => t.moduloId.equals(moduloId));
+    final listaTotal = await queryTotal.get();
+    final totalActividades = listaTotal.length;
+
+    if (totalActividades == 0) return;
+
+    // 2. Contar cuántas ha COMPLETADO el usuario en este módulo
+    // Hacemos un JOIN entre las actividades del módulo y las que el usuario ha jugado
+    final queryCompletadas = _db.select(_db.usuariosHasActividades).join([
+      innerJoin(
+        _db.actividadesHasModulos,
+        _db.actividadesHasModulos.actividadId.equalsExp(_db.usuariosHasActividades.actividadId)
+      )
+    ]);
+    
+    queryCompletadas.where(
+      _db.actividadesHasModulos.moduloId.equals(moduloId) &
+      _db.usuariosHasActividades.usuarioId.equals(usuarioId) &
+      _db.usuariosHasActividades.total.isBiggerThanValue(0) // Si total > 0, ya la jugó
+    );
+
+    final listaCompletadas = await queryCompletadas.get();
+    final actividadesCompletadas = listaCompletadas.length;
+
+    // 3. Calcular Porcentaje (Ej: 2 completadas / 4 totales = 0.5 -> 50%)
+    double nuevoPorcentaje = actividadesCompletadas / totalActividades;
+    if (nuevoPorcentaje > 1.0) nuevoPorcentaje = 1.0;
+
+    // 4. Guardar en la tabla caché que lee el Dashboard
+    await actualizarProgresoModulo(
+      usuarioId: usuarioId, 
+      moduloId: moduloId, 
+      progreso: nuevoPorcentaje
+    );
+  }
+
+  // --- RESTO DE MÉTODOS (SIN CAMBIOS) ---
 
   @override
   Future<List<ProgresoActividad>> getHistorialCompleto(String usuarioId) async {
@@ -45,9 +100,9 @@ class RepoProgresoImpl implements RepoProgreso {
         .get();
   }
   
-  // Implementación básica de los otros métodos requeridos por la interfaz abstracta...
   @override
   Future<double> getProgresoGeneral(String usuarioId) async {
+      // Tu lógica original de promedio general
       final actividadesRealizadas = await (_db.select(_db.usuariosHasActividades)
           ..where((t) => t.usuarioId.equals(usuarioId)))
         .get();
@@ -63,7 +118,6 @@ class RepoProgresoImpl implements RepoProgreso {
 
   @override
   Future<List<ModuloConProgreso>> getModulosDelUsuario(String usuarioId) async {
-    // Retorna lista vacía o implementa el join si lo necesitas aquí
     final query = _db.select(_db.modulos).join([
       leftOuterJoin(
         _db.modulosHasUsuarios,
@@ -95,7 +149,6 @@ class RepoProgresoImpl implements RepoProgreso {
       );
   }
   
-  // ... (Implementar los métodos de fonemas/números si los usas, o dejarlos vacíos por ahora)
   @override
   Future<void> guardarProgresoNumero({required String usuarioId, required int numeroId, required bool fueAcierto}) async {
     await _db.into(_db.usuariosHasNumeros).insertOnConflictUpdate(
@@ -118,6 +171,41 @@ class RepoProgresoImpl implements RepoProgreso {
       ),
     );
   }
+
   @override
-  Future<List<UsuariosHasNumero>> getProgresoNumeros(String usuarioId) async => [];
+  Future<void> guardarResultadoDiagnostico({
+    required String usuarioId,
+    required Map<HabilidadCognitiva, double> puntajes,
+  }) async {
+    double suma = 0;
+    int count = 0;
+    puntajes.forEach((k, v) {
+      if (v > 0) { 
+        suma += v;
+        count++;
+      }
+    });
+    
+    double promedio = count == 0 ? 0 : suma / count;
+
+    String nivel = "Inicial";
+    if (promedio >= 0.85) nivel = "Avanzado";
+    else if (promedio >= 0.60) nivel = "Intermedio";
+
+    await _db.into(_db.resultadosDiagnostico).insert(
+      ResultadosDiagnosticoCompanion.insert(
+        usuarioId: usuarioId,
+        puntajeAtencion: puntajes[HabilidadCognitiva.atencion] ?? 0.0,
+        puntajeMemoria: puntajes[HabilidadCognitiva.memoria] ?? 0.0,
+        puntajeLogica: puntajes[HabilidadCognitiva.logica] ?? 0.0,
+        puntajeInferencia: puntajes[HabilidadCognitiva.inferencia] ?? 0.0,
+        nivelGeneral: nivel,
+        fecha: Value(DateTime.now()),
+      ),
+    );
+  }
+  @override
+  Future<List<UsuariosHasNumero>> getProgresoNumeros(String usuarioId) async => (_db.select(_db.usuariosHasNumeros)
+        ..where((t) => t.usuarioId.equals(usuarioId)))
+      .get();
 }

@@ -1,6 +1,7 @@
 //lib\features\perfiles\repositorios\repo_progreso.dart
 import '../../../../../core/database/database.dart';
 import '../../../dashboard/dominio/entidades/progreso.dart';
+import '../entidades/actividad.dart';
 
 abstract class RepoProgreso {
   
@@ -30,5 +31,10 @@ abstract class RepoProgreso {
     required String usuarioId, 
     required int moduloId, 
     required double progreso
+  });
+
+  Future<void> guardarResultadoDiagnostico({
+    required String usuarioId,
+    required Map<HabilidadCognitiva, double> puntajes,
   });
 }

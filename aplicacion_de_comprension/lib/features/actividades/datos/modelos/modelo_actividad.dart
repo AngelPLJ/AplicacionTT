@@ -9,72 +9,88 @@ class ActividadModel extends Actividad {
     required super.habilidades,
     required super.tipo,
     required super.instruccion,
-    super.contenidoVisual,
+    required super.contenido,
     required super.opciones,
     required super.respuestaCorrecta,
   });
 
   factory ActividadModel.fromJson(Map<String, dynamic> json) {
-    final contenido = json['Contenido'] as Map<String, dynamic>;
-    final nombreActividad = json['Nombre'] as String;
+    
+    // 1. Extraer Habilidades (del string "Memoria, lógica")
+    final habilidadesString = json['Habilidad(es)'] as String? ?? '';
+    final listaHabilidades = _parsearHabilidades(habilidadesString);
 
-    // 1. Determinar el Tipo de Actividad
-    // Usamos una variable local para calcularlo antes de pasarlo al constructor
-    TipoActividad tipoCalculado = TipoActividad.comprensionFragmentos; // Valor por defecto
+    // 2. Detectar Tipo de Actividad (basado en nombre o estructura)
+    final nombre = json['Nombre'] as String? ?? 'Sin nombre';
+    final tipoDetectado = _inferirTipo(nombre);
 
-    if (contenido.containsKey('oracion_desordenada')) {
-      tipoCalculado = TipoActividad.ordenaOracion;
-    } else if (nombreActividad.contains('¿Qué pasará después?')) {
-      tipoCalculado = TipoActividad.quePasaraDespues;
-    } else if (nombreActividad.contains('Comprensión')) {
-      tipoCalculado = TipoActividad.comprensionFragmentos;
-    } else if (contenido.containsKey('pregunta')) {
-      // Fallback genérico si hay pregunta pero no coincide con los nombres anteriores
-      tipoCalculado = TipoActividad.comprensionFragmentos; 
+    // 3. Aplanar el objeto "Contenido"
+    // Tu JSON tiene todo metido dentro de "Contenido": {}, hay que sacarlo.
+    final dynamic contenidoRaw = json['Contenido'];
+    Map<String, dynamic> contenidoVisualMap = {};
+    List<String> opciones = [];
+    String respuestaCorrecta = '';
+    String instruccion = 'Resuelve la actividad';
+
+    if (contenidoRaw is Map<String, dynamic>) {
+      // Copiamos todo para no modificar el original
+      contenidoVisualMap = Map.from(contenidoRaw);
+
+      // A. Extraer Opciones
+      if (contenidoVisualMap.containsKey('opciones')) {
+        opciones = List<String>.from(contenidoVisualMap['opciones']);
+        contenidoVisualMap.remove('opciones'); // Lo quitamos del visual para no duplicar
+      } else if (contenidoVisualMap.containsKey('oracion_desordenada')) {
+        // Caso especial para ordenar oraciones
+        opciones = List<String>.from(contenidoVisualMap['oracion_desordenada']);
+      }
+
+      // B. Extraer Respuesta
+      if (contenidoVisualMap.containsKey('respuesta_correcta')) {
+        respuestaCorrecta = contenidoVisualMap['respuesta_correcta'];
+        contenidoVisualMap.remove('respuesta_correcta');
+      } else if (contenidoVisualMap.containsKey('solucion')) {
+        respuestaCorrecta = contenidoVisualMap['solucion'];
+        contenidoVisualMap.remove('solucion');
+      }
+
+      // C. Extraer Pregunta/Instrucción
+      if (contenidoVisualMap.containsKey('pregunta')) {
+        instruccion = contenidoVisualMap['pregunta'];
+        contenidoVisualMap.remove('pregunta');
+      }
     }
-
-    // 2. Mapeo de Habilidades (String -> Enum)
-    final habString = json['Habilidad(es)'] as String? ?? '';
-    final habilidadesCalculadas = _parseHabilidades(habString);
-
-    // 3. Extracción de Opciones
-    // Puede venir en 'opciones' o en 'oracion_desordenada'
-    List<String> opcionesExtraidas = [];
-    if (contenido['opciones'] != null) {
-      opcionesExtraidas = List<String>.from(contenido['opciones']);
-    } else if (contenido['oracion_desordenada'] != null) {
-      opcionesExtraidas = List<String>.from(contenido['oracion_desordenada']);
-    }
-
-    // 4. Extracción de Respuesta Correcta
-    final respuesta = contenido['respuesta_correcta'] ?? contenido['solucion'] ?? '';
-
-    // 5. Extracción de Instrucción
-    // A veces la instrucción es la pregunta misma, a veces es el nombre
-    final instruccionExtraida = contenido['pregunta'] ?? nombreActividad;
 
     return ActividadModel(
       id: json['Numero'] ?? 0,
-      nombre: nombreActividad,
-      habilidades: habilidadesCalculadas,
-      tipo: tipoCalculado,
-      instruccion: instruccionExtraida,
-      contenidoVisual: contenido['fragmento_contexto'], // Puede ser null, y está bien
-      opciones: opcionesExtraidas,
-      respuestaCorrecta: respuesta,
+      nombre: nombre,
+      habilidades: listaHabilidades,
+      tipo: tipoDetectado,
+      instruccion: instruccion,
+      contenido: contenidoVisualMap, // Lo que sobró (ej: contexto, imagenes)
+      opciones: opciones,
+      respuestaCorrecta: respuestaCorrecta,
     );
   }
 
-  static List<HabilidadCognitiva> _parseHabilidades(String raw) {
-    final list = <HabilidadCognitiva>[];
-    final t = raw.toLowerCase();
+  // Helpers privados para mantener limpio el código
+  static List<HabilidadCognitiva> _parsearHabilidades(String texto) {
+    final limpio = texto.toLowerCase();
+    final lista = <HabilidadCognitiva>[];
+    if (limpio.contains('atención') || limpio.contains('atencion')) lista.add(HabilidadCognitiva.atencion);
+    if (limpio.contains('memoria')) lista.add(HabilidadCognitiva.memoria);
+    if (limpio.contains('lógica') || limpio.contains('logica')) lista.add(HabilidadCognitiva.logica);
+    if (limpio.contains('inferencia')) lista.add(HabilidadCognitiva.inferencia);
+    return lista;
+  }
 
-    if (t.contains('atención')) list.add(HabilidadCognitiva.atencion);
-    // Nota: En tu enum definiste 'memoria', asegúrate de usar ese nombre
-    if (t.contains('memoria')) list.add(HabilidadCognitiva.memoria); 
-    if (t.contains('lógica')) list.add(HabilidadCognitiva.logica);
-    if (t.contains('inferencia')) list.add(HabilidadCognitiva.inferencia);
-
-    return list;
+  static TipoActividad _inferirTipo(String nombre) {
+    final n = nombre.toLowerCase();
+    if (n.contains('ordena')) return TipoActividad.ordenaOracion;
+    if (n.contains('letra')) return TipoActividad.encuentraLetraDistinta;
+    if (n.contains('escuchaste')) return TipoActividad.palabraEscuchada;
+    if (n.contains('memorama')) return TipoActividad.memorama;
+    if (n.contains('pasará') || n.contains('pasara')) return TipoActividad.quePasaraDespues;
+    return TipoActividad.comprensionLectora; // Default seguro
   }
 }
